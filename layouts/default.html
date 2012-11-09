@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - <%= @item[:title] %></title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <%= render "sidebar" %>
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
