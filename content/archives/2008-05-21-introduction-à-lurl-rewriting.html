@@ -2,210 +2,151 @@
 title: "Introduction à l'URL Rewriting"
 ---
 
-<h1>Introduction à l'URL Rewriting</h1><p>L&rsquo;URL Rewriting permet de &ldquo;r&eacute;-&eacute;crire des URLs&rdquo;.<br />
-Gr&acirc;ce &agrave; cette fonctionnalit&eacute;, vous pouvez proposer des <strong>URLs &ldquo;virtuelles&rdquo;</strong> sur votre site, qui ne correspondent &agrave; aucune page r&eacute;elle : vous donnez une certaine <span class="caps">URL</span>, ou vous la mettez dans un lien, et en fait le client verra affich&eacute;e une page toute autre.</p>
-<p>L&rsquo;URL Rewriting permet de &ldquo;r&eacute;&eacute;crire des URLs&rdquo;.</p>
+<h1>Introduction à l'URL Rewriting</h1>
 
+<p>L’URL Rewriting permet de “ré-écrire des URLs”.<br>
+Grâce à cette fonctionnalité, vous pouvez proposer des <strong>URLs “virtuelles”</strong> sur votre site, qui ne correspondent à aucune page réelle : vous
+donnez une certaine <span class="caps">URL</span>, ou vous la mettez dans un lien, et en fait le client verra affichée une page toute autre.</p>
 
-	<p>Pr&eacute; requis : avoir quelques notions sur les expressions r&eacute;guli&eacute;res..</p>
+<p>L’URL Rewriting permet de “réécrire des URLs”.</p>
 
+<p>Pré requis : avoir quelques notions sur les expressions réguliéres..</p>
 
-	<h2>Introduction</h2>
+<h2>Introduction</h2>
 
+<p>L’URL Rewriting permet de “ré-écrire des URLs”.<br>
+Grâce à cette fonctionnalité, vous pouvez proposer des <strong>URLs “virtuelles”</strong> sur votre site, qui ne correspondent à aucune page réelle : vous
+donnez une certaine <span class="caps">URL</span>, ou vous la mettez dans un lien, et en fait le client verra affichée une page toute autre.</p>
 
-	<p>L&rsquo;URL Rewriting permet de &ldquo;r&eacute;-&eacute;crire des URLs&rdquo;.<br />
-Gr&acirc;ce &agrave; cette fonctionnalit&eacute;, vous pouvez proposer des <strong>URLs &ldquo;virtuelles&rdquo;</strong> sur votre site, qui ne correspondent &agrave; aucune page r&eacute;elle : vous donnez une certaine <span class="caps">URL</span>, ou vous la mettez dans un lien, et en fait le client verra affich&eacute;e une page toute autre.</p>
+<p>Les exemples qui suivent supposent une mise en pratique avec Apache (version 1 ou 2) et son module “mod_rewrite”.<br>
+<span class="caps">PHP</span> est pris comme langage de référence pour les exemples pour les noms des pages, mais cela fonctionne bien sûr avec d’autres
+langages :-)</p>
 
+<p>Par exemple :<br>
+http://www.monsite.fr/a/b/c/ affichera en réalité sur mon site la page correspondant à l’URL de votre site :
+http://www.monsite.fr/index.php?page=a&amp;section=b&amp;client=c</p>
 
-	<p>Les exemples qui suivent supposent une mise en pratique avec Apache (version 1 ou 2) et son module &ldquo;mod_rewrite&rdquo;.<br />
-<span class="caps">PHP</span> est pris comme langage de r&eacute;f&eacute;rence pour les exemples pour les noms des pages, mais cela fonctionne bien s&ucirc;r avec d&rsquo;autres langages :-)</p>
+<p>L’intérêt est double :<br>
+- le <strong>référencement</strong> : certains moteurs de recherche n’indexent pas les pages au delà d’un certain nombre de paramètres. C’est le cas de
+Google qui bloque au delà de deux. Ainsi, la page que j’ai donné en exemple ( http://www.monsite.fr/index.php ?page=a&amp;section=b&amp;client=c ) qui
+contient trois paramètres “page”, “section” et “client” ne sera pas indexée, ce qui nuira au bon référencement de votre site.<br>
+- la <strong>sécurité</strong>, ou plutot le coté “<strong>pratique</strong>” : vous avez par exemple un répertoire admin/ auquel vous ne voulez que personne
+accède. Grâce à l’URL Rewriting, vous pouvez spécifier que toute page appelée dans le répertoire admin/ doit afficher en fait
+http://www.monsite.fr/erreur.html</p>
 
+<h2>Mise en pratique</h2>
 
-	<p>Par exemple :<br />
-http://www.monsite.fr/a/b/c/ affichera en r&eacute;alit&eacute; sur mon site la page correspondant &agrave; l&rsquo;URL de votre site : http://www.monsite.fr/index.php?page=a&section=b&client=c</p>
+<p>En pratique, l’URL Rewriting est disponible (a minima) sur Apache, et sur <span class="caps">IIS</span>.<br>
+Nous traiterons le cas d’Apache, qui est très répandu, je n’ai jamais testé sur <span class="caps">IIS</span> (le serveur <span class="caps">HTTP</span>
+Microsoft).</p>
 
+<h2>1- Vérifier que l’URL Rewriting est utilisable</h2>
 
-	<p>L&rsquo;int&eacute;r&ecirc;t est double :<br />
-- le <strong>r&eacute;f&eacute;rencement</strong> : certains moteurs de recherche n&rsquo;indexent pas les pages au del&agrave; d&rsquo;un certain nombre de param&egrave;tres. C&rsquo;est le cas de Google qui bloque au del&agrave; de deux. Ainsi, la page que j&rsquo;ai donn&eacute; en exemple ( http://www.monsite.fr/index.php ?page=a&section=b&client=c ) qui contient trois param&egrave;tres &ldquo;page&rdquo;, &ldquo;section&rdquo; et &ldquo;client&rdquo; ne sera pas index&eacute;e, ce qui nuira au bon r&eacute;f&eacute;rencement de votre site.<br />
-- la <strong>s&eacute;curit&eacute;</strong>, ou plutot le cot&eacute; &ldquo;<strong>pratique</strong>&rdquo; : vous avez par exemple un r&eacute;pertoire admin/ auquel vous ne voulez que personne acc&egrave;de. Gr&acirc;ce &agrave; l&rsquo;URL Rewriting, vous pouvez sp&eacute;cifier que toute page appel&eacute;e dans le r&eacute;pertoire admin/ doit afficher en fait http://www.monsite.fr/erreur.html</p>
+<p>En <span class="caps">PHP</span>, il suffit de vérifier que le module “mod_rewrite” est chargé.<br>
+Faites une page et regardez dans la liste “Apache Loaded Modules” si ce module est bien activé. En général même chez de petits hébergeurs payants c’est le
+cas.</p>
 
+<h2>2- Fonctionnement</h2>
 
-	<h2>Mise en pratique</h2>
+<p>L’URL Rewriting se présente concrètement sous forme de “règles” que vous allez préciser dans un fichier .htaccess<br>
+Rappelons que les fichiers .htaccess ont d’autres fonctions, qui ne seront pas exposées ici : restriction d’accès à une page, erreurs personnalisées,
+redirections.</p>
 
+<p>L’URL Rewriting utilise donc des règles, composées d’un masque de recherche qui est une expression régulière, et un masque de remplacement en fonction (un
+peu comme preg_replace en <span class="caps">PHP</span>)<br>
+Si l’URL entrée par l’utilisateur (ou dans un lien) vérifie le masque de recherche, elle est remplacée par l’autre masque, celui de remplacement.<br>
+A noter : si le masque de remplacement est un tiret, la réécriture n’a pas lieu.</p>
 
-	<p>En pratique, l&rsquo;URL Rewriting est disponible (a minima) sur Apache, et sur <span class="caps">IIS</span>.<br />
-Nous traiterons le cas d&rsquo;Apache, qui est tr&egrave;s r&eacute;pandu, je n&rsquo;ai jamais test&eacute; sur <span class="caps">IIS</span> (le serveur <span class="caps">HTTP</span> Microsoft).</p>
+<h2>3- Premier exemple</h2>
 
+<p>Voyons un premier exemple très simple.<br>
+Mettez dans votre .htaccess :</p><code>RewriteEngine on RewriteRule ^test\.html$ /test.php</code>
 
-	<h2>1- V&eacute;rifier que l&rsquo;URL Rewriting est utilisable</h2>
-
-
-	<p>En <span class="caps">PHP</span>, il suffit de v&eacute;rifier que le module &ldquo;mod_rewrite&rdquo; est charg&eacute;.<br />
-Faites une page  et regardez dans la liste &ldquo;Apache Loaded Modules&rdquo; si ce module est bien activ&eacute;. En g&eacute;n&eacute;ral m&ecirc;me chez de petits h&eacute;bergeurs payants c&rsquo;est le cas.</p>
-
-
-	<h2>2- Fonctionnement</h2>
-
-
-	<p>L&rsquo;URL Rewriting se pr&eacute;sente concr&egrave;tement sous forme de &ldquo;r&egrave;gles&rdquo; que vous allez pr&eacute;ciser dans un fichier .htaccess<br />
-Rappelons que les fichiers .htaccess ont d&rsquo;autres fonctions, qui ne seront pas expos&eacute;es ici : restriction d&rsquo;acc&egrave;s &agrave; une page, erreurs personnalis&eacute;es, redirections.</p>
-
-
-	<p>L&rsquo;URL Rewriting utilise donc des r&egrave;gles, compos&eacute;es d&rsquo;un masque de recherche qui est une expression r&eacute;guli&egrave;re, et un masque de remplacement en fonction (un peu comme preg_replace en <span class="caps">PHP</span>)<br />
-Si l&rsquo;URL entr&eacute;e par l&rsquo;utilisateur (ou dans un lien) v&eacute;rifie le masque de recherche, elle est remplac&eacute;e par l&rsquo;autre masque, celui de remplacement.<br />
-A noter : si le masque de remplacement est un tiret, la r&eacute;&eacute;criture n&rsquo;a pas lieu.</p>
-
-
-	<h2>3- Premier exemple</h2>
-
-
-	<p>Voyons un premier exemple tr&egrave;s simple.<br />
-Mettez dans votre .htaccess :</p>
-
-
-<code>RewriteEngine on
-RewriteRule ^test\.html$ /test.php</code>
-
-	<p>Mettez ensuite une page test.php &agrave; la racine de votre site :<br />
-Exemple de contenu :<br />
+<p>Mettez ensuite une page test.php à la racine de votre site :<br>
+Exemple de contenu :<br>
 <code>Ceci est la page test.php !!</code></p>
 
+<p>Si vous essayez d’aller sur http://www.votresite.fr/test.html, vous verrez la page test.php s’afficher ! Et ce bien que test.html n’existe pas en
+réalité.</p>
 
-	<p>Si vous essayez d&rsquo;aller sur http://www.votresite.fr/test.html, vous verrez la page test.php s&rsquo;afficher ! Et ce bien que test.html n&rsquo;existe pas en r&eacute;alit&eacute;.</p>
+<p>Remarque : si c’est uniquement pour faire une redirection fixe, pas besoin d’URL Rewriting : un RedirectPermanent marche aussi.. Remarque2 : selon la
+version et les réglages de votre serveur, il est possible que ceci ne marche pas (erreur 500 ou 404) : mettez alors test.php au lieu de /test.php en
+réécriture.</p>
 
+<h2>4- Limites</h2>
 
-	<p>Remarque : si c&rsquo;est uniquement pour faire une redirection fixe, pas besoin d&rsquo;URL Rewriting : un RedirectPermanent marche aussi.. Remarque2 : selon la version et les r&eacute;glages de votre serveur, il est possible que ceci ne marche pas (erreur 500 ou 404) : mettez alors test.php au lieu de /test.php en r&eacute;&eacute;criture.</p>
+<p>Certaines regex ne marcheront pas sur de l’URL Rewriting.<br>
+Les notions “avancées” des langages de regex, du genre test avant, test arrière, conditions, n’ont pas marché sur mon serv Apache.</p>
 
+<p>Conclusion : une expression régulière utilisée dans ce cas se doit d’être <span class="caps">VERIFIEE</span> !</p>
 
-	<h2>4- Limites</h2>
+<p>Pour l’anecdote, dans un masque compliqué un jour, [abcd] fonctionnait, mais pas [abcdef], allez comprendre ;o)</p>
 
+<h2>Les références</h2>
 
-	<p>Certaines regex ne marcheront pas sur de l&rsquo;URL Rewriting.<br />
-Les notions &ldquo;avanc&eacute;es&rdquo; des langages de regex, du genre test avant, test arri&egrave;re, conditions, n&rsquo;ont pas march&eacute; sur mon serv Apache.</p>
+<p>Comme tout outil utilisant les regex, on peut capturer du texte et le réutiliser lors du remplacement.</p>
 
+<p>Ceci se fait comme avec preg_replace, par l’ajout de parenthèses pour capturer, et de références $1,$2,... pour restituer ce qui a été capturé. Exemple :
+vous désirez que toute page php demandée dans repertoire1 affiche en fait la page équivalent dans répertoire2 :</p><code>RewriteEngine on RewriteRule
+^repertoire1/(.*\.php)$ /repertoire2/$1</code>
 
-	<p>Conclusion : une expression r&eacute;guli&egrave;re utilis&eacute;e dans ce cas se doit d&rsquo;&ecirc;tre <span class="caps">VERIFIEE</span> !</p>
+<p>Je ne m’étendrai pas plus la dessus ici, histoire de se concentrer sur l’URL Rewriting et non sur les mécanismes de regex.</p>
 
+<h2>Les drapeaux</h2>
 
-	<p>Pour l&rsquo;anecdote, dans un masque compliqu&eacute; un jour, [abcd] fonctionnait, mais pas [abcdef], allez comprendre ;o)</p>
+<p>Les flags, ou drapeaux, se placent après le masque de ré-écriture : ils permettent de définir des options pour la réécriture.<br>
+Ils peuvent être combinés en étant séparés par une virgule : [L,F] par exemple (voir la suite)</p>[L] : la règle qui précède sera la dernière, aucune autre
+tentative de réécriture ne sera effectuée ensuite. Exemple : <code>RewriteEngine on RewriteRule ^test\.php$ - [L] RewriteRule ^test\.php$ /test2.php</code>
+Vous tomberez sur test.php, et non test2.php. Sans le [L], vous tomberez sur test2.php ! Ce flag permet par exemple de bloquer l’accès aux images par
+exemples, tout en gardant une réécriture sur tous les dossiers/fichiers autres. [R] : force une redirection Exemple : <code>RewriteEngine on RewriteRule
+^test\.php$ /test2.php [R]</code> test.php sera redirigée vers test2.php, et non réécrite à la volée : le visiteur verra s’écrire test2.php dans la barre de
+navigation de son browser. [F] : forbidden, accès interdit : renvoie une erreur 403 (permet de protéger l’accès à certains fichiers/répertoires coté serveur
+!) Exemple : <code>RewriteEngine on RewriteRule ^test\.php$ - [F]</code> [G] : erreur 410, <span class="caps">URL</span> n’existant plus Exemple :
+<code>RewriteEngine on RewriteRule ^test\.php$ - [G]</code> [N] : recommence au début des règles Exemple : <code>RewriteEngine on RewriteRule ^test2\.php$
+/index.html RewriteRule ^test\.php$ /test2.php [N]</code> Avec ces règles, la page test.php sera réécrite en test2.php, puis en index.html ! [NC] : pattern
+non sensible à la casse (majuscules/minuscules) Exemple : <code>RewriteEngine on RewriteRule ^tEsT\.pHP$ /test2.php [NC]</code> Ce masque réécrira bien
+test.php (marche également dans l’autre sens.. qui est plus intéressant ;o))
 
+<p>Voila la liste des autres flags, moins utiles pour débuter :<br>
+[P] : force le passage par un proxy : non testé<br>
+[C] : règles en chaines : non testé<br>
+[T] : force le type <span class="caps">MIME</span> du fichier demandé : non testé<br>
+et autres <span class="caps">QSA</span>,NS,PT,S,E…</p>
 
-	<h2>Les r&eacute;f&eacute;rences</h2>
+<h2>Les conditions</h2>
 
+<p>mod_rexrite permet de mettre différentes conditions avant de réaliser une réécriture.</p>
 
-	<p>Comme tout outil utilisant les regex, on peut capturer du texte et le r&eacute;utiliser lors du remplacement.</p>
+<p>Trois choses à savoir :<br>
+- le “ET” est implicite entre deux conditions sur deux lignes successives, et pour faire un ou, il suffit d’ajouter un flag [OR] en fin de ligne<br>
+- pour nier un masque, il suffit de le précéder d’un point d’exclamation ”!”<br>
+- les tests agissent sur des “VARIABLES <span class="caps">SERVEUR</span>” de la forme %<em><span class="caps">VARIABLE</span></em>. Une liste exhaustive est
+dispo dans la doc Apache, on va par exemple tester le host du visiteur :</p>
 
+<p>Exemple : refuser les hosts contenant <span class="caps">AOL</span> ou tiscali sur notre page test.php<br>
+<code>RewriteEngine on RewriteCond %REMOTE_HOST AOL [OR] RewriteCond %REMOTE_HOST tiscali RewriteRule ^test\.php$ - [F]</code></p>
 
-	<p>Ceci se fait comme avec preg_replace, par l&rsquo;ajout de parenth&egrave;ses pour capturer, et de r&eacute;f&eacute;rences $1,$2,... pour restituer ce qui a &eacute;t&eacute; captur&eacute;. Exemple : vous d&eacute;sirez que toute page php demand&eacute;e dans repertoire1 affiche en fait la page &eacute;quivalent dans r&eacute;pertoire2 :</p>
+<p>Exemple : réécrire test.php en test2.php pour les non-utilisateurs de Firefox<br>
+<code>RewriteEngine on RewriteCond %HTTP_USER_AGENT !^.*Firefox.*$ RewriteRule ^test\.php$ /test2.php</code></p>
 
+<p>Note : voici mon <span class="caps">HTTP</span>_USER_AGENT<br>
+- avec Firefox : Mozilla/5.0 (Windows ; U ; Windows <span class="caps">NT 5</span>.1 ; fr-FR ; rv:1.7.12) Gecko/20050919 Firefox/1.0.7<br>
+- avec IE : Mozilla/4.0 (compatible ; <span class="caps">MSIE 6</span>.0 ; Windows <span class="caps">NT 5</span>.1 ; <span class="caps">SV1</span> ; .NET
+<span class="caps">CLR 1</span>.1.4322 ; .NET <span class="caps">CLR 2</span>.0.50215)</p>
 
-<code>RewriteEngine on
-RewriteRule ^repertoire1/(.*\.php)$ /repertoire2/$1</code>
+<p>Cette réécriture n’est pas infaillible, on peut régler son user agent sur certains browsers.</p>
 
-	<p>Je ne m&rsquo;&eacute;tendrai pas plus la dessus ici, histoire de se concentrer sur l&rsquo;URL Rewriting et non sur les m&eacute;canismes de regex.</p>
+<p>Exemple : afficher une page différente en journée et soirée : (curiosité trouvée dans un ppt sur www.w3-campus.com)</p><code>RewriteEngine on RewriteCond
+%TIME_HOUR%TIME_MIN &gt;0800 RewriteCond %TIME_HOUR%TIME_MIN &lt;2000 RewriteRule ^index\.html$ index.jour.html [L] RewriteRule ^index\.html$ index.nuit.html
+[L]</code>
 
+<p>A vous d’être imaginatifs maintenant !</p>
 
-	<h2>Les drapeaux</h2>
+<h2>Conclusion</h2>
 
+<p>Beaucoup de fonctionnalités et options de l’URL Rewriting n’ont pas été abordées ici, mais vous avez déjà un panorama assez large des fonctionnalités de
+base.</p>
 
-	<p>Les flags, ou drapeaux, se placent apr&egrave;s le masque de r&eacute;-&eacute;criture : ils permettent de d&eacute;finir des options pour la r&eacute;&eacute;criture.<br />
-Ils peuvent &ecirc;tre combin&eacute;s en &eacute;tant s&eacute;par&eacute;s par une virgule : [L,F] par exemple (voir la suite)</p>
-
-
-[L] : la r&egrave;gle qui pr&eacute;c&egrave;de sera la derni&egrave;re, aucune autre tentative de r&eacute;&eacute;criture ne sera effectu&eacute;e ensuite.
-Exemple :
-<code>RewriteEngine on
-RewriteRule ^test\.php$ - [L]
-RewriteRule ^test\.php$ /test2.php</code>
-Vous tomberez sur test.php, et non test2.php. Sans le [L], vous tomberez sur test2.php !
-Ce flag permet par exemple de bloquer l&rsquo;acc&egrave;s aux images par exemples, tout en gardant une r&eacute;&eacute;criture sur tous les dossiers/fichiers autres.
-
-[R] : force une redirection
-Exemple :
-<code>RewriteEngine on
-RewriteRule ^test\.php$ /test2.php [R]</code>
-test.php sera redirig&eacute;e vers test2.php, et non r&eacute;&eacute;crite &agrave; la vol&eacute;e : le visiteur verra s&rsquo;&eacute;crire test2.php dans la barre de navigation de son browser.
-
-[F] : forbidden, acc&egrave;s interdit : renvoie une erreur 403 (permet de prot&eacute;ger l&rsquo;acc&egrave;s &agrave; certains fichiers/r&eacute;pertoires cot&eacute; serveur !)
-Exemple :
-<code>RewriteEngine on
-RewriteRule ^test\.php$ - [F]</code>
-
-[G] : erreur 410, <span class="caps">URL</span> n&rsquo;existant plus
-Exemple :
-<code>RewriteEngine on
-RewriteRule ^test\.php$ - [G]</code>
-
-[N] : recommence au d&eacute;but des r&egrave;gles
-Exemple :
-<code>RewriteEngine on
-RewriteRule ^test2\.php$ /index.html
-RewriteRule ^test\.php$ /test2.php [N]</code>
-Avec ces r&egrave;gles, la page test.php sera r&eacute;&eacute;crite en test2.php, puis en index.html !
-
-[NC] : pattern non sensible &agrave; la casse (majuscules/minuscules)
-Exemple :
-<code>RewriteEngine on
-RewriteRule ^tEsT\.pHP$ /test2.php [NC]</code>
-Ce masque r&eacute;&eacute;crira bien test.php (marche &eacute;galement dans l&rsquo;autre sens.. qui est plus int&eacute;ressant ;o))
-
-	<p>Voila la liste des autres flags, moins utiles pour d&eacute;buter :<br />
-[P] : force le passage par un proxy : non test&eacute;<br />
-[C] : r&egrave;gles en chaines : non test&eacute;<br />
-[T] : force le type <span class="caps">MIME</span> du fichier demand&eacute; : non test&eacute;<br />
-et autres <span class="caps">QSA</span>,NS,PT,S,E&hellip;</p>
-
-
-	<h2>Les conditions</h2>
-
-
-	<p>mod_rexrite permet de mettre diff&eacute;rentes conditions avant de r&eacute;aliser une r&eacute;&eacute;criture.</p>
-
-
-	<p>Trois choses &agrave; savoir :<br />
-- le &ldquo;ET&rdquo; est implicite entre deux conditions sur deux lignes successives, et pour faire un ou, il suffit d&rsquo;ajouter un flag [OR] en fin de ligne<br />
-- pour nier un masque, il suffit de le pr&eacute;c&eacute;der d&rsquo;un point d&rsquo;exclamation &rdquo;!&rdquo; <br />
-- les tests agissent sur des &ldquo;VARIABLES <span class="caps">SERVEUR</span>&rdquo; de la forme %<em><span class="caps">VARIABLE</span></em>. Une liste exhaustive est dispo dans la doc Apache, on va par exemple tester le host du visiteur :</p>
-
-
-	<p>Exemple : refuser les hosts contenant <span class="caps">AOL</span> ou tiscali sur notre page test.php<br />
-<code>RewriteEngine on
-RewriteCond %REMOTE_HOST AOL [OR]
-RewriteCond %REMOTE_HOST tiscali
-RewriteRule ^test\.php$ - [F]</code></p>
-
-
-	<p>Exemple : r&eacute;&eacute;crire test.php en test2.php pour les non-utilisateurs de Firefox<br />
-<code>RewriteEngine on
-RewriteCond %HTTP_USER_AGENT !^.*Firefox.*$
-RewriteRule ^test\.php$ /test2.php</code></p>
-
-
-	<p>Note : voici mon <span class="caps">HTTP</span>_USER_AGENT<br />
-- avec Firefox : Mozilla/5.0 (Windows ; U ; Windows <span class="caps">NT 5</span>.1 ; fr-FR ; rv:1.7.12) Gecko/20050919 Firefox/1.0.7<br />
-- avec IE : Mozilla/4.0 (compatible ; <span class="caps">MSIE 6</span>.0 ; Windows <span class="caps">NT 5</span>.1 ; <span class="caps">SV1</span> ; .NET <span class="caps">CLR 1</span>.1.4322 ; .NET <span class="caps">CLR 2</span>.0.50215)</p>
-
-
-	<p>Cette r&eacute;&eacute;criture n&rsquo;est pas infaillible, on peut r&eacute;gler son user agent sur certains browsers.</p>
-
-
-	<p>Exemple : afficher une page diff&eacute;rente en journ&eacute;e et soir&eacute;e : (curiosit&eacute; trouv&eacute;e dans un ppt sur www.w3-campus.com)</p>
-
-
-<code>RewriteEngine on
-RewriteCond %TIME_HOUR%TIME_MIN &gt;0800
-RewriteCond %TIME_HOUR%TIME_MIN &lt;2000
-RewriteRule ^index\.html$ index.jour.html [L]
-RewriteRule ^index\.html$ index.nuit.html [L]</code>
-
-	<p>A vous d&rsquo;&ecirc;tre imaginatifs maintenant !</p>
-
-
-	<h2>Conclusion</h2>
-
-
-	<p>Beaucoup de fonctionnalit&eacute;s et options de l&rsquo;URL Rewriting n&rsquo;ont pas &eacute;t&eacute; abord&eacute;es ici, mais vous avez d&eacute;j&agrave; un panorama assez large des fonctionnalit&eacute;s de base.</p>
-
-
-	<p>Si vous voulez plus d&rsquo;infos reportez vous &agrave; la <a href="http://www.apachefrance.com/Manuels/Apache_1.3_VF/mod/mod_rewrite.html"> doc Apache mod_rewrite (fr)</a><br />
-Ou <a href="http://www.webmaster-hub.com/publication/article5.html">un autre tuto tr&egrave;s bien fait</a></p>
+<p>Si vous voulez plus d’infos reportez vous à la <a href="http://www.apachefrance.com/Manuels/Apache_1.3_VF/mod/mod_rewrite.html">doc Apache mod_rewrite
+(fr)</a><br>
+Ou <a href="http://www.webmaster-hub.com/publication/article5.html">un autre tuto très bien fait</a></p>

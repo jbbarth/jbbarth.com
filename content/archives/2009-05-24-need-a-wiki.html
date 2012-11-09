@@ -2,14 +2,42 @@
 title: "Need a wiki ?"
 ---
 
-<h1>Need a wiki ?</h1><p>En ce moment j&#8217;ai trop d&#8217;articles techniques &agrave; publier, souvent trop en bazar, ou trop long pour &ecirc;tre publi&eacute;s dans une demi-colone de ce blog. De plus je risque de quitter mon boulot dans quelques mois, et tout ce que j&#8217;ai p&ucirc; documenter l&agrave;-bas sera perdu pour moi si je ne le r&eacute;cup&egrave;re pas avant. Bref, j&#8217;ai besoin d&#8217;un wiki, simple d&#8217;utilisation, avec suivi des r&eacute;visions, formatage en Textile, un peu comme celui de <a href="http://www.redmine.org/">Remine</a>.</p>
-<p>Une contrainte suppl&eacute;mentaire, qu&#8217;il soit en <a href="http://rubyonrails.org/">Ruby on Rails</a>, &eacute;ventuellement <a href="http://merbivore.com/">Merb</a>. Pas par id&eacute;ologie, croyance en <span class="caps">REST</span>, ou quelconque connerie de ce genre (et certains en tiennent une couche &agrave; ce niveau quand on voit la liste rails-france), mais plut&ocirc;t parce que j&#8217;en ai marre de maintenir 50 technos h&eacute;t&eacute;rog&egrave;nes sur mon serveur. Mon <a href="http://blog.jbbarth.com/">blog</a>, mon <a href="http://code.jbbarth.com">gestionnaire de projets</a> tournent d&eacute;j&agrave; en Rails. Ce sera bient&ocirc;t le cas du site <a href="http://www.chanmasters.com/">chanmasters.com</a> que je r&eacute;&eacute;cris en ce moment. Bient&ocirc;t le cas &eacute;galement de <a href="http://photos.jbbarth.com/">ma gallerie de photos</a>, qui tourne d&eacute;j&agrave; avec des scripts ruby mais pas administrable en mode web. Donc dommage pour <a href="http://www.dokuwiki.org/">Dokuwiki</a> qui a priori me convenait parfaitement&#8230;</p>
-<p>J&#8217;ai essay&eacute; <a href="http://instiki.org/">Instiki</a> sans &ecirc;tre r&eacute;ellement convaincu, je ne saurais pas bien expliquer pourquoi. Et puis, j&#8217;aurais des modifs &agrave; faire dessus pour qu&#8217;il me convienne (templates trop &eacute;pur&eacute;es &agrave; mon go&ucirc;t, affichage &#8220;geeky&#8221; de certains champs, etc&#8230;). Ce qui implique un petit peu d&#8217;exploration du code, cf la suite. Je n&#8217;ai pas trouv&eacute; d&#8217;autres projets tr&egrave;s actifs en Rails et qui me convienne (liste <a href="http://en.wikipedia.org/wiki/List_of_wiki_software#Ruby-based">ici</a>)&#8230;</p>
-<p>En fait, le wiki de Redmine me convient parfaitement. Facile &agrave; &#8220;hacker&#8221; (je commence &agrave; conna&icirc;tre un peu le code m&ecirc;me si je suis loin d&#8217;&ecirc;tre un gourou comme les 3 ou 4 grands contributeurs r&eacute;guliers), maintenu, communaut&eacute; active, support de textile entre autres, jolis diff, etc. Nickel, &agrave; 4 petites choses pr&egrave;s :</p>
+<h1>Need a wiki ?</h1>
+
+<p>En ce moment j’ai trop d’articles techniques à publier, souvent trop en bazar, ou trop long pour être publiés dans une demi-colone de ce blog. De plus je
+risque de quitter mon boulot dans quelques mois, et tout ce que j’ai pû documenter là-bas sera perdu pour moi si je ne le récupère pas avant. Bref, j’ai
+besoin d’un wiki, simple d’utilisation, avec suivi des révisions, formatage en Textile, un peu comme celui de <a href=
+"http://www.redmine.org/">Remine</a>.</p>
+
+<p>Une contrainte supplémentaire, qu’il soit en <a href="http://rubyonrails.org/">Ruby on Rails</a>, éventuellement <a href="http://merbivore.com/">Merb</a>.
+Pas par idéologie, croyance en <span class="caps">REST</span>, ou quelconque connerie de ce genre (et certains en tiennent une couche à ce niveau quand on
+voit la liste rails-france), mais plutôt parce que j’en ai marre de maintenir 50 technos hétérogènes sur mon serveur. Mon <a href=
+"http://blog.jbbarth.com/">blog</a>, mon <a href="http://code.jbbarth.com">gestionnaire de projets</a> tournent déjà en Rails. Ce sera bientôt le cas du site
+<a href="http://www.chanmasters.com/">chanmasters.com</a> que je réécris en ce moment. Bientôt le cas également de <a href="http://photos.jbbarth.com/">ma
+gallerie de photos</a>, qui tourne déjà avec des scripts ruby mais pas administrable en mode web. Donc dommage pour <a href=
+"http://www.dokuwiki.org/">Dokuwiki</a> qui a priori me convenait parfaitement…</p>
+
+<p>J’ai essayé <a href="http://instiki.org/">Instiki</a> sans être réellement convaincu, je ne saurais pas bien expliquer pourquoi. Et puis, j’aurais des
+modifs à faire dessus pour qu’il me convienne (templates trop épurées à mon goût, affichage “geeky” de certains champs, etc…). Ce qui implique un petit peu
+d’exploration du code, cf la suite. Je n’ai pas trouvé d’autres projets très actifs en Rails et qui me convienne (liste <a href=
+"http://en.wikipedia.org/wiki/List_of_wiki_software#Ruby-based">ici</a>)…</p>
+
+<p>En fait, le wiki de Redmine me convient parfaitement. Facile à “hacker” (je commence à connaître un peu le code même si je suis loin d’être un gourou
+comme les 3 ou 4 grands contributeurs réguliers), maintenu, communauté active, support de textile entre autres, jolis diff, etc. Nickel, à 4 petites choses
+près :</p>
+
 <ol>
-	<li>le support Textile est un peu foireux parfois ; voir <a href="http://www.redmine.org/issues/1416">ici</a></li>
-	<li>la coloration syntaxique est hideuse, j&#8217;aimerais bien remplacer CodeRay par autre chose ; voir <a href="http://www.redmine.org/issues/2985">ici</a></li>
-	<li>j&#8217;aimerais bien que les hi&eacute;rarchies soient faites automatiquement, quitte &agrave; rendre l&#8217;arborescence un peu profonde, pas grave ; voir <a href="http://www.redmine.org/issues/3108">ici</a></li>
-	<li>j&#8217;aimerais bien un syst&egrave;me de tags avec un nuage sur le c&ocirc;t&eacute; ; voir <a href="http://www.redmine.org/issues/2897">ici</a>, <a href="http://www.redmine.org/issues/480">ici</a> et <a href="http://www.redmine.org/issues/1448">ici</a></li>
+  <li>le support Textile est un peu foireux parfois ; voir <a href="http://www.redmine.org/issues/1416">ici</a></li>
+
+  <li>la coloration syntaxique est hideuse, j’aimerais bien remplacer CodeRay par autre chose ; voir <a href=
+  "http://www.redmine.org/issues/2985">ici</a></li>
+
+  <li>j’aimerais bien que les hiérarchies soient faites automatiquement, quitte à rendre l’arborescence un peu profonde, pas grave ; voir <a href=
+  "http://www.redmine.org/issues/3108">ici</a></li>
+
+  <li>j’aimerais bien un système de tags avec un nuage sur le côté ; voir <a href="http://www.redmine.org/issues/2897">ici</a>, <a href=
+  "http://www.redmine.org/issues/480">ici</a> et <a href="http://www.redmine.org/issues/1448">ici</a></li>
 </ol>
-<p>Bref, &ccedil;a sent bon, et le choix est tout fait ; je documenterai dans le prochain article l&#8217;installation et la configuration de Redmine pour me servir de wiki :-)</p>
+
+<p>Bref, ça sent bon, et le choix est tout fait ; je documenterai dans le prochain article l’installation et la configuration de Redmine pour me servir de
+wiki :-)</p>

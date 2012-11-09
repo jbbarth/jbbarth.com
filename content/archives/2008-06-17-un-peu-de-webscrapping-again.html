@@ -2,87 +2,84 @@
 title: "Un peu de webscrapping ?"
 ---
 
-<h1>Un peu de webscrapping ?</h1><p>Le <a href="http://en.wikipedia.org/wiki/Web_scraping">webscraping</a> est d&eacute;fini sur la <a href="http://fr.wikipedia.org/wiki/Web_scraping">page fran&ccedil;aise</a> de Wikipedia comme suit :</p>
+<h1>Un peu de webscrapping ?</h1>
 
+<p>Le <a href="http://en.wikipedia.org/wiki/Web_scraping">webscraping</a> est défini sur la <a href="http://fr.wikipedia.org/wiki/Web_scraping">page
+française</a> de Wikipedia comme suit :</p>
 
-	<blockquote>
-		<p>Le Web scraping (parfois appel&eacute; Harvesting) d&eacute;crit g&eacute;n&eacute;ralement en informatique un moyen d&rsquo;extraire du contenu d&rsquo;un site internet, via un script ou un programme, dans le but de le transformer ou de changer son format pour permettre son utilisation dans un autre contexte.</p>
-	</blockquote>
+<blockquote>
+  <p>Le Web scraping (parfois appelé Harvesting) décrit généralement en informatique un moyen d’extraire du contenu d’un site internet, via un script ou un
+  programme, dans le but de le transformer ou de changer son format pour permettre son utilisation dans un autre contexte.</p>
+</blockquote>
 
+<p>J’en faisais régulièrement avant en mIRC scripting, rencontrant souvent des problèmes plutôt http que parsing : suivi des sessions, chunks, etc… Et puis
+j’étais à un séminaire ces derniers jours, et des collègues m’ont remotivé pour en faire, alors je commence quelques essais en Ruby.</p>
 
-	<p>J&rsquo;en faisais r&eacute;guli&egrave;rement avant en mIRC scripting, rencontrant souvent des probl&egrave;mes plut&ocirc;t http que parsing : suivi des sessions, chunks, etc&hellip; Et puis j&rsquo;&eacute;tais &agrave; un s&eacute;minaire ces derniers jours, et des coll&egrave;gues m&rsquo;ont remotiv&eacute; pour en faire, alors je commence quelques essais en Ruby.</p>
-<p>Let&rsquo;s go !</p>
+<p>Let’s go !</p>
 
-
-	<p>Installons <a href="http://scrubyt.org/">scRUBYt!</a>, un package qui vient par dessus <a href="http://code.whytheluckystiff.net/hpricot/">Hpricot</a> notamment (parser <span class="caps">HTML</span>). Les <a href="http://wiki.scrubyt.org/index.php?title=Installation_Instructions">instructions officielles</a> n&rsquo;&eacute;tant pas tr&egrave;s concluantes, je me suis rabattu sur <a href="http://agora.scrubyt.org/forums/3/topics/225">ce post</a> qui a r&eacute;solu tous mes soucis :-) Il faudra d&rsquo;ailleurs que j&rsquo;examine un de ces jours les avantages de Scrubyt par rapport &agrave; Hpricot seul, vues les difficult&eacute;s d&rsquo;installation, raisonnables mais un peu agga&ccedil;antes (et qui ne feront que s&rsquo;ajouter aux futures difficult&eacute;s lors d&rsquo;installations sur d&rsquo;autres distribs ou au boulot).</p>
-
-
-<pre class="bash"># gem install &mdash;version 1.7.1 ParseTree
-# gem install &mdash;version 3.6.3 RubyInline
-# gem install &mdash;version 1.1.6 ruby2ruby
+<p>Installons <a href="http://scrubyt.org/">scRUBYt!</a>, un package qui vient par dessus <a href="http://code.whytheluckystiff.net/hpricot/">Hpricot</a>
+notamment (parser <span class="caps">HTML</span>). Les <a href="http://wiki.scrubyt.org/index.php?title=Installation_Instructions">instructions
+officielles</a> n’étant pas très concluantes, je me suis rabattu sur <a href="http://agora.scrubyt.org/forums/3/topics/225">ce post</a> qui a résolu tous mes
+soucis :-) Il faudra d’ailleurs que j’examine un de ces jours les avantages de Scrubyt par rapport à Hpricot seul, vues les difficultés d’installation,
+raisonnables mais un peu aggaçantes (et qui ne feront que s’ajouter aux futures difficultés lors d’installations sur d’autres distribs ou au boulot).</p>
+<pre class="bash">
+# gem install —version 1.7.1 ParseTree
+# gem install —version 3.6.3 RubyInline
+# gem install —version 1.1.6 ruby2ruby
 # gem install ParseTreeReloaded
-#&nbsp;gem install RubyInlineAccelleration
-# gem install scrubyt</pre>
+# gem install RubyInlineAccelleration
+# gem install scrubyt
 
-	<p>Parfois il faut relancer le gem install une ou deux fois, mais &ccedil;a finit par passer normalement.</p>
+<p>Parfois il faut relancer le gem install une ou deux fois, mais ça finit par passer normalement.</p>
 
-
-	<p>Ensuite, premier essai (tir&eacute; d&rsquo;<a href="http://snippets.dzone.com/posts/show/4133">ici</a>) :</p>
-
-
+<p>Ensuite, premier essai (tiré d’<a href="http://snippets.dzone.com/posts/show/4133">ici</a>) :</p>
 <pre class="ruby">
 require 'rubygems'
 require 'scrubyt'
 
 google_data = Scrubyt::Extractor.define do
-   fetch 'http://www.google.com/ncr'
-   fill_textfield 'q', 'ruby'
-   submit
+ fetch 'http://www.google.com/ncr'
+ fill_textfield 'q', 'ruby'
+ submit
 
-   link "Ruby Programming Language/@href" 
-   next_page "Next", :limit =&gt; 2
+ link "Ruby Programming Language/@href" 
+ next_page "Next", :limit =&gt; 2
 end
 
 puts google_data.to_xml
-</pre>
-
 <pre class="bash">
 # ruby test_scrubyt.rb 
 /usr/local/lib/site_ruby/1.8/rubygems.rb:139:in `activate': can't activate RubyInline (= 3.6.3), already activated RubyInline-3.7.0] (Gem::Exception)
-    from /usr/local/lib/site_ruby/1.8/rubygems.rb:155:in `activate'
-    from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `each'
-    from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `activate'
-    from /usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:31:in `require'
-    from test_scrubyt.rb:2
-</pre>
+  from /usr/local/lib/site_ruby/1.8/rubygems.rb:155:in `activate'
+  from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `each'
+  from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `activate'
+  from /usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:31:in `require'
+  from test_scrubyt.rb:2
 
-	<p>Oopsie !<br />
-J&rsquo;ai donc d&eacute;sinstall&eacute; la version 3.7.0 via le choix 2 dans la commande :</p>
+<p>Oopsie !<br>
+J’ai donc désinstallé la version 3.7.0 via le choix 2 dans la commande :</p>
+<pre class="bash">
+# gem uninstall RubyInline
 
-
-<pre class="bash"># gem uninstall RubyInline</pre>
-
-	<p>Et l&agrave; hop !</p>
-
-
-<pre class="bash"># ruby test_scrubyt.rb 
+<p>Et là hop !</p>
+<pre class="bash">
+# ruby test_scrubyt.rb 
 /usr/lib/ruby/gems/1.8/gems/scrubyt-0.3.4/lib/scrubyt/core/scraping/filters/text_filter.rb:25: warning: don't put space before argument parentheses
-http://www.google.com/search?hl=en&ie=ISO-8859-1&q=ruby
-http://www.google.com/search?hl=en&ie=UTF-8&q=ruby&start=10&sa=N
+http://www.google.com/search?hl=en&amp;ie=ISO-8859-1&amp;q=ruby
+http://www.google.com/search?hl=en&amp;ie=UTF-8&amp;q=ruby&amp;start=10&amp;sa=N
 &lt;root&gt;
-  &lt;link&gt;http://www.ruby-lang.org/&lt;/link&gt;
-  &lt;link&gt;http://www.ruby-lang.org/en/20020101.html&lt;/link&gt;
-  &lt;link&gt;http://en.wikipedia.org/wiki/Ruby_programming_language&lt;/link&gt;
-  &lt;link&gt;http://en.wikipedia.org/wiki/Ruby&lt;/link&gt;
-  &lt;link&gt;http://www.rubyonrails.org/&lt;/link&gt;
-  &lt;link&gt;http://www.rubys.com/&lt;/link&gt;
-  &lt;link&gt;http://www.rubycentral.org/&lt;/link&gt;
-  &lt;link&gt;http://www.w3.org/TR/ruby/&lt;/link&gt;
-  &lt;link&gt;http://www.zenspider.com/Languages/Ruby/QuickRef.html&lt;/link&gt;
+&lt;link&gt;http://www.ruby-lang.org/&lt;/link&gt;
+&lt;link&gt;http://www.ruby-lang.org/en/20020101.html&lt;/link&gt;
+&lt;link&gt;http://en.wikipedia.org/wiki/Ruby_programming_language&lt;/link&gt;
+&lt;link&gt;http://en.wikipedia.org/wiki/Ruby&lt;/link&gt;
+&lt;link&gt;http://www.rubyonrails.org/&lt;/link&gt;
+&lt;link&gt;http://www.rubys.com/&lt;/link&gt;
+&lt;link&gt;http://www.rubycentral.org/&lt;/link&gt;
+&lt;link&gt;http://www.w3.org/TR/ruby/&lt;/link&gt;
+&lt;link&gt;http://www.zenspider.com/Languages/Ruby/QuickRef.html&lt;/link&gt;
 &lt;/root&gt;
-</pre>
 
-	<p>Excellent d&eacute;but !</p>
+<p>Excellent début !</p>
 
-
-	<p>Apr&egrave;s un petit patch de /usr/lib/ruby/gems/1.8/gems/scrubyt-0.3.4/lib/scrubyt/core/scraping/filters/text_filter.rb:25 (tu parles d&rsquo;un patch, j&rsquo;ai juste supprim&eacute; un espace&hellip; :D), je compte bien mener d&rsquo;autres essais, notamment ce dont j&rsquo;ai parl&eacute; dans le r&eacute;sum&eacute; :-) Je mettrai les r&eacute;sultats ici !</p>
+<p>Après un petit patch de /usr/lib/ruby/gems/1.8/gems/scrubyt-0.3.4/lib/scrubyt/core/scraping/filters/text_filter.rb:25 (tu parles d’un patch, j’ai juste
+supprimé un espace… :D), je compte bien mener d’autres essais, notamment ce dont j’ai parlé dans le résumé :-) Je mettrai les résultats ici !</p>

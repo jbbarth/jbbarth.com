@@ -2,17 +2,35 @@
 title: "Chef la recette !"
 ---
 
-<h1>Chef la recette !</h1><p>Apr&egrave;s avoir compar&eacute; au boulot 3 outils de gestion de conf, j&#8217;en retiens les &eacute;l&eacute;ments suivants :</p>
+<h1>Chef la recette !</h1>
+
+<p>Après avoir comparé au boulot 3 outils de gestion de conf, j’en retiens les éléments suivants :</p>
+
 <ul>
-	<li><a href="http://www.cfengine.org/">Cfengine</a> : <span class="caps">DSL</span> sp&eacute;cifique et horrible &agrave; apprendre, orientations peu claire (<em>&agrave;-la-Nagios</em>), une communaut&eacute; amorphe, pas hackable. Poubelle.</li>
-	<li><a href="http://reductivelabs.com/products/puppet/">Puppet</a> : en ruby, un <span class="caps">DSL</span> sp&eacute;cifique pour les confs (bof), a fait ses preuves, une bonne doc, de plus en plus hackable (la doc s&#8217;am&eacute;liore de jour en jour), une communaut&eacute; dynamique, et le projet est g&eacute;r&eacute; sous <a href="http://redmine.org">redmine</a>. Sympa.</li>
-	<li><a href="http://www.opscode.com/chef">Chef</a> : en ruby, <em>tout</em> en ruby, donc pas de <span class="caps">DSL</span> &agrave; apprendre (yeah!), une doc pas mal, hackable &agrave; l&#8217;infini, le projet est hyper mega dynamique, et ils ont des r&eacute;f&eacute;rences &eacute;normes dans le monde ruby, du genre 37signals ou Engine Yard. Adopt&eacute; !</li>
+  <li><a href="http://www.cfengine.org/">Cfengine</a> : <span class="caps">DSL</span> spécifique et horrible à apprendre, orientations peu claire
+  (<em>à-la-Nagios</em>), une communauté amorphe, pas hackable. Poubelle.</li>
+
+  <li><a href="http://reductivelabs.com/products/puppet/">Puppet</a> : en ruby, un <span class="caps">DSL</span> spécifique pour les confs (bof), a fait ses
+  preuves, une bonne doc, de plus en plus hackable (la doc s’améliore de jour en jour), une communauté dynamique, et le projet est géré sous <a href=
+  "http://redmine.org">redmine</a>. Sympa.</li>
+
+  <li><a href="http://www.opscode.com/chef">Chef</a> : en ruby, <em>tout</em> en ruby, donc pas de <span class="caps">DSL</span> à apprendre (yeah!), une doc
+  pas mal, hackable à l’infini, le projet est hyper mega dynamique, et ils ont des références énormes dans le monde ruby, du genre 37signals ou Engine Yard.
+  Adopté !</li>
 </ul>
-<p>Seul d&eacute;faut de Chef, &ccedil;a bouge vite, tr&egrave;s vite. Et les versions 0.7 pr&eacute;sentes dans mes distrib pr&eacute;f&eacute;r&eacute;es commencent &agrave; &ecirc;tre vraiment d&eacute;pass&eacute;es.</p>
-<p>Hier je me prends donc par la main, en m&#8217;inspirant de l&#8217;article de <a href="http://akitaonrails.com/2010/02/20/cooking-solo-with-chef">akitaonrails</a>, et je cherche comment installer une 0.8. Miracle, tout est dans <a href="http://wiki.opscode.com/display/chef/Package+Installation+on+Debian+and+Ubuntu">leur wiki</a>, et ils proposent m&ecirc;me des d&eacute;p&ocirc;ts pour ma Ubuntu Lucid.</p>
+
+<p>Seul défaut de Chef, ça bouge vite, très vite. Et les versions 0.7 présentes dans mes distrib préférées commencent à être vraiment dépassées.</p>
+
+<p>Hier je me prends donc par la main, en m’inspirant de l’article de <a href="http://akitaonrails.com/2010/02/20/cooking-solo-with-chef">akitaonrails</a>,
+et je cherche comment installer une 0.8. Miracle, tout est dans <a href="http://wiki.opscode.com/display/chef/Package+Installation+on+Debian+and+Ubuntu">leur
+wiki</a>, et ils proposent même des dépôts pour ma Ubuntu Lucid.</p>
+
 <p>Voici un script chef-install pondu en 3 secondes :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>#installation
+  <div class="code">
+    <pre>
+#installation
 add-apt-repository ppa:jtimberman/opschef
 aptitude update
 aptitude -y install chef
@@ -20,8 +38,8 @@ service chef-client stop
 update-rc.d chef-client disable &gt;/dev/null
 
 #configuration
-sed -i -e 's#^file.*#file_cache_path &quot;/tmp/chef-solo&quot;#' \
-    -e 's#^cook.*#cookbook_path [&quot;/var/chef-solo/cookbooks&quot;]#' /etc/chef/solo.rb
+sed -i -e 's#^file.*#file_cache_path "/tmp/chef-solo"#' \
+  -e 's#^cook.*#cookbook_path ["/var/chef-solo/cookbooks"]#' /etc/chef/solo.rb
 
 #cookbooks (install 'git-core' if needed)
 mkdir -p /var/chef-solo
@@ -31,21 +49,31 @@ git clone http://github.com/opscode/cookbooks.git
 #hyperspace!
 cat &gt;/etc/chef/recipes.json &lt;&lt;EOF
 {
-  &quot;resolver&quot;: {&quot;nameservers&quot;:[&quot;192.168.0.1&quot;], &quot;search&quot;:&quot;home&quot;},
-  &quot;recipes&quot;: [&quot;resolver&quot;]
+"resolver": {"nameservers":["192.168.0.1"], "search":"home"},
+"recipes": ["resolver"]
 }
-EOF</pre></div>
+EOF
+  </div>
 </div>
+
 <p>Go ?</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% sudo chef-solo -j /etc/chef/recipes.json
+  <div class="code">
+    <pre>
+% sudo chef-solo -j /etc/chef/recipes.json
 [Tue, 23 Mar 2010 13:47:37 +0100] INFO: Starting Chef Solo Run
 [Tue, 23 Mar 2010 13:47:42 +0100] WARN: Missing gem 'right_aws'
 [Tue, 23 Mar 2010 13:47:42 +0100] WARN: Missing gem 'mysql'
 [Tue, 23 Mar 2010 13:47:43 +0100] INFO: Updating template[/etc/resolv.conf] at /etc/resolv.conf
 [Tue, 23 Mar 2010 13:47:43 +0100] INFO: Backing up template[/etc/resolv.conf] to /etc/resolv.conf.chef-20100323134743
-[Tue, 23 Mar 2010 13:47:43 +0100] INFO: Chef Run complete in 5.588404 seconds</pre></div>
+[Tue, 23 Mar 2010 13:47:43 +0100] INFO: Chef Run complete in 5.588404 seconds
+  </div>
 </div>
+
 <p>Yeeehaa !</p>
-<p>Mon fonctionnement actuel m&#8217;emp&ecirc;che de m&#8217;attacher &agrave; un serveur central et ainsi fonctionner en client/serveur. Je pense que je vais donc commencer &agrave; me faire des cookbooks et les utiliser &#8220;b&ecirc;tement&#8221; via chef-solo, &agrave; voir.</p>
-<p>Enfin pour l&#8217;instant, c&#8217;est juste &eacute;norme.</p>
+
+<p>Mon fonctionnement actuel m’empêche de m’attacher à un serveur central et ainsi fonctionner en client/serveur. Je pense que je vais donc commencer à me
+faire des cookbooks et les utiliser “bêtement” via chef-solo, à voir.</p>
+
+<p>Enfin pour l’instant, c’est juste énorme.</p>

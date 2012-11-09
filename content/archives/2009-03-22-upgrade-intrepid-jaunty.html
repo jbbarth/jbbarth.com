@@ -2,31 +2,68 @@
 title: "Upgrade Intrepid->Jaunty"
 ---
 
-<h1>Upgrade Intrepid->Jaunty</h1><p>J&#8217;ai upgrad&eacute; hier ma Ubuntu Intrepid vers une Jaunty, qui commence &agrave; &ecirc;tre suffisamment bien support&eacute;e ; au passage, j&#8217;avais tent&eacute; de faire &ccedil;a il y a deux mois, et le support des pilotes Nvidia &eacute;tait lamentable, je n&#8217;avais aucun affichage correct, j&#8217;&eacute;tais donc revenu sous Intrepid.</p>
+<h1>Upgrade Intrepid-&gt;Jaunty</h1>
+
+<p>J’ai upgradé hier ma Ubuntu Intrepid vers une Jaunty, qui commence à être suffisamment bien supportée ; au passage, j’avais tenté de faire ça il y a deux
+mois, et le support des pilotes Nvidia était lamentable, je n’avais aucun affichage correct, j’étais donc revenu sous Intrepid.</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sudo vi /etc/apt/sources.list #puis :%s/intrepid/jaunty/g, et :wq!
-wajig update &amp;&amp; wajig dist-upgrade</pre></div>
-</div><p>A peine une demie-heure plus tard tout marchait impec&#8217; ;-)</p>
-<p>Seul b&eacute;mol, Jaunty supporte ext4 et ma partition racine n&#8217;&eacute;tait pas pass&eacute;e en ext4 toute seule (on s&#8217;en serait dout&eacute;s).</p>
-<p>J&#8217;ai inaugur&eacute; un <a href="http://forums.debian.net/viewtopic.php?t=32146">petit truc bien sympa</a>, le boot depuis une cl&eacute; <span class="caps">USB</span> live (en lenny, comme &ccedil;a je m&#8217;en resservirai au boulot) :</p>
+  <div class="code">
+    <pre>
+sudo vi /etc/apt/sources.list #puis :%s/intrepid/jaunty/g, et :wq!
+wajig update &amp;&amp; wajig dist-upgrade
+  </div>
+</div>
+
+<p>A peine une demie-heure plus tard tout marchait impec’ ;-)</p>
+
+<p>Seul bémol, Jaunty supporte ext4 et ma partition racine n’était pas passée en ext4 toute seule (on s’en serait doutés).</p>
+
+<p>J’ai inauguré un <a href="http://forums.debian.net/viewtopic.php?t=32146">petit truc bien sympa</a>, le boot depuis une clé <span class="caps">USB</span>
+live (en lenny, comme ça je m’en resservirai au boulot) :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sudo -s
+  <div class="code">
+    <pre>
+sudo -s
 mkdir /tmp/usbkey &amp;&amp; cd /tmp/usbkey
 apt-get install live-helper
-lh_config -d lenny -b usb-hdd -p xfce-desktop &mdash;packages wajig screen ruby
+lh_config -d lenny -b usb-hdd -p xfce-desktop —packages wajig screen ruby
 lh_build #patienter quelques minutes
 umount /dev/sdf1
-dd if=binary.img of=/dev/sdf bs=1M</pre></div>
-</div><p>Et reboot sur la cl&eacute; usb ! Tout marche au poil, sauf que le clavier est en Qwerty :</p>
+dd if=binary.img of=/dev/sdf bs=1M
+  </div>
+</div>
+
+<p>Et reboot sur la clé usb ! Tout marche au poil, sauf que le clavier est en Qwerty :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>dpkg-reconfigure console-data</pre></div>
-</div><p>L&agrave; commence le passage en ext4 ; mes partitions &agrave; migrer &eacute;taient /dev/sda2, 5 et 6, mais &ccedil;a ne s&#8217;invente pas : fiez vous au /etc/fstab et au besoin, montez temporairement chaque disque sur /mnt. Mon &#8220;/&#8221; &eacute;tant sur /dev/sda2</p>
+  <div class="code">
+    <pre>
+dpkg-reconfigure console-data
+  </div>
+</div>
+
+<p>Là commence le passage en ext4 ; mes partitions à migrer étaient /dev/sda2, 5 et 6, mais ça ne s’invente pas : fiez vous au /etc/fstab et au besoin,
+montez temporairement chaque disque sur /mnt. Mon “/” étant sur /dev/sda2</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>mount /dev/sda2 /mnt
+  <div class="code">
+    <pre>
+mount /dev/sda2 /mnt
 vi /mnt/etc/fstab
-#(remplacement de ext3 par ext4 sur les partitions &agrave; migrer)</pre></div>
-</div><p>Et l&#8217;op&eacute;ration qui suit est donc &agrave; r&eacute;p&eacute;ter pour chacune de vos partitions :</p>
+#(remplacement de ext3 par ext4 sur les partitions à migrer)
+  </div>
+</div>
+
+<p>Et l’opération qui suit est donc à répéter pour chacune de vos partitions :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>tune2fs -O extents,uninit_bg,dir_index /dev/sda2
-fsck.ext4 -pf /dev/sda2</pre></div>
-</div><p>Un reboot plus tard, everything is ok ;-)</p>
+  <div class="code">
+    <pre>
+tune2fs -O extents,uninit_bg,dir_index /dev/sda2
+fsck.ext4 -pf /dev/sda2
+  </div>
+</div>
+
+<p>Un reboot plus tard, everything is ok ;-)</p>

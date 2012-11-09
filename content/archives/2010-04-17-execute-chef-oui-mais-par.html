@@ -2,40 +2,71 @@
 title: "Execute, chef : oui mais par qui ?"
 ---
 
-<h1>Execute, chef : oui mais par qui ?</h1><p>Un billet en forme de petite note pour moi-m&ecirc;me, relatif &agrave; mes d&eacute;couvertes de la soir&eacute;e.</p>
-<p>J&#8217;ai besoin d&#8217;ex&eacute;cuter des commandes avec <a href="http://wiki.opscode.com/display/chef/Home">Chef</a>. Pour cela, il y a la ressource <a href="http://wiki.opscode.com/display/chef/Resources#Resources-Execute">Execute</a> :</p>
+<h1>Execute, chef : oui mais par qui ?</h1>
+
+<p>Un billet en forme de petite note pour moi-même, relatif à mes découvertes de la soirée.</p>
+
+<p>J’ai besoin d’exécuter des commandes avec <a href="http://wiki.opscode.com/display/chef/Home">Chef</a>. Pour cela, il y a la ressource <a href=
+"http://wiki.opscode.com/display/chef/Resources#Resources-Execute">Execute</a> :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>execute <span class="s"><span class="dl">&quot;</span><span class="k">ma commande</span><span class="dl">&quot;</span></span></pre></div>
+  <div class="code">
+    <pre>
+execute <span class="s"><span class="dl">"</span><span class="k">ma commande</span><span class="dl">"</span></span>
+  </div>
 </div>
-<p>Mais la documentation pr&eacute;vient bien :</p>
+
+<p>Mais la documentation prévient bien :</p>
+
 <blockquote>
-<p>By their nature, Execute resources are not idempotent, as they are completely up to the user&#8217;s imagination. Use the not_if or only_if meta parameters to guard the resource for idempotence.</p>
+  <p>By their nature, Execute resources are not idempotent, as they are completely up to the user’s imagination. Use the not_if or only_if meta parameters to
+  guard the resource for idempotence.</p>
 </blockquote>
+
 <p>OK, allons-y :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>execute <span class="s"><span class="dl">&quot;</span><span class="k">ma commande</span><span class="dl">&quot;</span></span> <span class="r">do</span>
-  not_if <span class="s"><span class="dl">&quot;</span><span class="k">ma condition shell</span><span class="dl">&quot;</span></span>
-<span class="r">end</span></pre></div>
+  <div class="code">
+    <pre>
+execute <span class="s"><span class="dl">"</span><span class="k">ma commande</span><span class="dl">"</span></span> <span class="r">do</span>
+not_if <span class="s"><span class="dl">"</span><span class="k">ma condition shell</span><span class="dl">"</span></span>
+  </div>
 </div>
-<p>Si la commande doit &ecirc;tre ex&eacute;cut&eacute;e avec un user particulier :</p>
+
+<p>Si la commande doit être exécutée avec un user particulier :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>execute <span class="s"><span class="dl">&quot;</span><span class="k">ma commande</span><span class="dl">&quot;</span></span> <span class="r">do</span>
-  user <span class="s"><span class="dl">&quot;</span><span class="k">tom</span><span class="dl">&quot;</span></span>
-  not_if <span class="s"><span class="dl">&quot;</span><span class="k">ma condition shell</span><span class="dl">&quot;</span></span>
-<span class="r">end</span></pre></div>
+  <div class="code">
+    <pre>
+execute <span class="s"><span class="dl">"</span><span class="k">ma commande</span><span class="dl">"</span></span> <span class="r">do</span>
+user <span class="s"><span class="dl">"</span><span class="k">tom</span><span class="dl">"</span></span>
+not_if <span class="s"><span class="dl">"</span><span class="k">ma condition shell</span><span class="dl">"</span></span>
+  </div>
 </div>
-<p>Mais la condition, elle, sera ex&eacute;cut&eacute;e dans un contexte root (puisqu&#8217;il vaut mieux lancer chef-solo ou chef-client en root si l&#8217;on veut que la plupart des ressources fonctionnent). En g&eacute;n&eacute;ral la condition serait &agrave; ex&eacute;cuter avec le m&ecirc;me user. D&#8217;o&ugrave; :</p>
+
+<p>Mais la condition, elle, sera exécutée dans un contexte root (puisqu’il vaut mieux lancer chef-solo ou chef-client en root si l’on veut que la plupart des
+ressources fonctionnent). En général la condition serait à exécuter avec le même user. D’où :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>execute <span class="s"><span class="dl">&quot;</span><span class="k">ma commande</span><span class="dl">&quot;</span></span> <span class="r">do</span>
-  user <span class="s"><span class="dl">&quot;</span><span class="k">tom</span><span class="dl">&quot;</span></span>
-  not_if <span class="s"><span class="dl">&quot;</span><span class="k">ma condition shell</span><span class="dl">&quot;</span></span>, <span class="sy">:user</span> =&gt; <span class="s"><span class="dl">&quot;</span><span class="k">tom</span><span class="dl">&quot;</span></span>
-<span class="r">end</span></pre></div>
+  <div class="code">
+    <pre>
+execute <span class="s"><span class="dl">"</span><span class="k">ma commande</span><span class="dl">"</span></span> <span class="r">do</span>
+user <span class="s"><span class="dl">"</span><span class="k">tom</span><span class="dl">"</span></span>
+not_if <span class="s"><span class="dl">"</span><span class="k">ma condition shell</span><span class="dl">"</span></span>, <span class=
+"sy">:user</span> =&gt; <span class="s"><span class="dl">"</span><span class="k">tom</span><span class="dl">"</span></span>
+  </div>
 </div>
-<p>Je trouve pas &ccedil;a tr&egrave;s joli. A r&eacute;fl&eacute;chir.</p>
-<p>PS: si on veut se convaincre que &ccedil;a se passe bien comme je dis :</p>
+
+<p>Je trouve pas ça très joli. A réfléchir.</p>
+
+<p>PS: si on veut se convaincre que ça se passe bien comme je dis :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>execute <span class="s"><span class="dl">&quot;</span><span class="k">whoami &gt; /tmp/whoami.execute</span><span class="dl">&quot;</span></span> <span class="r">do</span>
-  user <span class="s"><span class="dl">&quot;</span><span class="k">tom</span><span class="dl">&quot;</span></span>
-  only_if <span class="s"><span class="dl">&quot;</span><span class="k">whoami &gt; /tmp/whoami.only_if</span><span class="dl">&quot;</span></span>
-<span class="r">end</span></pre></div>
+  <div class="code">
+    <pre>
+execute <span class="s"><span class="dl">"</span><span class="k">whoami &gt; /tmp/whoami.execute</span><span class="dl">"</span></span> <span class=
+"r">do</span>
+user <span class="s"><span class="dl">"</span><span class="k">tom</span><span class="dl">"</span></span>
+only_if <span class="s"><span class="dl">"</span><span class="k">whoami &gt; /tmp/whoami.only_if</span><span class="dl">"</span></span>
+  </div>
 </div>

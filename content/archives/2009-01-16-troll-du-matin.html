@@ -2,4 +2,31 @@
 title: "Troll du matin..."
 ---
 
-<h1>Troll du matin...</h1><p>&#8230;chagrin. Mais quand m&ecirc;me.</p><p>2 jours qu&#8217;un coll&egrave;gue essaye d&#8217;installer <a href="http://www.ocsinventory-ng.org/">OCSInventory</a> sur un serveur <a href="http://www.redhat.com/rhel/">Red Hat Enterprise 5</a>. Ce matin, je me connecte &agrave; mon poste de test sous <a href="http://www.ubuntu-fr.org/">Ubuntu 8.10</a> :</p><div class="CodeRay"><div class="code"><pre>$ sudo apt-get install ocsinventory-server</pre></div></div><p>10 minutes plus tard (le temps du t&eacute;l&eacute;chargement et de me souvenir de mon mot de passe MySQL quoi), <span class="caps">OCS</span> &eacute;tait install&eacute;. Il me demande un mot de passe &agrave; la connexion, que je ne connais pas&#8230; Oups. Je fouille 2 secondes dans les confs Apache, je trouve le fichier qui va bien&#8230;</p><div class="CodeRay"><div class="code"><pre>$ sudo htpasswd -b /etc/ocsinventory/htpasswd.setup admin admin</pre></div></div><p>Et &ccedil;a marche. 15 minutes VS 2 jours.</p><p>Debian/Ubuntu 1 &#8211; 0 RedHat.</p>
+<h1>Troll du matin...</h1>
+
+<p>…chagrin. Mais quand même.</p>
+
+<p>2 jours qu’un collègue essaye d’installer <a href="http://www.ocsinventory-ng.org/">OCSInventory</a> sur un serveur <a href=
+"http://www.redhat.com/rhel/">Red Hat Enterprise 5</a>. Ce matin, je me connecte à mon poste de test sous <a href="http://www.ubuntu-fr.org/">Ubuntu 8.10</a>
+:</p>
+
+<div class="CodeRay">
+  <div class="code">
+    <pre>
+$ sudo apt-get install ocsinventory-server
+  </div>
+</div>
+
+<p>10 minutes plus tard (le temps du téléchargement et de me souvenir de mon mot de passe MySQL quoi), <span class="caps">OCS</span> était installé. Il me
+demande un mot de passe à la connexion, que je ne connais pas… Oups. Je fouille 2 secondes dans les confs Apache, je trouve le fichier qui va bien…</p>
+
+<div class="CodeRay">
+  <div class="code">
+    <pre>
+$ sudo htpasswd -b /etc/ocsinventory/htpasswd.setup admin admin
+  </div>
+</div>
+
+<p>Et ça marche. 15 minutes VS 2 jours.</p>
+
+<p>Debian/Ubuntu 1 – 0 RedHat.</p>

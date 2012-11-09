@@ -2,144 +2,230 @@
 title: "A first sight at Riak"
 ---
 
-<h1>A first sight at Riak</h1><p>It&#8217;s been a long time since I wanted to test <a href="http://wiki.basho.com/"><span class="caps">RIAK</span></a>, a <em>&#8220;NoSQL&#8221;</em> (what a fucking stupid word) database from the Basho team. It&#8217;s Dynamo-inspired, you can process data through &#8220;MapReduce&#8221; jobs on server side, and it&#8217;s content-agnostic. It can scale easily on numerous nodes and it aims at being strongly fault tolerant, so no node is particular in a riak cluster.</p>
-<p>Have you ever heard about the <span class="caps">CAP</span> theorem ? In brief, it says that <em>&#8220;In a distributed system, you can&#8217;t get a perfect Consistency, Availability and Partition tolerance at the same time&#8221;</em>. It&#8217;s like that, it&#8217;s been proved, now you&#8217;ll have to live with that. Riak focuses on the <strong>A</strong> and <strong>P</strong> sides, which means a Riak cluster is not always perfectly Consistent (it&#8217;s not boolean, your consistency needs can be tuned). A first node can have some data, and you might have to wait a certain amount of time before this data is coherent with the node <em>you</em> query. Which is perfectly fine in most cases.</p>
+<h1>A first sight at Riak</h1>
+
+<p>It’s been a long time since I wanted to test <a href="http://wiki.basho.com/"><span class="caps">RIAK</span></a>, a <em>“NoSQL”</em> (what a fucking
+stupid word) database from the Basho team. It’s Dynamo-inspired, you can process data through “MapReduce” jobs on server side, and it’s content-agnostic. It
+can scale easily on numerous nodes and it aims at being strongly fault tolerant, so no node is particular in a riak cluster.</p>
+
+<p>Have you ever heard about the <span class="caps">CAP</span> theorem ? In brief, it says that <em>“In a distributed system, you can’t get a perfect
+Consistency, Availability and Partition tolerance at the same time”</em>. It’s like that, it’s been proved, now you’ll have to live with that. Riak focuses
+on the <strong>A</strong> and <strong>P</strong> sides, which means a Riak cluster is not always perfectly Consistent (it’s not boolean, your consistency
+needs can be tuned). A first node can have some data, and you might have to wait a certain amount of time before this data is coherent with the node
+<em>you</em> query. Which is perfectly fine in most cases.</p>
+
 <h2>Install Riak</h2>
-<p>What&#8217;s fun with Riak is the scalability thing. If you want to test it, the wiki has a great tutorial about <a href="http://wiki.basho.com/Building-a-Development-Environment.html">Building a Development Environment</a>. Erlang was a bit too old on my Ubuntu 10.10 (R13B03 instead of required R13B04), so I had to get a fresh version from sources:</p>
+
+<p>What’s fun with Riak is the scalability thing. If you want to test it, the wiki has a great tutorial about <a href=
+"http://wiki.basho.com/Building-a-Development-Environment.html">Building a Development Environment</a>. Erlang was a bit too old on my Ubuntu 10.10 (R13B03
+instead of required R13B04), so I had to get a fresh version from sources:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>#!/bin/sh
+  <div class="code">
+    <pre>
+#!/bin/sh
 sudo aptitude install build-essential libncurses5-dev openssl libssl-dev
 [ -f otp_src_R13B04.tar.gz ] || wget http://erlang.org/download/otp_src_R13B04.tar.gz
 tar zxvf otp_src_R13B04.tar.gz
 cd otp_src_R13B04
-./configure &amp;&amp; make &amp;&amp; sudo make install</pre></div>
+./configure &amp;&amp; make &amp;&amp; sudo make install
+  </div>
 </div>
-<p>Then I installed Riak latest stable release (0.14.1). I could have taken current master branch too, but I wanted something stable for my first steps into :</p>
+
+<p>Then I installed Riak latest stable release (0.14.1). I could have taken current master branch too, but I wanted something stable for my first steps into
+:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>#!/bin/sh
+  <div class="code">
+    <pre>
+#!/bin/sh
 [ -f riak-0.14.1.tar.gz ] || curl -O http://downloads.basho.com/riak/riak-0.14/riak-0.14.1.tar.gz
 tar zxvf riak-0.14.1.tar.gz
 mv riak-0.14.1 riak
 cd riak
 make all
-make devrel</pre></div>
+make devrel
+  </div>
 </div>
-<p>It built me 3 nodes as expected, located in <code>./riak/dev</code> folder. So let&#8217;s start the 3 nodes and <em>cluster-ize</em> them :</p>
+
+<p>It built me 3 nodes as expected, located in <code>./riak/dev</code> folder. So let’s start the 3 nodes and <em>cluster-ize</em> them :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% cd riak/dev
+  <div class="code">
+    <pre>
+% cd riak/dev
 % ./dev1/bin/riak start
 % ./dev2/bin/riak start
 % ./dev3/bin/riak start
 % ./dev2/bin/riak-admin join dev1@127.0.0.1
-% ./dev3/bin/riak-admin join dev1@127.0.0.1</pre></div>
+% ./dev3/bin/riak-admin join dev1@127.0.0.1
+  </div>
 </div>
+
 <h2>Command line</h2>
+
 <p>We have 2 binaries :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% dev1/bin/riak
+  <div class="code">
+    <pre>
+% dev1/bin/riak
 Usage: riak {start|stop|restart|reboot|ping|console|attach}
 % dev1/bin/riak-admin
 Usage: riak-admin { join | leave | backup | restore | test | status |
-                    reip | js_reload | wait-for-service | ringready |
-                    transfers | remove }</pre></div>
+                  reip | js_reload | wait-for-service | ringready |
+                  transfers | remove }
+  </div>
 </div>
-<p><code>riak-admin</code> allows us to see the parameters of a running instance through the <code>status</code> command, and especially the state of our <code>ring</code> (= cluster of riak nodes) :</p>
+
+<p><code>riak-admin</code> allows us to see the parameters of a running instance through the <code>status</code> command, and especially the state of our
+<code>ring</code> (= cluster of riak nodes) :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% dev1/bin/riak-admin status |grep ring_
+  <div class="code">
+    <pre>
+% dev1/bin/riak-admin status |grep ring_
 ring_members : ['dev1@127.0.0.1','dev2@127.0.0.1','dev3@127.0.0.1']
 ring_num_partitions : 64
-ring_ownership : &lt;&lt;&quot;[{'dev3@127.0.0.1',21},{'dev2@127.0.0.1',21},{'dev1@127.0.0.1',22}]&quot;&gt;&gt;
-ring_creation_size : 64</pre></div>
+ring_ownership : &lt;&lt;"[{'dev3@127.0.0.1',21},{'dev2@127.0.0.1',21},{'dev1@127.0.0.1',22}]"&gt;&gt;
+ring_creation_size : 64
+  </div>
 </div>
+
 <p>And we can see if the ring is ready to serve requests :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% dev1/bin/riak-admin ringready
+  <div class="code">
+    <pre>
+% dev1/bin/riak-admin ringready
 TRUE All nodes agree on the ring ['dev1@127.0.0.1','dev2@127.0.0.1',
-                                  'dev3@127.0.0.1']</pre></div>
+                                'dev3@127.0.0.1']
+  </div>
 </div>
+
 <p>We can even test if a node is able to read/write data :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% dev1/bin/riak-admin test
+  <div class="code">
+    <pre>
+% dev1/bin/riak-admin test
 
 =INFO REPORT==== 21-Dec-2010::18:35:06 ===
-Successfully completed 1 read/write cycle to 'dev1@127.0.0.1'</pre></div>
+Successfully completed 1 read/write cycle to 'dev1@127.0.0.1'
+  </div>
 </div>
-<p>NB: I didn&#8217;t manage to make this test fail, I don&#8217;t really know what it tests. Restricting read/write permissions on <code>dev*/data/</code> doesn&#8217;t seem to affect it, but I presume Riak buffers things in memory in such cases, so it would need some more tests&#8230;</p>
+
+<p>NB: I didn’t manage to make this test fail, I don’t really know what it tests. Restricting read/write permissions on <code>dev*/data/</code> doesn’t seem
+to affect it, but I presume Riak buffers things in memory in such cases, so it would need some more tests…</p>
+
 <h2><span class="caps">HTTP</span> Exploration</h2>
-<p>Riak has a full <span class="caps">HTTP</span> <span class="caps">API</span>, so it&#8217;s dead simple to dialog with your ring (from any of its nodes). It returns <span class="caps">JSON</span>, so it&#8217;s easy to parse (formatting is mine in the following examples).</p>
-<p>You can organize data into <code>buckets</code>, which are containers for storing elements of the same type. You can get informations on a bucket (existing or not) with :</p>
+
+<p>Riak has a full <span class="caps">HTTP</span> <span class="caps">API</span>, so it’s dead simple to dialog with your ring (from any of its nodes). It
+returns <span class="caps">JSON</span>, so it’s easy to parse (formatting is mine in the following examples).</p>
+
+<p>You can organize data into <code>buckets</code>, which are containers for storing elements of the same type. You can get informations on a bucket
+(existing or not) with :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% curl http://localhost:8091/riak/MyBucket
+  <div class="code">
+    <pre>
+% curl http://localhost:8091/riak/MyBucket
 {
-  &quot;props&quot;: {
-    &quot;name&quot;: &quot;MyBucket&quot;,
-    &quot;n_val&quot;: 3,
-    &quot;allow_mult&quot;: false,
-    &quot;last_write_wins&quot;: false,
-    &quot;precommit&quot;: [],
-    &quot;postcommit&quot;: [],
-    &quot;chash_keyfun&quot;: {
-      &quot;mod&quot;: &quot;riak_core_util&quot;,
-      &quot;fun&quot;: &quot;chash_std_keyfun&quot;
-    },
-    &quot;linkfun&quot;: {
-      &quot;mod&quot;: &quot;riak_kv_wm_link_walker&quot;,
-      &quot;fun&quot;: &quot;mapreduce_linkfun&quot;
-    },
-    &quot;old_vclock&quot;: 86400,
-    &quot;young_vclock&quot;: 20,
-    &quot;big_vclock&quot;: 50,
-    &quot;small_vclock&quot;: 10,
-    &quot;r&quot;: &quot;quorum&quot;,
-    &quot;w&quot;: &quot;quorum&quot;,
-    &quot;dw&quot;: &quot;quorum&quot;,
-    &quot;rw&quot;: &quot;quorum&quot;
-  }
-}</pre></div>
+"props": {
+  "name": "MyBucket",
+  "n_val": 3,
+  "allow_mult": false,
+  "last_write_wins": false,
+  "precommit": [],
+  "postcommit": [],
+  "chash_keyfun": {
+    "mod": "riak_core_util",
+    "fun": "chash_std_keyfun"
+  },
+  "linkfun": {
+    "mod": "riak_kv_wm_link_walker",
+    "fun": "mapreduce_linkfun"
+  },
+  "old_vclock": 86400,
+  "young_vclock": 20,
+  "big_vclock": 50,
+  "small_vclock": 10,
+  "r": "quorum",
+  "w": "quorum",
+  "dw": "quorum",
+  "rw": "quorum"
+}
+}
+  </div>
 </div>
-<p>If the bucket doesn&#8217;t exist, it will be created as soon as you insert an element in it.</p>
+
+<p>If the bucket doesn’t exist, it will be created as soon as you insert an element in it.</p>
+
 <p>You can get the list of all existing buckets with :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% curl http://localhost:8091/riak?buckets=true 
-{&quot;buckets&quot;:[&quot;articles&quot;,&quot;rekon&quot;]}</pre></div>
+  <div class="code">
+    <pre>
+% curl http://localhost:8091/riak?buckets=true 
+{"buckets":["articles","rekon"]}
+  </div>
 </div>
+
 <p>And get some general stats on the node you query (the result is quite similar to stats on a particular bucket) :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% curl http://localhost:8091/riak/stats
+  <div class="code">
+    <pre>
+% curl http://localhost:8091/riak/stats
 {
-  &quot;props&quot;: {
-    &quot;name&quot;: &quot;stats&quot;,
-    &quot;n_val&quot;: 3,
-    &quot;allow_mult&quot;: false,
-    &quot;last_write_wins&quot;: false,
-    &quot;precommit&quot;: [],
-    &quot;postcommit&quot;: [],
-    &quot;chash_keyfun&quot;: {
-      &quot;mod&quot;: &quot;riak_core_util&quot;,
-      &quot;fun&quot;: &quot;chash_std_keyfun&quot;
-    },
-    &quot;linkfun&quot;: {
-      &quot;mod&quot;: &quot;riak_kv_wm_link_walker&quot;,
-      &quot;fun&quot;: &quot;mapreduce_linkfun&quot;
-    },
-    &quot;old_vclock&quot;: 86400,
-    &quot;young_vclock&quot;: 20,
-    &quot;big_vclock&quot;: 50,
-    &quot;small_vclock&quot;: 10,
-    &quot;r&quot;: &quot;quorum&quot;,
-    &quot;w&quot;: &quot;quorum&quot;,
-    &quot;dw&quot;: &quot;quorum&quot;,
-    &quot;rw&quot;: &quot;quorum&quot;
-  }
-}</pre></div>
+"props": {
+  "name": "stats",
+  "n_val": 3,
+  "allow_mult": false,
+  "last_write_wins": false,
+  "precommit": [],
+  "postcommit": [],
+  "chash_keyfun": {
+    "mod": "riak_core_util",
+    "fun": "chash_std_keyfun"
+  },
+  "linkfun": {
+    "mod": "riak_kv_wm_link_walker",
+    "fun": "mapreduce_linkfun"
+  },
+  "old_vclock": 86400,
+  "young_vclock": 20,
+  "big_vclock": 50,
+  "small_vclock": 10,
+  "r": "quorum",
+  "w": "quorum",
+  "dw": "quorum",
+  "rw": "quorum"
+}
+}
+  </div>
 </div>
+
 <h2>But I wanna haz some <span class="caps">GUI</span> !</h2>
-<p>Not happy with the command line ? <a href="https://github.com/adamhunter">Adam Hunter</a> built <a href="https://github.com/adamhunter/rekon">Rekon</a>, a data browser for your riak node, built as a riak app (only riak objects and javascript, yeah). Installation is pretty simple, in our case for our &#8220;dev1&#8221; node :</p>
+
+<p>Not happy with the command line ? <a href="https://github.com/adamhunter">Adam Hunter</a> built <a href="https://github.com/adamhunter/rekon">Rekon</a>, a
+data browser for your riak node, built as a riak app (only riak objects and javascript, yeah). Installation is pretty simple, in our case for our “dev1” node
+:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>curl -s get.rekonapp.com | node=127.0.0.1:8091 sh</pre></div>
+  <div class="code">
+    <pre>
+curl -s get.rekonapp.com | node=127.0.0.1:8091 sh
+  </div>
 </div>
+
 <p>Then navigate to <a href="http://localhost:8091/riak/rekon/go">http://localhost:8091/riak/rekon/go</a>, and <em>tadam</em> :</p>
-<p style="text-align:center;"><img src="http://jbbarth.com/assets/0000/0056/riak-rekon.png" alt="" /></p>
-<p>I let you play with it, it&#8217;s intuitive enough.</p>
+
+<p style="text-align:center;"><img src="http://jbbarth.com/assets/0000/0056/riak-rekon.png" alt=""></p>
+
+<p>I let you play with it, it’s intuitive enough.</p>
+
 <h2>Conclusion</h2>
-<p>Riak is an amazing piece of software. In future posts, I&#8217;ll try to discuss how you can query it from a Rails app with the Ripple client library, and some other exciting things such as deployment and system administration things.</p>
+
+<p>Riak is an amazing piece of software. In future posts, I’ll try to discuss how you can query it from a Rails app with the Ripple client library, and some
+other exciting things such as deployment and system administration things.</p>

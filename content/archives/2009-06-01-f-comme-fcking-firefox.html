@@ -2,15 +2,29 @@
 title: "F comme F*cking Firefox"
 ---
 
-<h1>F comme F*cking Firefox</h1><p>Depuis que j&#8217;ai mon NC10, &ccedil;a doit donc faire deux mois, je cherche comment faire pour que mes bookmarks ne passent pas &agrave; la trappe &agrave; chaque resizing de Firefox. Ou al&eacute;atoirement d&#8217;ailleurs. Parce que parfois ce renard imb&eacute;cile &eacute;tend la barre d&#8217;url on ne sait pourquoi, et r&eacute;duit les dossiers personnels &agrave; une mis&eacute;rable double fl&egrave;che, les rendant beaucoup moins accessibles.</p>
-<p>En gros, je voulais que &ccedil;a arr&ecirc;te de faire &ccedil;a :</p>
-<p style="text-align:center;"><a href="/assets/0000/0047/desktop-20090601-1.png"><img src="/assets/0000/0047/desktop-20090601-1_thumb.png" alt="" /></a></p>
-<p>Mais que &ccedil;a fasse &ccedil;a (et tout le temps !) :</p>
-<p style="text-align:center;"><a href="/assets/0000/0049/desktop-20090601-2.png"><img src="/assets/0000/0049/desktop-20090601-2_thumb.png" alt="" /></a></p>
-<p>Apr&egrave;s avoir essay&eacute; pas mal de trucs sans succ&egrave;s, j&#8217;ai trouv&eacute; l&#8217;inspiration <a href="http://getsatisfaction.com/mozilla/topics/auto_collapsing_of_bookmarks_toolbar_items_in_firefox">ici</a> ; et voici donc mon UserChrome.css qui fonctionne :</p>
+<h1>F comme F*cking Firefox</h1>
+
+<p>Depuis que j’ai mon NC10, ça doit donc faire deux mois, je cherche comment faire pour que mes bookmarks ne passent pas à la trappe à chaque resizing de
+Firefox. Ou aléatoirement d’ailleurs. Parce que parfois ce renard imbécile étend la barre d’url on ne sait pourquoi, et réduit les dossiers personnels à une
+misérable double flèche, les rendant beaucoup moins accessibles.</p>
+
+<p>En gros, je voulais que ça arrête de faire ça :</p>
+
+<p style="text-align:center;"><a href="/assets/0000/0047/desktop-20090601-1.png"><img src="/assets/0000/0047/desktop-20090601-1_thumb.png" alt=""></a></p>
+
+<p>Mais que ça fasse ça (et tout le temps !) :</p>
+
+<p style="text-align:center;"><a href="/assets/0000/0049/desktop-20090601-2.png"><img src="/assets/0000/0049/desktop-20090601-2_thumb.png" alt=""></a></p>
+
+<p>Après avoir essayé pas mal de trucs sans succès, j’ai trouvé l’inspiration <a href=
+"http://getsatisfaction.com/mozilla/topics/auto_collapsing_of_bookmarks_toolbar_items_in_firefox">ici</a> ; et voici donc mon UserChrome.css qui fonctionne
+:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre><span class="co">#bookmarksBarContent</span> <span class="cl">.bookmark-item</span> {
-  <span class="ke">min-width</span>: <span class="fl">70px</span> <span class="im">!important</span>;
-  <span class="ke">visibility</span>: <span class="vl">visible</span> <span class="im">!important</span>;
-}</pre></div>
+  <div class="code">
+    <pre>
+<span class="ke">min-width</span>: <span class="fl">70px</span> <span class="im">!important</span>;
+<span class="ke">visibility</span>: <span class="vl">visible</span> <span class="im">!important</span>;
+}
+  </div>
 </div>

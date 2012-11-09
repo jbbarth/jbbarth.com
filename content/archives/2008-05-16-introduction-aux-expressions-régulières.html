@@ -2,144 +2,136 @@
 title: "Introduction aux expressions régulières"
 ---
 
-<h1>Introduction aux expressions régulières</h1><p>Les expressions r&eacute;guli&egrave;res (ou regex) permettent de v&eacute;rifier qu&rsquo;une chaine est conforme &agrave; un masque (ou pattern).<br />
-Cet outil permet des reconnaissances ou substitutions complexes. Les regex sont impl&eacute;ment&eacute;es dans la plupart des langages de programmation : sachant cela, lorsque vous apprendrez un nouveau langage, vous n&rsquo;aurez pas &agrave; r&eacute;-apprendre compl&egrave;tement vos notions sur les expressions r&eacute;guli&egrave;res, m&ecirc;me si quelques l&eacute;g&egrave;res diff&eacute;rences peuvent survenir.</p>
-<p>Les expressions r&eacute;guli&egrave;res (ou regex) permettent de v&eacute;rifier qu&rsquo;une chaine est conforme &agrave; un masque (ou pattern).</p>
+<h1>Introduction aux expressions régulières</h1>
 
+<p>Les expressions régulières (ou regex) permettent de vérifier qu’une chaine est conforme à un masque (ou pattern).<br>
+Cet outil permet des reconnaissances ou substitutions complexes. Les regex sont implémentées dans la plupart des langages de programmation : sachant cela,
+lorsque vous apprendrez un nouveau langage, vous n’aurez pas à ré-apprendre complètement vos notions sur les expressions régulières, même si quelques légères
+différences peuvent survenir.</p>
 
-	<p>Cet outil permet des reconnaissances ou substitutions complexes.<br />
-Les regex sont impl&eacute;ment&eacute;es dans la plupart des langages de programmation :<br />
-sachant cela, lorsque vous apprendrez un nouveau langage, vous n&rsquo;aurez pas &agrave; r&eacute;-apprendre<br />
-compl&egrave;tement vos notions sur les expressions r&eacute;guli&egrave;res, m&ecirc;me si quelques l&eacute;g&egrave;res diff&eacute;rences peuvent survenir.</p>
+<p>Les expressions régulières (ou regex) permettent de vérifier qu’une chaine est conforme à un masque (ou pattern).</p>
 
+<p>Cet outil permet des reconnaissances ou substitutions complexes.<br>
+Les regex sont implémentées dans la plupart des langages de programmation :<br>
+sachant cela, lorsque vous apprendrez un nouveau langage, vous n’aurez pas à ré-apprendre<br>
+complètement vos notions sur les expressions régulières, même si quelques légères différences peuvent survenir.</p>
 
-	<p>Les patterns sont constitu&eacute;s de caract&egrave;res &ldquo;normaux&rdquo; et de m&eacute;tacaract&egrave;res.</p>
+<p>Les patterns sont constitués de caractères “normaux” et de métacaractères.</p>
 
+<p>Un métacaractère est un caractère ayant une signification particulière (des signes de ponctuation en général).</p>
 
-	<p>Un m&eacute;tacaract&egrave;re est un caract&egrave;re ayant une signification particuli&egrave;re (des signes de ponctuation en g&eacute;n&eacute;ral).</p>
+<p>Il n’est pas mis dans le masque “pour lui même”.</p>
 
+<p>Les lettres et chiffres ne sont pas des métacaractères : ils sont mis pour eux mêmes : lorsqu’un masque contient “A”, le moteur de regex cherchera bien un
+A majuscule dans la chaine testée.</p>
 
-	<p>Il n&rsquo;est pas mis dans le masque &ldquo;pour lui m&ecirc;me&rdquo;.</p>
+<p><code>{n,}</code> : “n fois ou plus”</p>
 
+<p>ex : <code>/AB{3,}C/</code> reconnait A suivi de 3 B ou plus, puis un C.</p>
 
-	<p>Les lettres et chiffres ne sont pas des m&eacute;tacaract&egrave;res : ils sont mis pour eux m&ecirc;mes : lorsqu&rsquo;un masque contient &ldquo;A&rdquo;, le moteur de regex cherchera bien un A majuscule dans la chaine test&eacute;e.</p>
+<p><code>{n,m}</code> : “entre n et m fois”</p>
 
+<p>ex : <code>/AB{3,5}C/</code> reconnait A suivi de 3 à 5 B puis C.</p>
 
-	<p><code>{n,}</code> : &ldquo;n fois ou plus&rdquo; </p>
+<p>Remarque : <code>?,*,+</code> peuvent être exprimés par un équivalent entre accollades.</p>
 
-	<p>ex : <code>/AB{3,}C/</code> reconnait A suivi de 3 B ou plus, puis un C.</p>
+<h2><span class="caps">METACARACTERES DE POSITION</span></h2>
 
+<p><code>^</code> : “Début de chaine” (si positionné en début de masque)</p>
 
-	<p><code>{n,m}</code> : &ldquo;entre n et m fois&rdquo; </p>
+<p>Comme vous l’aurez remarqué, par défaut une recherche de regex regarde si la chaine testée <span class="caps">CONTIENT</span> une sous chaine vérifiant le
+masque.</p>
 
-	<p>ex : <code>/AB{3,5}C/</code> reconnait A suivi de 3 &agrave; 5 B puis C.</p>
+<p>^ permet de changer ca : <code>/^ABC/</code> reconnaitra une chaine qui <span class="caps">COMMENCE</span> par <span class="caps">ABC</span> : “ABCDE” est
+reconnu, pas “AZABCDE”</p>
 
+<p><code>$</code> : “Fin de chaine” (si positionné en fin de chaine)</p>
 
-	<p>Remarque : <code>?,*,+</code> peuvent &ecirc;tre exprim&eacute;s par un &eacute;quivalent entre accollades.</p>
+<p><code>/^ABC$/</code> permet donc de reconnaitre une chaine qui est <span class="caps">EXACTEMENT</span> “ABC” ;-)</p>
 
+<h2><span class="caps">METACARACTERES DE GROUPEMENT</span></h2>
 
-	<p><h2><span class="caps">METACARACTERES DE POSITION</span></h2></p>
+<p>Les parenthèses servent à regrouper plusieurs “briques” de regex.</p>
 
-	<p><code>^</code> : &ldquo;D&eacute;but de chaine&rdquo; (si positionn&eacute; en d&eacute;but de masque)</p>
+<p>Ex : on souhaite reconnaitre “ab” un nombre indéfini de fois, suivi d’un “c”.</p>
 
-	<p>Comme vous l&rsquo;aurez remarqu&eacute;, par d&eacute;faut une recherche de regex regarde si la chaine test&eacute;e <span class="caps">CONTIENT</span> une sous chaine v&eacute;rifiant le masque.</p>
+<p>On utilisera le masque : <code>/(ab)*c/</code></p>
 
-
-	<p>^ permet de changer ca : <code>/^ABC/</code> reconnaitra une chaine qui <span class="caps">COMMENCE</span> par <span class="caps">ABC</span> : &ldquo;ABCDE&rdquo; est reconnu, pas &ldquo;AZABCDE&rdquo;</p>
-
-
-	<p><code>$</code> : &ldquo;Fin de chaine&rdquo; (si positionn&eacute; en fin de chaine)</p>
-
-	<p><code>/^ABC$/</code> permet donc de reconnaitre une chaine qui est <span class="caps">EXACTEMENT</span> &ldquo;ABC&rdquo; ;-)</p>
-
-	<p><h2><span class="caps">METACARACTERES DE GROUPEMENT</span></h2></p>
-
-	<p>Les parenth&egrave;ses servent &agrave; regrouper plusieurs &ldquo;briques&rdquo; de regex.</p>
-
-
-	<p>Ex : on souhaite reconnaitre &ldquo;ab&rdquo; un nombre ind&eacute;fini de fois, suivi d&rsquo;un &ldquo;c&rdquo;.</p>
-
-
-	<p>On utilisera le masque : <code>/(ab)*c/</code></p>
-
-
-	<p>Les parenth&egrave;ses servent &eacute;galement pour l&rsquo;alternative : le &rdquo;|&rdquo; signifie &ldquo;OU&rdquo;.<br />
-ex : on veut reconnaitre : &ldquo;ab&rdquo; ou &ldquo;bc&rdquo; suivi d&rsquo;un &ldquo;d&rdquo; <br />
+<p>Les parenthèses servent également pour l’alternative : le ”|” signifie “OU”.<br>
+ex : on veut reconnaitre : “ab” ou “bc” suivi d’un “d”<br>
 Le pattern sera : <code>/(ab|bc)d/</code></p>
 
+<p>Les parenthèses ont une troisième fonction, la capture, que je ne développerai pas ici : grosso modo, tout ce qui est entre des parenthèses peut être
+réutilisé plus loin dans la regex (backref), ou dans un remplacement, ou simplement retrouvé après un “if” par exemple.</p>
 
-	<p>Les parenth&egrave;ses ont une troisi&egrave;me fonction, la capture, que je ne d&eacute;velopperai pas ici : grosso modo, tout ce qui est entre des parenth&egrave;ses peut &ecirc;tre r&eacute;utilis&eacute; plus loin dans la regex (backref), ou dans un remplacement, ou simplement retrouv&eacute; apr&egrave;s un &ldquo;if&rdquo; par exemple.</p>
+<h2><span class="caps">METACARACTERES DE CLASSE</span></h2><br>
+Une classe est un ensemble de caractères, elle est définie entre crochets.<br>
+ex : un ensemble contentant a,b,e,g, et z : <code>[abegz]</code>
 
+<p>A la différence des parenthèses, une classe ne reconnaitra qu’un seul caractère au maximum.<br>
+Seconde différence, une classe peut être “complémentée”, en la commencant par un ^ :<br>
+ex : reconnaitre “tout caractère différent d’un z” : <code>[^z]</code></p>
 
-	<p><h2><span class="caps">METACARACTERES DE CLASSE</span></h2><br />
-Une classe est un ensemble de caract&egrave;res, elle est d&eacute;finie entre crochets.<br />
-ex : un ensemble contentant a,b,e,g, et z : <code>[abegz]</code></p>
+<p>Utile dans les classes, la réunion : le tiret ”-” permet de raccourcir des classes qu’on utilise fréquemment.<br>
+Pour reconnaitre une lettre minuscule, on utiliserait a priori :<br>
+<code>[abcdefghijklmnopqrstuvwxyz]</code><br>
+C’est lourd, on préfèrera la notation : <code>[a-z]</code><br>
+Marchent également : <code>[A-Z], [0-9], [a-zA-Z]</code> (contient toutes les lettres), <code>[a-ft-z]</code>, etc..</p>
 
-	<p>A la diff&eacute;rence des parenth&egrave;ses, une classe ne reconnaitra qu&rsquo;un seul caract&egrave;re au maximum.<br />
-Seconde diff&eacute;rence, une classe peut &ecirc;tre &ldquo;compl&eacute;ment&eacute;e&rdquo;, en la commencant par un ^ :<br />
-ex : reconnaitre &ldquo;tout caract&egrave;re diff&eacute;rent d&rsquo;un z&rdquo; : <code>[^z]</code></p>
+<p>Le tiret est donc un métacaractère lorsqu’il est utilisé dans une classe. _ Pour mettre un tiret dans une classe, on le mettra simplement sur le bord :
+<code>[a-z-]</code> contient les lettres de a à z ainsi qu’un tiret.</p>
 
+<p>/ !\ Méditez ceci :<br>
+<code>if (preg_match("/[^a-z]/",$string)) ...</code><br>
+Cette condition vérifie que $string contient un caractère qui n’est pas une lettre minuscule.<br>
+Cette condition <strong><span class="caps">NE DIT PAS</span></strong> : vérifie que $string ne contient pas de lettre minuscule.</p>
 
-	<p>Utile dans les classes, la r&eacute;union : le tiret &rdquo;-&rdquo; permet de raccourcir des classes qu&rsquo;on utilise fr&eacute;quemment.<br />
-Pour reconnaitre une lettre minuscule, on utiliserait a priori :<br />
-<code>[abcdefghijklmnopqrstuvwxyz]</code><br />
-C&rsquo;est lourd, on pr&eacute;f&egrave;rera la notation : <code>[a-z]</code><br />
-Marchent &eacute;galement : <code>[A-Z], [0-9], [a-zA-Z]</code> (contient toutes les lettres), <code>[a-ft-z]</code>, etc..</p>
+<h2><span class="caps">METACARACTERE</span> \</h2><br>
+Il a 3 fonctions :
 
+<p>1- échappement<br>
+Un <code>+</code> signifie “1 fois ou plus”, d’accord, mais comment reconnaitre un plus “<code>+</code>” ? Il suffit de mettre <code>\+</code> (de la même
+facon qu’on échappe les guillemets dans des chaines php ou perl)<br>
+Le backslash est donc lui même un métacaractère.<br>
+Voici une liste des métacaractères qu’on peut ainsi échapper : <code>^ $ * + ? . | ( ) [ ] \</code><br>
+Il permet aussi d’échapper le caractère utilisé comme délimiteur histoire d’éviter les confusions : j’ai utilisé des slashes, on peut utiliser d’autres chars
+: voici les courants : ==<img src="masque" alt="">, #masque#, /masque/.</p>
 
-	<p>Le tiret est donc un m&eacute;tacaract&egrave;re lorsqu&rsquo;il est utilis&eacute; dans une classe. _ Pour mettre un tiret dans une classe, on le mettra simplement sur le bord : <code>[a-z-]</code> contient les lettres de a &agrave; z ainsi qu&rsquo;un tiret.</p>
+<p>2- devant des lettres, pour une signification particulière<br>
+<code>&lt;strong&gt;\s&lt;/strong&gt;</code> : un espace blanc, \t, \r, \n, \f<br>
+<code>&lt;strong&gt;\S&lt;/strong&gt;</code> : pas un espace<br>
+<code>&lt;strong&gt;\d&lt;/strong&gt;</code> : un chiffre (équivalent à [0-9])<br>
+<code>&lt;strong&gt;\D&lt;/strong&gt;</code> : pas un chiffre<br>
+<code>&lt;strong&gt;\w&lt;/strong&gt;</code> : un mot (équivalent à [a-zA-Z_])<br>
+<code>&lt;strong&gt;\W&lt;/strong&gt;</code> : pas un mot<br>
+Moultes autres selon les langages, ceux ci sont les plus utilisés.</p>
 
+<p>3- références arrière<br>
+Point très intéressant, non traité ici car trop compliqué pour une première approche.</p>
 
-	<p>/ !\ M&eacute;ditez ceci :<br />
-<code>if (preg_match("/[^a-z]/",$string)) ... </code><br />
-Cette condition v&eacute;rifie que $string contient un caract&egrave;re qui n&rsquo;est pas une lettre minuscule.<br />
-Cette condition <strong><span class="caps">NE DIT PAS</span></strong> : v&eacute;rifie que $string ne contient pas de lettre minuscule.</p>
+<h2><span class="caps">LIENS UTILES</span></h2><br>
+perldoc.perl.org/perlre.html : la doc de référence des regex en Perl (qui implémente les regex au coeur du langage)<br>
+www.pcre.org : le site officiel de la lib pcre (qui équipe pas mal de langages)<br>
+www.expreg.com : site francais très bien fait sur les regexp<br>
+www.scriptsdb.org/tutar.php ?id=1 : tuto sur les regex en mIRC (celui par lequel j’ai commencé)
 
+<h2><span class="caps">SUJETS LAISSES A UNE PROPA ULTERIEURE</span></h2><br>
+opérateurs non gourmands<br>
+- utilisation des backref et des captures<br>
+- assertions positives et négatives<br>
+- optimisations de regex, conditions<br>
+- support unicode (valide en php ? php 5.1 ?)<br>
+- métacaractères non cités<br>
+- interpolations de variables, échappements<br>
+- classes <span class="caps">POSIX</span><br>
+- vue des modificateurs et modes de reconnaissance<br>
+- équivalence de fonctions php ou Perl standard (voir http://www.expreg.com/equivalence.php)<br>
+- UrlRewriting<br>
+- ...<br>
 
-	<p><h2><span class="caps">METACARACTERE</span> \</h2><br />
-Il a 3 fonctions :</p>
-
-	<p>1- &eacute;chappement<br />
-Un <code>+</code> signifie &ldquo;1 fois ou plus&rdquo;, d&rsquo;accord, mais comment reconnaitre un plus &ldquo;<code>+</code>&rdquo; ? Il suffit de mettre <code>\+</code> (de la m&ecirc;me facon qu&rsquo;on &eacute;chappe les guillemets dans des chaines php ou perl)<br />
-Le backslash est donc lui m&ecirc;me un m&eacute;tacaract&egrave;re.<br />
-Voici une liste des m&eacute;tacaract&egrave;res qu&rsquo;on peut ainsi &eacute;chapper : <code>^ $ * + ? . | ( ) [ ] \</code><br />
-Il permet aussi d&rsquo;&eacute;chapper le caract&egrave;re utilis&eacute; comme d&eacute;limiteur histoire d&rsquo;&eacute;viter les confusions : j&rsquo;ai utilis&eacute; des slashes, on peut utiliser d&rsquo;autres chars : voici les courants : ==<img src="masque" alt="" />, #masque#, /masque/.</p>
-
-
-	<p>2- devant des lettres, pour une signification particuli&egrave;re<br />
-<code>&lt;strong&gt;\s&lt;/strong&gt;</code> : un espace blanc, \t, \r, \n, \f<br />
-<code>&lt;strong&gt;\S&lt;/strong&gt;</code> : pas un espace<br />
-<code>&lt;strong&gt;\d&lt;/strong&gt;</code> : un chiffre (&eacute;quivalent &agrave; [0-9])<br />
-<code>&lt;strong&gt;\D&lt;/strong&gt;</code> : pas un chiffre<br />
-<code>&lt;strong&gt;\w&lt;/strong&gt;</code> : un mot (&eacute;quivalent &agrave; [a-zA-Z_])<br />
-<code>&lt;strong&gt;\W&lt;/strong&gt;</code> : pas un mot<br />
-Moultes autres selon les langages, ceux ci sont les plus utilis&eacute;s.</p>
-
-
-	<p>3- r&eacute;f&eacute;rences arri&egrave;re<br />
-Point tr&egrave;s int&eacute;ressant, non trait&eacute; ici car trop compliqu&eacute; pour une premi&egrave;re approche.</p>
-
-
-	<p><h2><span class="caps">LIENS UTILES</span></h2><br />
-perldoc.perl.org/perlre.html : la doc de r&eacute;f&eacute;rence des regex en Perl (qui impl&eacute;mente les regex au coeur du langage)<br />
-www.pcre.org : le site officiel de la lib pcre (qui &eacute;quipe pas mal de langages)<br />
-www.expreg.com : site francais tr&egrave;s bien fait sur les regexp<br />
-www.scriptsdb.org/tutar.php ?id=1 : tuto sur les regex en mIRC (celui par lequel j&rsquo;ai commenc&eacute;)</p>
-
-	<p><h2><span class="caps">SUJETS LAISSES A UNE PROPA ULTERIEURE</span></h2><br />
-op&eacute;rateurs non gourmands<br />
-- utilisation des backref et des captures<br />
-- assertions positives et n&eacute;gatives<br />
-- optimisations de regex, conditions<br />
-- support unicode (valide en php ? php 5.1 ?)<br />
-- m&eacute;tacaract&egrave;res non cit&eacute;s<br />
-- interpolations de variables, &eacute;chappements<br />
-- classes <span class="caps">POSIX</span><br />
-- vue des modificateurs et modes de reconnaissance<br />
-- &eacute;quivalence de fonctions php ou Perl standard (voir http://www.expreg.com/equivalence.php)<br />
-- UrlRewriting<br />
-- ...<br />
-<h2><span class="caps">CONCLUSION</span></h2><br />
-Attention cependant : le travers naturel quand on commence &agrave; bien maitriser cet outil, c&rsquo;est de faire pas mal de choses avec qu&rsquo;on aurait fait sans sinon.<br />
-Ce qui peut devenir ennuyeux pour des probl&egrave;mes d&rsquo;optimisation ;-)<br />
-Durant votre progession, l&rsquo;important est de faire des tests, d&rsquo;apprendre par la pratique et l&rsquo;observation : les moteurs de regex ont un fonctionnement complexe : au del&agrave; d&rsquo;un certain niveau, on peut trouver des &ldquo;bugs&rdquo; donc testez vos masques !</p>
+<h2><span class="caps">CONCLUSION</span></h2><br>
+Attention cependant : le travers naturel quand on commence à bien maitriser cet outil, c’est de faire pas mal de choses avec qu’on aurait fait sans
+sinon.<br>
+Ce qui peut devenir ennuyeux pour des problèmes d’optimisation ;-)<br>
+Durant votre progession, l’important est de faire des tests, d’apprendre par la pratique et l’observation : les moteurs de regex ont un fonctionnement
+complexe : au delà d’un certain niveau, on peut trouver des “bugs” donc testez vos masques !

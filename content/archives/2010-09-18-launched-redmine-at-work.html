@@ -2,32 +2,80 @@
 title: "Launched Redmine at $WORK"
 ---
 
-<h1>Launched Redmine at $WORK</h1><p>I took a new job in June, still in a datacenter for the French government. We needed a tool to manage our projects, there was nothing more than some spreadsheets with major goals and pending actions. Definitely not enough.</p>
+<h1>Launched Redmine at $WORK</h1>
+
+<p>I took a new job in June, still in a datacenter for the French government. We needed a tool to manage our projects, there was nothing more than some
+spreadsheets with major goals and pending actions. Definitely not enough.</p>
+
 <p><strong>What we did ?</strong></p>
-<p>So I introduced <a href="http://www.redmine.org/">Redmine</a> there. I was using it in my previous position for daily tickets, with just one project and a few specific plugins (mainly an embryo of <span class="caps">CMDB</span> with the <a href="http://code.jbbarth.com/projects/redmine-datacenter/wiki">datacenter plugin</a> and the <a href="http://www.redmine.org/boards/3/topics/13930">draft plugin</a> for writing looong tickets).</p>
-<p>For this new redmine, I decided to use multiple private projects (one for each application we&#8217;re hosting, and some others for our own infrastructure projects), and to map real users to redmine users. But it was just a start point since my boss and I soon realized standard redmine without plugin was no enough for us. Luckily, Redmine is a very flexible tool. We decided to keep the application private until we addressed some major wishes we add :</p>
+
+<p>So I introduced <a href="http://www.redmine.org/">Redmine</a> there. I was using it in my previous position for daily tickets, with just one project and a
+few specific plugins (mainly an embryo of <span class="caps">CMDB</span> with the <a href=
+"http://code.jbbarth.com/projects/redmine-datacenter/wiki">datacenter plugin</a> and the <a href="http://www.redmine.org/boards/3/topics/13930">draft
+plugin</a> for writing looong tickets).</p>
+
+<p>For this new redmine, I decided to use multiple private projects (one for each application we’re hosting, and some others for our own infrastructure
+projects), and to map real users to redmine users. But it was just a start point since my boss and I soon realized standard redmine without plugin was no
+enough for us. Luckily, Redmine is a very flexible tool. We decided to keep the application private until we addressed some major wishes we add :</p>
+
 <ul>
-	<li>improve cross project views: sometimes it&#8217;s not intuitive where you are between cross-project views and project ones. Plus some views are difficult to reach (you need 3 clicks to reach the global Gantt view!). Specific plugin for this one, which implements <a href="http://www.redmine.org/issues/5920">#5920</a> and adds some items in top_menu</li>
-	<li>improve project memberships system: we wanted to reflect our hierarchical organization. Each team has a parent, and some members. At project level, some teams have a role (same idea as groups), but we would define explicitly which members of the organization are specifically involved in the project. It&#8217;s not finished yet, but it works and it&#8217;s available at github : <a href="http://github.com/jbbarth/redmine_organizations">redmine_organizations plugin</a></li>
-	<li>add a public calendar to communicate our workload, so that developers know when we have admins available to install their application. It will probably not be useful for anybody else, but it&#8217;s also available at github : <a href="http://github.com/jbbarth/redmine_workload_calendar">redmine_workload_calendar</a></li>
-	<li>add graphs / pie charts. It needed to be fully configurable, so for the moment I have a private plugin using <a href="http://www.jqplot.com/">jqPlot</a>. I define code in the interface, ruby to define the source, and javascript to define the rendering options. It&#8217;s not ready for lamda users, maybe later.</li>
-	<li>add doodle functionality: Felix&#8217;s plugin is perfect for that, I recommend it : <a href="http://github.com/thegcat/redmine_doodles">thegcat/redmine_doodles at github</a></li>
-	<li>add local avatars functionality: I&#8217;m not really happy with the existing plugin, so we use gravatars for now, and I&#8217;ll fork it or build my own one soon</li>
-	<li>improve notifications : I have a tiny hack for the moment, but I&#8217;m not really happy with it. I want to be able to manage notifications per user, project, maybe tracker, depending on their roles on the project. For the moment it&#8217;s a hack in a private plugin, and many addresses with a dumb domain so that notifications are not sent. Argl.</li>
-	<li>less important, improve the theme: I built a custom theme based on <a href="http://theill.com/stuff/redmine/">basecamp theme for redmine</a></li>
+  <li>improve cross project views: sometimes it’s not intuitive where you are between cross-project views and project ones. Plus some views are difficult to
+  reach (you need 3 clicks to reach the global Gantt view!). Specific plugin for this one, which implements <a href=
+  "http://www.redmine.org/issues/5920">#5920</a> and adds some items in top_menu</li>
+
+  <li>improve project memberships system: we wanted to reflect our hierarchical organization. Each team has a parent, and some members. At project level,
+  some teams have a role (same idea as groups), but we would define explicitly which members of the organization are specifically involved in the project.
+  It’s not finished yet, but it works and it’s available at github : <a href="http://github.com/jbbarth/redmine_organizations">redmine_organizations
+  plugin</a></li>
+
+  <li>add a public calendar to communicate our workload, so that developers know when we have admins available to install their application. It will probably
+  not be useful for anybody else, but it’s also available at github : <a href=
+  "http://github.com/jbbarth/redmine_workload_calendar">redmine_workload_calendar</a></li>
+
+  <li>add graphs / pie charts. It needed to be fully configurable, so for the moment I have a private plugin using <a href=
+  "http://www.jqplot.com/">jqPlot</a>. I define code in the interface, ruby to define the source, and javascript to define the rendering options. It’s not
+  ready for lamda users, maybe later.</li>
+
+  <li>add doodle functionality: Felix’s plugin is perfect for that, I recommend it : <a href=
+  "http://github.com/thegcat/redmine_doodles">thegcat/redmine_doodles at github</a></li>
+
+  <li>add local avatars functionality: I’m not really happy with the existing plugin, so we use gravatars for now, and I’ll fork it or build my own one
+  soon</li>
+
+  <li>improve notifications : I have a tiny hack for the moment, but I’m not really happy with it. I want to be able to manage notifications per user,
+  project, maybe tracker, depending on their roles on the project. For the moment it’s a hack in a private plugin, and many addresses with a dumb domain so
+  that notifications are not sent. Argl.</li>
+
+  <li>less important, improve the theme: I built a custom theme based on <a href="http://theill.com/stuff/redmine/">basecamp theme for redmine</a></li>
 </ul>
+
 <p><strong>The disclosure &amp; the future</strong></p>
-<p>We presented the application to our team yesterday. They&#8217;ll start using it next week, I&#8217;m pretty curious to see what criticisms and great ideas will emerge.</p>
-<p>I have some ideas for plugins which will be too specific to be open-sourced. I don&#8217;t think anybody cares how I&#8217;ll pull our Cyrus/Postfix clusters status into a dashboard inside our redmine. But here are some more &#8220;mainstream&#8221; plugins I may work on in the next months :</p>
+
+<p>We presented the application to our team yesterday. They’ll start using it next week, I’m pretty curious to see what criticisms and great ideas will
+emerge.</p>
+
+<p>I have some ideas for plugins which will be too specific to be open-sourced. I don’t think anybody cares how I’ll pull our Cyrus/Postfix clusters status
+into a dashboard inside our redmine. But here are some more “mainstream” plugins I may work on in the next months :</p>
+
 <ul>
-	<li>a local avatar plugin : it might be a fork of the existing one. I need some more functionalities, such as being able to define a default avatar, or croping uploaded image as I want, etc.</li>
-	<li>a fine-grained notification plugin</li>
-	<li>a plugin to add knowledge base functionalities to wiki : &#8220;did this page help you ?&#8221; etc.</li>
-	<li>a plugin to have many wiki-like pages in the public section (not related to project ; for now you have only one welcome page)</li>
-	<li>a dashboard for installations with many projects : easily retrieve stats on project (custom) fields, roles present or not present, etc.</li>
-	<li>a plugin to add tagging functionalities for wiki pages</li>
-	<li>a plugin to have dokuwiki or spip replace cleanly redmine wiki</li>
-	<li>a plugin to see who is connected at the moment, maybe a chat box too</li>
-	<li>&#8230; (it&#8217;s late, I don&#8217;t remember ;))</li>
+  <li>a local avatar plugin : it might be a fork of the existing one. I need some more functionalities, such as being able to define a default avatar, or
+  croping uploaded image as I want, etc.</li>
+
+  <li>a fine-grained notification plugin</li>
+
+  <li>a plugin to add knowledge base functionalities to wiki : “did this page help you ?” etc.</li>
+
+  <li>a plugin to have many wiki-like pages in the public section (not related to project ; for now you have only one welcome page)</li>
+
+  <li>a dashboard for installations with many projects : easily retrieve stats on project (custom) fields, roles present or not present, etc.</li>
+
+  <li>a plugin to add tagging functionalities for wiki pages</li>
+
+  <li>a plugin to have dokuwiki or spip replace cleanly redmine wiki</li>
+
+  <li>a plugin to see who is connected at the moment, maybe a chat box too</li>
+
+  <li>… (it’s late, I don’t remember ;))</li>
 </ul>
+
 <p>A lot of work to come! I also have many things I want to do on redmine core in the next year. But for the moment, I need some rest.</p>

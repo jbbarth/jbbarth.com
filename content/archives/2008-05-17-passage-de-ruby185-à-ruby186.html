@@ -2,32 +2,49 @@
 title: "Passage de ruby-1.8.5 à ruby-1.8.6"
 ---
 
-<h1>Passage de ruby-1.8.5 à ruby-1.8.6</h1><p>Alors que sur le poste o&ugrave; j&rsquo;avais d&rsquo;abord install&eacute; Mephisto/Sqlite3 je suis en Debian Lenny (version &ldquo;testing&rdquo; &agrave; ce jour), qui vient naturellement avec ruby-1.8.6. Alors que sur mon serveur, je suis en Debian Etch, et donc ruby-1.8.5. Voici donc les &eacute;tapes de l&rsquo;installation, reprises de en partie du site <a href="http://ange.librium.org/?p=84">ange.librium.org</a></p>
+<h1>Passage de ruby-1.8.5 à ruby-1.8.6</h1>
+
+<p>Alors que sur le poste où j’avais d’abord installé Mephisto/Sqlite3 je suis en Debian Lenny (version “testing” à ce jour), qui vient naturellement avec
+ruby-1.8.6. Alors que sur mon serveur, je suis en Debian Etch, et donc ruby-1.8.5. Voici donc les étapes de l’installation, reprises de en partie du site
+<a href="http://ange.librium.org/?p=84">ange.librium.org</a></p>
+
 <ol>
-	<li>R&eacute;cup&eacute;rer les tarballs de : ruby 1.8.6, rubygems, et ruby-zlib (indispensable pour ruby 1.8.6)</li>
-		<li>Installer zlib1g-dev via &ldquo;apt-get install&rdquo; (ou aptitude, ou wajig&hellip;)</li>
-		<li>Arr&ecirc;tez les programmes utilisant ruby, &agrave; tout hasard mongrel</li>
-		<li>Assurer vous de d&eacute;sinstaller ruby et rubygems (apt-get remove ruby rubygems). Vous pouvez &eacute;galement supprimer ri, rdoc, rspec, etc. si vous les avez install&eacute;s via votre gestionnaire de paquets</li>
-		<li>Installer Ruby 1.8.6 : tar -xvzf tarball ; cd ruby<strong>1.8.6</strong> ; ./configure ; make ; make install</li>
-		<li>Faites de m&ecirc;me avec ruby-zlib : ruby extconf.rb</li>
-		<li>Faites de m&ecirc;me avec rubygems : ruby setup.rb all</li>
-	</ol>
+  <li>Récupérer les tarballs de : ruby 1.8.6, rubygems, et ruby-zlib (indispensable pour ruby 1.8.6)</li>
 
+  <li>Installer zlib1g-dev via “apt-get install” (ou aptitude, ou wajig…)</li>
 
-	<p>Tout a fonctionn&eacute; assez bien jusqu&rsquo;&agrave; ce que je red&eacute;marre mon mongrel. Patatra, il cherche /usr/bin/ruby1.8 qui n&rsquo;existe plus.<br />
-Les gem sont install&eacute;s avec mes anciens paths, pas top pour avoir quelque chose de propre. Donc :</p>
+  <li>Arrêtez les programmes utilisant ruby, à tout hasard mongrel</li>
 
+  <li>Assurer vous de désinstaller ruby et rubygems (apt-get remove ruby rubygems). Vous pouvez également supprimer ri, rdoc, rspec, etc. si vous les avez
+  installés via votre gestionnaire de paquets</li>
 
-	<ol>
-	<li>cd /usr/lib/ruby/gems/1.8/gems/ ; ls &gt; ../tmp.txt ; rm -rf *</li>
-		<li>Puis r&eacute;installation de mes gems favorites : gem install rails mongrel rake rcov rspec ruby-debug sqlite3-ruby tzinfo</li>
-		<li>Oups, ne fonctionne pas pour sqlite3 (qui fonctionnait avec le paquet sqlite3-ruby) il me dit qu&rsquo;il lui manque &ldquo;ruby.h&rdquo; d&egrave;s le premier check (rat&eacute;)</li>
-		<li>Donc direction le nouveau r&eacute;pertoire gems : cd /usr/local/lib/ruby/gems/1.8/gems/ ; cd sqlite3-ruby-1.2.1/ext/sqlite3_api/</li>
-		<li>2e essai : ruby extconf.rb =&gt; m&ecirc;me erreur, OK !</li>
-		<li>Installation de libsqlite, &ldquo;&agrave; tout hasard&rdquo; ;-) : install libsqlite3-0 libsqlite3-dev</li>
-		<li>ruby extconf.rb =&gt; OK</li>
-		<li>On relance la &ldquo;vraie&rdquo; installation : gem install sqlite3-ruby</li>
-	</ol>
+  <li>Installer Ruby 1.8.6 : tar -xvzf tarball ; cd ruby<strong>1.8.6</strong> ; ./configure ; make ; make install</li>
 
+  <li>Faites de même avec ruby-zlib : ruby extconf.rb</li>
 
-	<p>Enjoy ;-)</p>
+  <li>Faites de même avec rubygems : ruby setup.rb all</li>
+</ol>
+
+<p>Tout a fonctionné assez bien jusqu’à ce que je redémarre mon mongrel. Patatra, il cherche /usr/bin/ruby1.8 qui n’existe plus.<br>
+Les gem sont installés avec mes anciens paths, pas top pour avoir quelque chose de propre. Donc :</p>
+
+<ol>
+  <li>cd /usr/lib/ruby/gems/1.8/gems/ ; ls &gt; ../tmp.txt ; rm -rf *</li>
+
+  <li>Puis réinstallation de mes gems favorites : gem install rails mongrel rake rcov rspec ruby-debug sqlite3-ruby tzinfo</li>
+
+  <li>Oups, ne fonctionne pas pour sqlite3 (qui fonctionnait avec le paquet sqlite3-ruby) il me dit qu’il lui manque “ruby.h” dès le premier check
+  (raté)</li>
+
+  <li>Donc direction le nouveau répertoire gems : cd /usr/local/lib/ruby/gems/1.8/gems/ ; cd sqlite3-ruby-1.2.1/ext/sqlite3_api/</li>
+
+  <li>2e essai : ruby extconf.rb =&gt; même erreur, OK !</li>
+
+  <li>Installation de libsqlite, “à tout hasard” ;-) : install libsqlite3-0 libsqlite3-dev</li>
+
+  <li>ruby extconf.rb =&gt; OK</li>
+
+  <li>On relance la “vraie” installation : gem install sqlite3-ruby</li>
+</ol>
+
+<p>Enjoy ;-)</p>

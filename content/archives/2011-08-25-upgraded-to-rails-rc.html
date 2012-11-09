@@ -2,38 +2,52 @@
 title: "Upgraded to Rails 3.1.rc6"
 ---
 
-<h1>Upgraded to Rails 3.1.rc6</h1><p><strong><span class="caps">EDIT</span></strong>: I confirm it&#8217;s fixed in 3.1.0-stable, and this patch is not compatible with the stable version.</p>
-<p>This night I upgraded my main app of the moment to Rails 3.1.rc6. I followed <a href="http://davidjrice.co.uk/2011/05/25/how-to-upgrade-a-rails-application-to-version-3-1-0.html">this awesome post</a> and everything went fine. I had to fix one or two tests, and now I have to think about what goes to the asset pipeline or not, but everything works fine!</p>
-<p>One little gotcha with this version though, Sprockets outputs a lot (and I mean a <strong><span class="caps">LOT</span></strong>) of deprecation warnings because of this: <a href="https://github.com/rails/rails/issues/2598">https://github.com/rails/rails/issues/2598</a></p>
-<p>The interesting part of this patch can easily be backported in an initializer until 3.1-stable is released. Let&#8217;s put it in <code>config/initializers/sprockets_warnings_silencer.rb</code> :</p>
+<h1>Upgraded to Rails 3.1.rc6</h1>
+
+<p><strong><span class="caps">EDIT</span></strong>: I confirm it’s fixed in 3.1.0-stable, and this patch is not compatible with the stable version.</p>
+
+<p>This night I upgraded my main app of the moment to Rails 3.1.rc6. I followed <a href=
+"http://davidjrice.co.uk/2011/05/25/how-to-upgrade-a-rails-application-to-version-3-1-0.html">this awesome post</a> and everything went fine. I had to fix
+one or two tests, and now I have to think about what goes to the asset pipeline or not, but everything works fine!</p>
+
+<p>One little gotcha with this version though, Sprockets outputs a lot (and I mean a <strong><span class="caps">LOT</span></strong>) of deprecation warnings
+because of this: <a href="https://github.com/rails/rails/issues/2598">https://github.com/rails/rails/issues/2598</a></p>
+
+<p>The interesting part of this patch can easily be backported in an initializer until 3.1-stable is released. Let’s put it in
+<code>config/initializers/sprockets_warnings_silencer.rb</code> :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>require <span class="s"><span class="dl">'</span><span class="k">sprockets/helpers/rails_helper</span><span class="dl">'</span></span>
+  <div class="code">
+    <pre>
+require <span class="s"><span class="dl">'</span><span class="k">sprockets/helpers/rails_helper</span><span class="dl">'</span></span>
 
-<span class="r">module</span> <span class="cl">Sprockets</span>
-  <span class="r">module</span> <span class="cl">Helpers</span>
-    <span class="r">module</span> <span class="cl">RailsHelper</span>
-      <span class="r">class</span> <span class="cl">AssetPaths</span>
-        <span class="r">def</span> <span class="fu">digest_for</span>(logical_path)
-          <span class="r">if</span> asset = asset_environment[logical_path]
-            <span class="r">return</span> asset.digest_path
-          <span class="r">end</span>
-
-          logical_path
+<span class="r">module</span> <span class="cl">Helpers</span>
+  <span class="r">module</span> <span class="cl">RailsHelper</span>
+    <span class="r">class</span> <span class="cl">AssetPaths</span>
+      <span class="r">def</span> <span class="fu">digest_for</span>(logical_path)
+        <span class="r">if</span> asset = asset_environment[logical_path]
+          <span class="r">return</span> asset.digest_path
         <span class="r">end</span>
 
-        <span class="r">def</span> <span class="fu">rewrite_asset_path</span>(source, dir)
-          <span class="r">if</span> source[<span class="i">0</span>] == <span class="i">?/</span>
-            source
-          <span class="r">else</span>
-            source = digest_for(source) <span class="r">if</span> performing_caching?
-            source = <span class="co">File</span>.join(dir, source)
-            source = <span class="s"><span class="dl">&quot;</span><span class="k">/</span><span class="il"><span class="idl">#{</span>url<span class="idl">}</span></span><span class="dl">&quot;</span></span> <span class="r">unless</span> source =~ <span class="rx"><span class="dl">/</span><span class="k">^</span><span class="ch">\/</span><span class="dl">/</span></span>
-            source
-          <span class="r">end</span>
+        logical_path
+      <span class="r">end</span>
+
+      <span class="r">def</span> <span class="fu">rewrite_asset_path</span>(source, dir)
+        <span class="r">if</span> source[<span class="i">0</span>] == <span class="i">?/</span>
+          source
+        <span class="r">else</span>
+          source = digest_for(source) <span class="r">if</span> performing_caching?
+          source = <span class="co">File</span>.join(dir, source)
+          source = <span class="s"><span class="dl">"</span><span class="k">/</span><span class="il"><span class="idl">#{</span>url<span class=
+"idl">}</span></span><span class="dl">"</span></span> <span class="r">unless</span> source =~ <span class="rx"><span class="dl">/</span><span class=
+"k">^</span><span class="ch">\/</span><span class="dl">/</span></span>
+          source
         <span class="r">end</span>
       <span class="r">end</span>
     <span class="r">end</span>
   <span class="r">end</span>
-<span class="r">end</span></pre></div>
+<span class="r">end</span>
+  </div>
 </div>
-<p>Now let&#8217;s explore all the awesome features of Rails 3.1 ! (and first split my bloated <span class="caps">CSS</span> and Javascript files)</p>
+
+<p>Now let’s explore all the awesome features of Rails 3.1 ! (and first split my bloated <span class="caps">CSS</span> and Javascript files)</p>

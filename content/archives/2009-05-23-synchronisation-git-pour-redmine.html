@@ -2,33 +2,60 @@
 title: "Synchronisation git pour Redmine"
 ---
 
-<h1>Synchronisation git pour Redmine</h1><p>J&#8217;avais &eacute;voqu&eacute; <a href="http://blog.jbbarth.com/archives/2009/1/12/configuration_de_redmine_pour_github/">ici</a> la synchronisation de d&eacute;p&ocirc;ts <a href="http://fr.wikipedia.org/wiki/Git">Git</a> (en l&#8217;occurrence <a href="http://github.com/">Github</a> mais &ccedil;a n&#8217;a pas d&#8217;importance).</p>
-<p>Mais voil&agrave;, &ccedil;a ne fonctionnait plus tout &agrave; fait apr&egrave;s migration de serveur, et ce n&#8217;&eacute;tait pas tr&egrave;s clair pour moi honn&ecirc;tement. Alors j&#8217;ai de nouveau regard&eacute; sur le wiki de Redmine et trouv&eacute; <a href="http://www.redmine.org/wiki/1/HowTo_keep_in_sync_your_git_repository_for_redmine">cet article</a> qui d&eacute;crit les choses tr&egrave;s bien.</p>
-<p>Seule diff&eacute;rence, j&#8217;utilise les branches sous Git, et ce mode ne synchronise que la branche principale (&#8220;master&#8221;, ce que l&#8217;on appellerait le &#8220;trunk&#8221; sous subversion).</p>
-<p>Initialisation de mon d&eacute;p&ocirc;t:</p>
+<h1>Synchronisation git pour Redmine</h1>
+
+<p>J’avais évoqué <a href="http://blog.jbbarth.com/archives/2009/1/12/configuration_de_redmine_pour_github/">ici</a> la synchronisation de dépôts <a href=
+"http://fr.wikipedia.org/wiki/Git">Git</a> (en l’occurrence <a href="http://github.com/">Github</a> mais ça n’a pas d’importance).</p>
+
+<p>Mais voilà, ça ne fonctionnait plus tout à fait après migration de serveur, et ce n’était pas très clair pour moi honnêtement. Alors j’ai de nouveau
+regardé sur le wiki de Redmine et trouvé <a href="http://www.redmine.org/wiki/1/HowTo_keep_in_sync_your_git_repository_for_redmine">cet article</a> qui
+décrit les choses très bien.</p>
+
+<p>Seule différence, j’utilise les branches sous Git, et ce mode ne synchronise que la branche principale (“master”, ce que l’on appellerait le “trunk” sous
+subversion).</p>
+
+<p>Initialisation de mon dépôt:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>cd /var/redmine/git_repositories/
-git clone &mdash;bare git@github.com:jbbarth/project.git project
+  <div class="code">
+    <pre>
+cd /var/redmine/git_repositories/
+git clone —bare git@github.com:jbbarth/project.git project
 cd project
 git remote add origin git@github.com:jbbarth/project.git
-git fetch -v</pre></div>
-</div><p>Ajout de ceci en <span class="caps">CRON</span>:</p>
+git fetch -v
+  </div>
+</div>
+
+<p>Ajout de ceci en <span class="caps">CRON</span>:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>#sync of my github repos for redmine
-*/10 * * * * /var/redmine/git_repositories/sync_repositories.sh &gt;/dev/null</pre></div>
-</div><p>Et le petit script qui va bien:</p>
+  <div class="code">
+    <pre>
+#sync of my github repos for redmine
+*/10 * * * * /var/redmine/git_repositories/sync_repositories.sh &gt;/dev/null
+  </div>
+</div>
+
+<p>Et le petit script qui va bien:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>#!/bin/sh
+  <div class="code">
+    <pre>
+#!/bin/sh
 
 base=$(dirname $0)
-[ &quot;$base&quot; == &quot;.&quot; ] &amp;&amp; base=$(pwd)
+[ "$base" == "." ] &amp;&amp; base=$(pwd)
 
 cd $base
-for repo in $(ls -F |fgrep &quot;/&quot;); do
-  cd $base/$repo
-  git fetch origin
-  for branch in $(ls refs/remotes/origin/); do
-    git reset &mdash;soft refs/remotes/origin/$branch
-  done
-done</pre></div>
-</div><p>Youpi!</p>
+for repo in $(ls -F |fgrep "/"); do
+cd $base/$repo
+git fetch origin
+for branch in $(ls refs/remotes/origin/); do
+  git reset —soft refs/remotes/origin/$branch
+done
+done
+  </div>
+</div>
+
+<p>Youpi!</p>

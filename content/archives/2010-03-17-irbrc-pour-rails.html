@@ -2,18 +2,37 @@
 title: ".irbrc pour Rails 3"
 ---
 
-<h1>.irbrc pour Rails 3</h1><p>J&#8217;utilise souvent <a href="http://fr.wikipedia.org/wiki/Interactive_Ruby"><span class="caps">IRB</span></a>. Tr&egrave;s souvent pour d&#8217;autres choses que Rails (<em>&agrave; la base</em> on me paye pour &ecirc;tre sysadmin, pas d&eacute;veloppeur&#8230;).</p>
-<p>L&agrave; arrive Rails 3 beta :</p>
+<h1>.irbrc pour Rails 3</h1>
+
+<p>J’utilise souvent <a href="http://fr.wikipedia.org/wiki/Interactive_Ruby"><span class="caps">IRB</span></a>. Très souvent pour d’autres choses que Rails
+(<em>à la base</em> on me paye pour être sysadmin, pas développeur…).</p>
+
+<p>Là arrive Rails 3 beta :</p>
+
 <ul>
-	<li>qui s&#8217;appuie sur <span class="caps">IRB</span> pour sa console (<code>rails console</code>)</li>
-	<li>qui g&egrave;re ses d&eacute;pendances via <a href="http://github.com/carlhuda/bundler">Bundler</a>, ce qui ne permet plus par d&eacute;faut de charger des Gems en dehors de son appli</li>
+  <li>qui s’appuie sur <span class="caps">IRB</span> pour sa console (<code>rails console</code>)</li>
+
+  <li>qui gère ses dépendances via <a href="http://github.com/carlhuda/bundler">Bundler</a>, ce qui ne permet plus par défaut de charger des Gems en dehors
+  de son appli</li>
 </ul>
-<p>Bah oui mais l&agrave; &ccedil;a coince. De b&ecirc;tes <code>require</code> dans mon .irbrc ne fonctionnent plus. Comme <a href="http://groups.google.com/group/railsfrance/browse_thread/thread/d680e6708cd0db4b">discut&eacute; sur la liste rails france</a>, je charge dans mon <code>.irbrc</code> des choses dont j&#8217;ai tr&egrave;s souvent besoin, et qui n&#8217;ont rien &agrave; voir avec mes applis, m&ecirc;me en Rails 3. Par exemple, il n&#8217;y a <strong>aucune raison</strong> qu&#8217;une de mes applis d&eacute;pende de <a href="http://pablotron.org/software/wirble/">Wirble</a>, une lib pour am&eacute;liorer <span class="caps">IRB</span>.</p>
-<p>Bref, faute de mieux pour le moment, voil&agrave; le genre d&#8217;horreur auquel Rails me pousse :</p>
+
+<p>Bah oui mais là ça coince. De bêtes <code>require</code> dans mon .irbrc ne fonctionnent plus. Comme <a href=
+"http://groups.google.com/group/railsfrance/browse_thread/thread/d680e6708cd0db4b">discuté sur la liste rails france</a>, je charge dans mon
+<code>.irbrc</code> des choses dont j’ai très souvent besoin, et qui n’ont rien à voir avec mes applis, même en Rails 3. Par exemple, il n’y a <strong>aucune
+raison</strong> qu’une de mes applis dépende de <a href="http://pablotron.org/software/wirble/">Wirble</a>, une lib pour améliorer <span class=
+"caps">IRB</span>.</p>
+
+<p>Bref, faute de mieux pour le moment, voilà le genre d’horreur auquel Rails me pousse :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>basedirs = <span class="co">ENV</span>[<span class="s"><span class="dl">&quot;</span><span class="k">GEM_PATH</span><span class="dl">&quot;</span></span>].to_s.split(<span class="s"><span class="dl">&quot;</span><span class="k">:</span><span class="dl">&quot;</span></span>).map{|d|<span class="s"><span class="dl">&quot;</span><span class="il"><span class="idl">#{</span>d<span class="idl">}</span></span><span class="k">/gems/*/lib</span><span class="dl">&quot;</span></span>}
-<span class="co">Dir</span>.glob(basedirs).each <span class="r">do</span> |dir|
-  <span class="gv">$:</span> &lt;&lt; dir <span class="r">unless</span> <span class="gv">$:</span>.include?(dir)
-<span class="r">end</span></pre></div>
+  <div class="code">
+    <pre>
+basedirs = <span class="co">ENV</span>[<span class="s"><span class="dl">"</span><span class="k">GEM_PATH</span><span class=
+"dl">"</span></span>].to_s.split(<span class="s"><span class="dl">"</span><span class="k">:</span><span class="dl">"</span></span>).map{|d|<span class=
+"s"><span class="dl">"</span><span class="il"><span class="idl">#{</span>d<span class="idl">}</span></span><span class="k">/gems/*/lib</span><span class=
+"dl">"</span></span>}
+<span class="gv">$:</span> &lt;&lt; dir <span class="r">unless</span> <span class="gv">$:</span>.include?(dir)
+  </div>
 </div>
+
 <p>Humpf.</p>

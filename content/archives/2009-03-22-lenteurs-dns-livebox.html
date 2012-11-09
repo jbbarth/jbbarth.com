@@ -2,8 +2,15 @@
 title: "Lenteurs DNS Livebox"
 ---
 
-<h1>Lenteurs DNS Livebox</h1><p>Sous mon PC principal (Ubuntu/wrath), les r&eacute;solutions <span class="caps">DNS</span> sont assez lentes. J&#8217;ai trouv&eacute; des solutions <a href="http://forum.ubuntu-fr.org/viewtopic.php?id=214145">ici</a>, imm&eacute;diatement mises en oeuvre :</p>
+<h1>Lenteurs DNS Livebox</h1>
+
+<p>Sous mon PC principal (Ubuntu/wrath), les résolutions <span class="caps">DNS</span> sont assez lentes. J’ai trouvé des solutions <a href=
+"http://forum.ubuntu-fr.org/viewtopic.php?id=214145">ici</a>, immédiatement mises en oeuvre :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre># echo &quot;supersede domain-name-servers 80.10.246.2, 80.10.246.129;&quot; &gt;&gt; /etc/dhcp3/dhclient.conf
-# /etc/init.d/networking restart #ou un reboot pour &ecirc;tre s&ucirc;r..</pre></div>
+  <div class="code">
+    <pre>
+# echo "supersede domain-name-servers 80.10.246.2, 80.10.246.129;" &gt;&gt; /etc/dhcp3/dhclient.conf
+# /etc/init.d/networking restart #ou un reboot pour être sûr..
+  </div>
 </div>

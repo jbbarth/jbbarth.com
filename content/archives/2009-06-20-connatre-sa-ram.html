@@ -2,27 +2,52 @@
 title: "Connaître sa RAM"
 ---
 
-<h1>Connaître sa RAM</h1><p>J&#8217;apprendrai la prochaine fois &agrave; tourner 7 fois ma langue dans ma bouche avant de dire une b&ecirc;tise ; non, le nombre de <code>/dev/ram*</code> ce n&#8217;est pas le nombre de barettes de <span class="caps">RAM</span> sur un Linux. Pour connaitre ce genre d&#8217;info, <code>lshw</code> ou <code>dmidecode</code> sont plus adapt&eacute;s. En reformattant la sortie avec <code>ruby</code>, on obtient quelque chose de ce genre :</p>
+<h1>Connaître sa RAM</h1>
+
+<p>J’apprendrai la prochaine fois à tourner 7 fois ma langue dans ma bouche avant de dire une bêtise ; non, le nombre de <code>/dev/ram*</code> ce n’est pas
+le nombre de barettes de <span class="caps">RAM</span> sur un Linux. Pour connaitre ce genre d’info, <code>lshw</code> ou <code>dmidecode</code> sont plus
+adaptés. En reformattant la sortie avec <code>ruby</code>, on obtient quelque chose de ce genre :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sudo dmidecode | ruby -ne <span class="s"><span class="dl">'</span><span class="k">( a=[]; 12.times{a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class="k">*(.*)/).first }; puts a.compact.join(&quot;/&quot;) ) if $_.match /Memory Device$/</span><span class="dl">'</span></span> | uniq -c</pre></div>
-</div><p>Par charit&eacute;, je vous fais la m&ecirc;me en lisible :</p>
+  <div class="code">
+    <pre>
+sudo dmidecode | ruby -ne <span class="s"><span class="dl">'</span><span class=
+"k">( a=[]; 12.times{a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class=
+"k">*(.*)/).first }; puts a.compact.join("/") ) if $_.match /Memory Device$/</span><span class="dl">'</span></span> | uniq -c
+  </div>
+</div>
+
+<p>Par charité, je vous fais la même en lisible :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sudo dmidecode | \
-  ruby -ne <span class="s"><span class="dl">'</span><span class="k">\
-</span><span class="k">    ( a=[]; </span><span class="k">\
-</span><span class="k">      12.times {
-        a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class="k">*(.*)/).first </span><span class="k">\
-</span><span class="k">      }; </span><span class="k">\
-</span><span class="k">      puts a.compact.join(&quot;/&quot;) </span><span class="k">\
-</span><span class="k">    ) if $_.match /Memory Device$/</span><span class="k">\
-</span><span class="k">  </span><span class="dl">'</span></span> | uniq -c</pre></div>
-</div><p>Sur mon NC10:</p>
+  <div class="code">
+    <pre>
+sudo dmidecode | \
+ruby -ne <span class="s"><span class="dl">'</span><span class="k">\
+      a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class="k">*(.*)/).first </span><span class="k">\
+  </div>
+</div>
+
+<p>Sur mon NC10:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>      1 2048 MB/DDR2/533 MHz (1.9 ns)
-      1 No Module Installed/DDR2/533 MHz (1.9 ns)</pre></div>
-</div><p>Et sur un serveur du boulot:</p>
+  <div class="code">
+    <pre>
+    1 2048 MB/DDR2/533 MHz (1.9 ns)
+    1 No Module Installed/DDR2/533 MHz (1.9 ns)
+  </div>
+</div>
+
+<p>Et sur un serveur du boulot:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>      8 4096 MB/&lt;OUT OF SPEC&gt;/667 MHz (1.5 ns)
-     24 No Module Installed/&lt;OUT OF SPEC&gt;/Unknown</pre></div>
-</div><p>(3615 Jmelap&egrave;te)</p>
+  <div class="code">
+    <pre>
+    8 4096 MB/&lt;OUT OF SPEC&gt;/667 MHz (1.5 ns)
+   24 No Module Installed/&lt;OUT OF SPEC&gt;/Unknown
+  </div>
+</div>
+
+<p>(3615 Jmelapète)</p>
+
 <p>Hope this helps..</p>

@@ -2,17 +2,22 @@
 title: "De la simplicité de travailler des dates en Ruby"
 ---
 
-<h1>De la simplicité de travailler des dates en Ruby</h1><p>Imaginons qu&rsquo;on veuille ajouter 10000 jours au 26/06/2008. <em>Date.new(2008,6,26)</em> permet de cr&eacute;er un premier objet date. La m&eacute;thode &ldquo;+&rdquo; permet ensuite d&rsquo;ajouter des jours, et pour info &ldquo;&gt;&gt;&rdquo; d&rsquo;ajouter des mois. Modulo un <em>require &ldquo;Date&rdquo;</em> au d&eacute;but, on a tout ce qu&rsquo;il faut ! Il faut juste penser &agrave; faire un &ldquo;to_s&rdquo; &agrave; la fin pour sortir une chaine de caract&egrave;res, sauf si on utilise &ldquo;puts&rdquo; qui l&rsquo;appelle tout seul&hellip;</p>
-<p>Au final, m&ecirc;me pas besoin de faire un script, une oneliner suffit :</p>
+<h1>De la simplicité de travailler des dates en Ruby</h1>
+
+<p>Imaginons qu’on veuille ajouter 10000 jours au 26/06/2008. <em>Date.new(2008,6,26)</em> permet de créer un premier objet date. La méthode “+” permet
+ensuite d’ajouter des jours, et pour info “&gt;&gt;” d’ajouter des mois. Modulo un <em>require “Date”</em> au début, on a tout ce qu’il faut ! Il faut juste
+penser à faire un “to_s” à la fin pour sortir une chaine de caractères, sauf si on utilise “puts” qui l’appelle tout seul…</p>
+
+<p>Au final, même pas besoin de faire un script, une oneliner suffit :</p>
 <pre>
-root@vds# ruby -e &lsquo;require &ldquo;Date&rdquo;; puts Date.new(2008,6,26) + 10000&rsquo;
+root@vds# ruby -e ‘require “Date”; puts Date.new(2008,6,26) + 10000’
 2035-11-12
-</pre>
-<p>M&ecirc;me genre de solution pour trouver un &eacute;cart de dates, ou bien s&ucirc;r de nombres :</p>
+
+<p>Même genre de solution pour trouver un écart de dates, ou bien sûr de nombres :</p>
 <pre>
-root@vds# ruby -e &lsquo;require &ldquo;Date&rdquo;; puts Date.new(2008,9,19) &ndash; Date.new(2008,6,26)&rsquo;
+root@vds# ruby -e ‘require “Date”; puts Date.new(2008,9,19) – Date.new(2008,6,26)’
 85
-root@vds# ruby -e &lsquo;puts 10000 &ndash; 85&rsquo;
+root@vds# ruby -e ‘puts 10000 – 85’
 9915
-</pre>
-<p>Dans 10000 jours depuis le 26/06, c&rsquo;est &agrave; dire 9915 jours &agrave; compter d&rsquo;aujourd&rsquo;hui, nous serons le 12 novembre 2035 ! Merci Ruby :-)</p>
+
+<p>Dans 10000 jours depuis le 26/06, c’est à dire 9915 jours à compter d’aujourd’hui, nous serons le 12 novembre 2035 ! Merci Ruby :-)</p>

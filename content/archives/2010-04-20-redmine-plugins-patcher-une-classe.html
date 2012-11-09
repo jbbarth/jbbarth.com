@@ -2,65 +2,86 @@
 title: "Redmine Plugins #2 : patcher une classe de Redmine"
 ---
 
-<h1>Redmine Plugins #2 : patcher une classe de Redmine</h1><p>Il peut arriver qu&#8217;une classe de Redmine ne se comporte pas exactement comme vous le voudriez, ou que vous souhaitiez lui ajouter des propri&eacute;t&eacute;s.</p>
-<p>C&#8217;est d&eacute;crit en anglais sur la page <a href="http://www.redmine.org/wiki/1/Plugin_Internals#Extending-the-Redmine-Core">Plugin Internals / Extending the Redmine Core</a> du wiki officiel, qui renvoie vers la lecture de certains plugins d&#8217;Eric Davis pour des exemples.</p>
-<p>Petit appart&eacute;, je partage assez l&#8217;analyse selon laquelle il est quasi inutile de maintenir une <span class="caps">API</span> pour surcharger les mod&egrave;les / controlleurs. Cela dit, parfois les m&eacute;thodes sont extr&ecirc;mement longues et/ou sujettes &agrave; de fr&eacute;quents changements. Toute surcharge dans un plugin induit donc un risque pour les futures versions du core&#8230;</p>
-<p>Retour &agrave; nos moutons : admettons qu&#8217;on veuille ajouter au mod&egrave;le <code>Issue</code> une m&eacute;thode d&#8217;instance <code>whoami</code> qui retournerait &#8220;Je suis le ticket #<span class="caps">XXX</span>&#8221;. Exemple bidon, c&#8217;est pour la science.</p>
-<p>Si on applique ce que pr&eacute;conise Eric, &ccedil;a donne quelque chose de ce genre :</p>
+<h1>Redmine Plugins #2 : patcher une classe de Redmine</h1>
+
+<p>Il peut arriver qu’une classe de Redmine ne se comporte pas exactement comme vous le voudriez, ou que vous souhaitiez lui ajouter des propriétés.</p>
+
+<p>C’est décrit en anglais sur la page <a href="http://www.redmine.org/wiki/1/Plugin_Internals#Extending-the-Redmine-Core">Plugin Internals / Extending the
+Redmine Core</a> du wiki officiel, qui renvoie vers la lecture de certains plugins d’Eric Davis pour des exemples.</p>
+
+<p>Petit apparté, je partage assez l’analyse selon laquelle il est quasi inutile de maintenir une <span class="caps">API</span> pour surcharger les modèles /
+controlleurs. Cela dit, parfois les méthodes sont extrêmement longues et/ou sujettes à de fréquents changements. Toute surcharge dans un plugin induit donc
+un risque pour les futures versions du core…</p>
+
+<p>Retour à nos moutons : admettons qu’on veuille ajouter au modèle <code>Issue</code> une méthode d’instance <code>whoami</code> qui retournerait “Je suis
+le ticket #<span class="caps">XXX</span>”. Exemple bidon, c’est pour la science.</p>
+
+<p>Si on applique ce que préconise Eric, ça donne quelque chose de ce genre :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre><span class="c">#init.rb</span>
+  <div class="code">
+    <pre>
 require_dependency <span class="s"><span class="dl">'</span><span class="k">issue_patch</span><span class="dl">'</span></span>
-<span class="co">Dispatcher</span>.to_prepare <span class="r">do</span>
-  <span class="co">Issue</span>.send(<span class="sy">:include</span>, <span class="co">IssuePatch</span>) <span class="r">unless</span> <span class="co">Issue</span>.included_modules.include? <span class="co">IssuePatch</span>
-<span class="r">end</span>
+<span class="co">Issue</span>.send(<span class="sy">:include</span>, <span class="co">IssuePatch</span>) <span class="r">unless</span> <span class=
+"co">Issue</span>.included_modules.include? <span class="co">IssuePatch</span>
 
 
-<span class="c">#lib/issue_patch.rb</span>
 require_dependency <span class="s"><span class="dl">'</span><span class="k">issue</span><span class="dl">'</span></span>
 
-<span class="r">module</span> <span class="cl">IssuePatch</span>
-  <span class="r">def</span> <span class="pc">self</span>.included(base)
-    base.extend(<span class="co">ClassMethods</span>)
-    base.send(<span class="sy">:include</span>, <span class="co">InstanceMethods</span>)
-    base.class_eval <span class="r">do</span>
-      unloadable <span class="c">#permet de d&eacute;charger la classe en mode dev</span>
-    <span class="r">end</span>
+<span class="r">def</span> <span class="pc">self</span>.included(base)
+  base.extend(<span class="co">ClassMethods</span>)
+  base.send(<span class="sy">:include</span>, <span class="co">InstanceMethods</span>)
+  base.class_eval <span class="r">do</span>
+    unloadable <span class="c">#permet de décharger la classe en mode dev</span>
   <span class="r">end</span>
-  
-  <span class="c">#ici nos m&eacute;thodes de classe</span>
-  <span class="r">module</span> <span class="cl">ClassMethods</span>
-  <span class="r">end</span>
-  
-  <span class="c">#ici nos m&eacute;thodes d'instance</span>
-  <span class="r">module</span> <span class="cl">InstanceMethods</span>
-    <span class="r">def</span> <span class="fu">whoami</span>
-      <span class="s"><span class="dl">&quot;</span><span class="k">Je suis le ticket #</span><span class="il"><span class="idl">#{</span><span class="pc">self</span>.id<span class="idl">}</span></span><span class="dl">&quot;</span></span>
-    <span class="r">end</span>
-  <span class="r">end</span>    
-<span class="r">end</span></pre></div>
-</div>
-<p>Classique, mais comme diraient certains amis &#8220;on voit pas trop ce que &ccedil;a fait&#8221;.</p>
-<p>Personnellement je pr&eacute;f&egrave;re r&eacute;ouvrir la classe Issue, et &ccedil;a a l&#8217;air de marcher tout aussi bien (en dev et  en prod) :</p>
-<div class="CodeRay">
-  <div class="code"><pre><span class="c">#init.rb</span>
-config.to_prepare <span class="r">do</span>
-  require_dependency <span class="s"><span class="dl">'</span><span class="k">issue_patch</span><span class="dl">'</span></span>
 <span class="r">end</span>
 
+<span class="c">#ici nos méthodes de classe</span>
+<span class="r">module</span> <span class="cl">ClassMethods</span>
+<span class="r">end</span>
 
-<span class="c">#lib/issue_patch.rb</span>
-require_dependency <span class="s"><span class="dl">'</span><span class="k">issue</span><span class="dl">'</span></span>
-
-<span class="r">class</span> <span class="cl">Issue</span>
+<span class="c">#ici nos méthodes d'instance</span>
+<span class="r">module</span> <span class="cl">InstanceMethods</span>
   <span class="r">def</span> <span class="fu">whoami</span>
-    <span class="s"><span class="dl">&quot;</span><span class="k">Je suis le ticket #</span><span class="il"><span class="idl">#{</span><span class="pc">self</span>.id<span class="idl">}</span></span><span class="dl">&quot;</span></span>
+    <span class="s"><span class="dl">"</span><span class="k">Je suis le ticket #</span><span class="il"><span class="idl">#{</span><span class=
+"pc">self</span>.id<span class="idl">}</span></span><span class="dl">"</span></span>
   <span class="r">end</span>
-<span class="r">end</span></pre></div>
+<span class="r">end</span>    
+  </div>
 </div>
-<p>Diff&eacute;rences :</p>
+
+<p>Classique, mais comme diraient certains amis “on voit pas trop ce que ça fait”.</p>
+
+<p>Personnellement je préfère réouvrir la classe Issue, et ça a l’air de marcher tout aussi bien (en dev et en prod) :</p>
+
+<div class="CodeRay">
+  <div class="code">
+    <pre>
+config.to_prepare <span class="r">do</span>
+require_dependency <span class="s"><span class="dl">'</span><span class="k">issue_patch</span><span class="dl">'</span></span>
+
+
+require_dependency <span class="s"><span class="dl">'</span><span class="k">issue</span><span class="dl">'</span></span>
+
+<span class="r">def</span> <span class="fu">whoami</span>
+  <span class="s"><span class="dl">"</span><span class="k">Je suis le ticket #</span><span class="il"><span class="idl">#{</span><span class=
+"pc">self</span>.id<span class="idl">}</span></span><span class="dl">"</span></span>
+<span class="r">end</span>
+  </div>
+</div>
+
+<p>Différences :</p>
+
 <ol>
-	<li>utilisation de &#8220;config&#8221; au lieu de &#8220;Dispatcher&#8221; ; sans importance &agrave; mon avis. C&#8217;est discut&eacute; un peu <a href="http://robots.thoughtbot.com/post/159805560/tips-for-writing-your-own-rails-engine">ici</a>.</li>
-	<li>r&eacute;-ouverture de la classe plut&ocirc;t qu&#8217;inclusion d&#8217;un module ; je trouve &ccedil;a plus lisible pour ce coup-ci</li>
+  <li>utilisation de “config” au lieu de “Dispatcher” ; sans importance à mon avis. C’est discuté un peu <a href=
+  "http://robots.thoughtbot.com/post/159805560/tips-for-writing-your-own-rails-engine">ici</a>.</li>
+
+  <li>ré-ouverture de la classe plutôt qu’inclusion d’un module ; je trouve ça plus lisible pour ce coup-ci</li>
 </ol>
-<p>Attention, je ne dis pas que ce que fait Eric fonctionne moins bien. Au contraire, c&#8217;est peut-&ecirc;tre plus &#8220;propre&#8221;, mais n&#8217;&eacute;tant pas un d&eacute;veloppeur confirm&eacute;, si je ne comprends pas au premier coup d&#8217;oeil ce que j&#8217;ai fait, j&#8217;ai plus de mal &agrave; maintenir mon code.</p>
-<p>Au passage, c&#8217;est une mauvaise id&eacute;e d&#8217;appeler son patch &#8220;lib/issue_patch.rb&#8221;. Si tout le monde fait &ccedil;a, on ne pourra pas faire fonctionner 2 plugins qui patchent la m&ecirc;me classe en m&ecirc;me temps. Beurk. D&#8217;ailleurs, c&#8217;&eacute;tait le cas pour des plugins &agrave; moi, donc autant utiliser des noms <em>a priori uniques</em> : <a href="http://github.com/jbbarth/redmine_drafts/commit/ec06b82818cf0f49466b1b6404da02683e9bea16">commit redmine_drafts/ec06b8</a></p>
+
+<p>Attention, je ne dis pas que ce que fait Eric fonctionne moins bien. Au contraire, c’est peut-être plus “propre”, mais n’étant pas un développeur
+confirmé, si je ne comprends pas au premier coup d’oeil ce que j’ai fait, j’ai plus de mal à maintenir mon code.</p>
+
+<p>Au passage, c’est une mauvaise idée d’appeler son patch “lib/issue_patch.rb”. Si tout le monde fait ça, on ne pourra pas faire fonctionner 2 plugins qui
+patchent la même classe en même temps. Beurk. D’ailleurs, c’était le cas pour des plugins à moi, donc autant utiliser des noms <em>a priori uniques</em> :
+<a href="http://github.com/jbbarth/redmine_drafts/commit/ec06b82818cf0f49466b1b6404da02683e9bea16">commit redmine_drafts/ec06b8</a></p>

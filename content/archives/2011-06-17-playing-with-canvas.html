@@ -2,13 +2,45 @@
 title: "Playing with canvas"
 ---
 
-<h1>Playing with canvas</h1><p>Today I&#8217;m tired of server-side programming.. And yes, I&#8217;m looking at you, <span class="caps">SQL</span> ! It&#8217;s a pain to persist objects naturally when you have complex data structures. And switching to smarter alternatives such as Riak is not an option since I&#8217;m coding for $<span class="caps">WORK</span>. So I decided to work on something else.</p>
-<p>There are a lot of things to explore in my sysadmin world : high availability, security, monitoring, capacity planning, logs correlation, performance tuning, databases, automated deployments, networking, backups, storage, messaging, virtualization, config management, versionning, etc. There are also many subjects on the management or client relations sides : basically it&#8217;s everything that is treated under <span class="caps">ITIL</span>, including configuration database (<span class="caps">CMDB</span>), provisioning, treating support requests/incidents/problems/changes, building reporting/dashboards, contracts, etc.</p>
-<p>I don&#8217;t love them all the same way. I even hate a few of them because of the stupid way they&#8217;re treated. Anyway, I can&#8217;t explore all of the remaining ones. These days I&#8217;m really passionate about <span class="caps">CMDB</span> and config management, and how I can integrate it with the gazillions of tools we use every day. It&#8217;s a hard thing, and I think visualizing things is one of the major lack in today tools. There are some cool things in Service-Now though, but I&#8217;m not that rich (and the &#8220;diagrams&#8221; part is not worth the price).</p>
-<p>This night, I started to work on a visual output for the <span class="caps">CMDB</span> I build these days. I want to be able to build diagrams for the applications I host, at least semi-automatically. They should represent servers, arrows for network traffic, active/passive clustering, and basic components on each server. Later, I plan to make it dynamic so we can display either components, network parameters, physical machine, location, and maybe even integrate it with the monitoring system so that it eases problems resolution. But enough for the dreams.</p>
-<p>I started with a basic <code>canvas</code> and some <code>jQuery</code> to make elements &#8220;<em>draggable</em>&#8221;, with collision detection. I already had boxes, with some piece of code for dynamically drawing arrows between the boxes. Then with <code>ruby</code> and <code>erb</code>, I made it a bit more dynamic (data are in nested hashes/arrays for now, but it could well have been data extracted from a database). I added some intelligence (on the ruby side, maybe I&#8217;ll need to port it to javascript) to position elements automatically, depending on the number of elements on the line, and the elements type. Then I added signs to represent active/passive clusters (hearts for heartbeat and &#8220;R&#8221; for redhat clusters).</p>
-<p>Here&#8217;s the result for now :</p>
-<p style="text-align:center;"><img src="/assets/0000/0060/canvas-experiment.png" alt="" /></p>
-<p>Boxes are auto-positionned, draggable, they cannot collide, and they&#8217;re re-drawn with each drag event. Cluster signs don&#8217;t follow their boxes though, because boxes in a same cluster are not linked together for now.</p>
-<p>But now I have a problem : I&#8217;d like to be able to click on links between servers, to group elements, to provide animations&#8230; and it seems it&#8217;s not that easy with canvas. Tomorrow I&#8217;ll try to explore <span class="caps">SVG</span> with the awesome <a href="http://raphaeljs.com/">raphaeljs</a> library, and see where it leads.</p>
-<p>The second problem I have is my (very) limited skills in Javascript. My code is ugly and not so organized, not even tested. It&#8217;s mainly because I always find javascript syntax itself ugly. I&#8217;ll try to use <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a> as a therapy to build a smarter component, and if it looks good, I&#8217;ll put it on Github.</p>
+<h1>Playing with canvas</h1>
+
+<p>Today I’m tired of server-side programming.. And yes, I’m looking at you, <span class="caps">SQL</span> ! It’s a pain to persist objects naturally when
+you have complex data structures. And switching to smarter alternatives such as Riak is not an option since I’m coding for $<span class="caps">WORK</span>.
+So I decided to work on something else.</p>
+
+<p>There are a lot of things to explore in my sysadmin world : high availability, security, monitoring, capacity planning, logs correlation, performance
+tuning, databases, automated deployments, networking, backups, storage, messaging, virtualization, config management, versionning, etc. There are also many
+subjects on the management or client relations sides : basically it’s everything that is treated under <span class="caps">ITIL</span>, including
+configuration database (<span class="caps">CMDB</span>), provisioning, treating support requests/incidents/problems/changes, building reporting/dashboards,
+contracts, etc.</p>
+
+<p>I don’t love them all the same way. I even hate a few of them because of the stupid way they’re treated. Anyway, I can’t explore all of the remaining
+ones. These days I’m really passionate about <span class="caps">CMDB</span> and config management, and how I can integrate it with the gazillions of tools we
+use every day. It’s a hard thing, and I think visualizing things is one of the major lack in today tools. There are some cool things in Service-Now though,
+but I’m not that rich (and the “diagrams” part is not worth the price).</p>
+
+<p>This night, I started to work on a visual output for the <span class="caps">CMDB</span> I build these days. I want to be able to build diagrams for the
+applications I host, at least semi-automatically. They should represent servers, arrows for network traffic, active/passive clustering, and basic components
+on each server. Later, I plan to make it dynamic so we can display either components, network parameters, physical machine, location, and maybe even
+integrate it with the monitoring system so that it eases problems resolution. But enough for the dreams.</p>
+
+<p>I started with a basic <code>canvas</code> and some <code>jQuery</code> to make elements “<em>draggable</em>”, with collision detection. I already had
+boxes, with some piece of code for dynamically drawing arrows between the boxes. Then with <code>ruby</code> and <code>erb</code>, I made it a bit more
+dynamic (data are in nested hashes/arrays for now, but it could well have been data extracted from a database). I added some intelligence (on the ruby side,
+maybe I’ll need to port it to javascript) to position elements automatically, depending on the number of elements on the line, and the elements type. Then I
+added signs to represent active/passive clusters (hearts for heartbeat and “R” for redhat clusters).</p>
+
+<p>Here’s the result for now :</p>
+
+<p style="text-align:center;"><img src="/assets/0000/0060/canvas-experiment.png" alt=""></p>
+
+<p>Boxes are auto-positionned, draggable, they cannot collide, and they’re re-drawn with each drag event. Cluster signs don’t follow their boxes though,
+because boxes in a same cluster are not linked together for now.</p>
+
+<p>But now I have a problem : I’d like to be able to click on links between servers, to group elements, to provide animations… and it seems it’s not that
+easy with canvas. Tomorrow I’ll try to explore <span class="caps">SVG</span> with the awesome <a href="http://raphaeljs.com/">raphaeljs</a> library, and see
+where it leads.</p>
+
+<p>The second problem I have is my (very) limited skills in Javascript. My code is ugly and not so organized, not even tested. It’s mainly because I always
+find javascript syntax itself ugly. I’ll try to use <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a> as a therapy to build a smarter
+component, and if it looks good, I’ll put it on Github.</p>

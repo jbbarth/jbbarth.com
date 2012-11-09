@@ -2,24 +2,30 @@
 title: "Syntax Highlighting for Mephisto"
 ---
 
-<h1>Syntax Highlighting for Mephisto</h1><p>Je compl&egrave;terai un peu ce billet plus tard. Pour l&rsquo;heure, une d&eacute;marche sommaire pour mettre en place un module de syntax highlighting sur votre Mephisto&rsquo;blog.<br />
-Il existe de nombreuses autres m&eacute;thodes <em>a priori</em>, j&rsquo;en essayerai certainement quelques unes pour voir, pour des questions de performance et d&rsquo;&eacute;volutivit&eacute;, stay tuned :-)</p>
-<p>T&eacute;l&eacute;chargement :<br />
-<pre class="bash">$ cd /tmp
+<h1>Syntax Highlighting for Mephisto</h1>
+
+<p>Je complèterai un peu ce billet plus tard. Pour l’heure, une démarche sommaire pour mettre en place un module de syntax highlighting sur votre
+Mephisto’blog.<br>
+Il existe de nombreuses autres méthodes <em>a priori</em>, j’en essayerai certainement quelques unes pour voir, pour des questions de performance et
+d’évolutivité, stay tuned :-)</p>
+
+<p>Téléchargement :<br></p>
+<pre class="bash">
+$ cd /tmp
 $ wget http://syntaxhighlighter.googlecode.com/files/SyntaxHighlighter_1.5.1.rar
-$ mkdir sh && unrar e SyntaxHighlighter_1.5.1.rar sh/
-$ wget http://bboy.mr.freeze.googlepages.com/shBrushBash.js && mv shBrushBash.js sh/</pre></p>
+$ mkdir sh &amp;&amp; unrar e SyntaxHighlighter_1.5.1.rar sh/
+$ wget http://bboy.mr.freeze.googlepages.com/shBrushBash.js &amp;&amp; mv shBrushBash.js sh/
 
+<p>Intégration à Mephisto :<br></p>
+<pre class="bash">
+$ cd /home/app/mephisto
+$ mkdir public/javascripts/syntaxHighlighter/ &amp;&amp; cp /tmp/sh/*.js public/javascripts/syntaxHighlighter/
+$ mkdir public/stylesheets/syntaxHighlighter &amp;&amp; cp /tmp/sh/*.css public/stylesheets/syntaxHighlighter/
+$ mkdir public/flash &amp;&amp; cp /tmp/sh/*.swf public/flash/
 
-	<p>Int&eacute;gration &agrave; Mephisto :<br />
-<pre class="bash">$ cd /home/app/mephisto
-$ mkdir public/javascripts/syntaxHighlighter/ && cp /tmp/sh/*.js public/javascripts/syntaxHighlighter/
-$ mkdir public/stylesheets/syntaxHighlighter && cp /tmp/sh/*.css public/stylesheets/syntaxHighlighter/
-$ mkdir public/flash && cp /tmp/sh/*.swf public/flash/</pre></p>
-
-
-	<p>Ajouts dans layout.liquid :<br />
-<pre class="html">{{ 'syntaxHighlighter/SyntaxHighlighter' | stylesheet }}
+<p>Ajouts dans layout.liquid :<br></p>
+<pre class="html">
+{{ 'syntaxHighlighter/SyntaxHighlighter' | stylesheet }}
 {{ 'syntaxHighlighter/shCore' | javascript }}
 {{ 'syntaxHighlighter/shBrushRuby' | javascript }}
 {{ 'syntaxHighlighter/shBrushCss' | javascript }}
@@ -27,11 +33,9 @@ $ mkdir public/flash && cp /tmp/sh/*.swf public/flash/</pre></p>
 {{ 'syntaxHighlighter/shBrushBash' | javascript }}
 &lt;script language="javascript"&gt;
 window.onload = function () {
-    dp.SyntaxHighlighter.ClipboardSwf = '/flash/clipboard.swf';
-    dp.SyntaxHighlighter.HighlightAll('code');
+  dp.SyntaxHighlighter.ClipboardSwf = '/flash/clipboard.swf';
+  dp.SyntaxHighlighter.HighlightAll('code');
 }
 &lt;/script&gt;
-</pre></p>
 
-
-	<p>Et ensuite, il suffit d&rsquo;<a href="http://code.google.com/p/syntaxhighlighter/wiki/Usage">appliquer les r&egrave;gles d&rsquo;utilisation</a> dans vos articles.</p>
+<p>Et ensuite, il suffit d’<a href="http://code.google.com/p/syntaxhighlighter/wiki/Usage">appliquer les règles d’utilisation</a> dans vos articles.</p>

@@ -2,53 +2,116 @@
 title: "How to play with Rails 3.1 on Ubuntu with RVM"
 ---
 
-<h1>How to play with Rails 3.1 on Ubuntu with RVM</h1><p>Rails core team recently confirmed that Rails 3.1 will ship by default with <a href="http://jquery.com/">jQuery</a>, <a href="http://sass-lang.com/"><span class="caps">SASS</span></a> and <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a>. While Prototype replacement with jQuery is not controversial, this is not the case for <span class="caps">SASS</span> (a framework to <span class="caps">DRY</span> up your stylesheets) and CoffeeScript (a cleaner syntax on top of Javascript). Everything is explained <a href="http://www.rubyinside.com/rails-3-1-adopts-coffeescript-jquery-sass-and-controversy-4669.html">here</a>, and you can look at <a href="https://github.com/rails/rails/commit/9f09aeb8273177fc2d09ebdafcc76ee8eb56fe33">all the smart comments on the github commit</a>.</p>
-<p>RubyInside blog also published an excellent tutorial on <a href="http://www.rubyinside.com/how-to-rails-3-1-coffeescript-howto-4695.html">how to play with Rails 3.1 right now</a>. <strong>Read it first, I will not explain everything here</strong>, but I had 2 problems following the how-to.</p>
+<h1>How to play with Rails 3.1 on Ubuntu with RVM</h1>
+
+<p>Rails core team recently confirmed that Rails 3.1 will ship by default with <a href="http://jquery.com/">jQuery</a>, <a href=
+"http://sass-lang.com/"><span class="caps">SASS</span></a> and <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a>. While Prototype
+replacement with jQuery is not controversial, this is not the case for <span class="caps">SASS</span> (a framework to <span class="caps">DRY</span> up your
+stylesheets) and CoffeeScript (a cleaner syntax on top of Javascript). Everything is explained <a href=
+"http://www.rubyinside.com/rails-3-1-adopts-coffeescript-jquery-sass-and-controversy-4669.html">here</a>, and you can look at <a href=
+"https://github.com/rails/rails/commit/9f09aeb8273177fc2d09ebdafcc76ee8eb56fe33">all the smart comments on the github commit</a>.</p>
+
+<p>RubyInside blog also published an excellent tutorial on <a href="http://www.rubyinside.com/how-to-rails-3-1-coffeescript-howto-4695.html">how to play with
+Rails 3.1 right now</a>. <strong>Read it first, I will not explain everything here</strong>, but I had 2 problems following the how-to.</p>
+
 <p>First, install rails master branch (I use the awesome <a href="https://github.com/defunkt/hub">hub</a> wrapper for git) :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>cd ~/code
-git clone rails/rails</pre></div>
+  <div class="code">
+    <pre>
+cd ~/code
+git clone rails/rails
+  </div>
 </div>
+
 <p>Then create a gemset with <span class="caps">RVM</span> :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>rvm use 1.9.2@yourapp --create
-gem install i18n thor bundler</pre></div>
+  <div class="code">
+    <pre>
+rvm use 1.9.2@yourapp --create
+gem install i18n thor bundler
+  </div>
 </div>
+
 <p>Then we can create our rails app:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>./rails/bin/rails new yourapp --edge
-cd yourapp</pre></div>
+  <div class="code">
+    <pre>
+./rails/bin/rails new yourapp --edge
+cd yourapp
+  </div>
 </div>
+
 <p>Unfortunately, I had 2 problems with this application.</p>
+
 <p>First, the <code>rails</code> binary installed in $GEM_HOME/bin is not fully functional :</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% rails -v
-/usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:762:in `report_activate_error': Could not find RubyGem rails (&gt;= 0) (Gem::LoadError)
-        from /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:219:in `activate'
-        from /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:1065:in `gem'
-        from /usr/local/rvm/gems/ruby-1.9.2-p180@yourapp/bin/rails:18:in `&lt;main&gt;'</pre></div>
-</div>
-<p>The simplest way to solve this is a shell alias:</p>
-<div class="CodeRay">
-  <div class="code"><pre>% alias rails=$GEM_HOME/bundler/gems/rails-*/bin/rails
+  <div class="code">
+    <pre>
 % rails -v
-Rails 3.1.0.beta</pre></div>
+/usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:762:in `report_activate_error': Could not find RubyGem rails (&gt;= 0) (Gem::LoadError)
+      from /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:219:in `activate'
+      from /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:1065:in `gem'
+      from /usr/local/rvm/gems/ruby-1.9.2-p180@yourapp/bin/rails:18:in `&lt;main&gt;'
+  </div>
 </div>
+
+<p>The simplest way to solve this is a shell alias:</p>
+
+<div class="CodeRay">
+  <div class="code">
+    <pre>
+% alias rails=$GEM_HOME/bundler/gems/rails-*/bin/rails
+% rails -v
+Rails 3.1.0.beta
+  </div>
+</div>
+
 <p>With this, I could make the application run, with <span class="caps">SASS</span> support, good.</p>
-<p>But CoffeeScript didn&#8217;t work. When I tried to introduce an <code>app/assets/javascripts/awesome.js.coffee</code> script, nothing happened, no alert. I had the following error instead of a normal <code>application.js</code> file:</p>
+
+<p>But CoffeeScript didn’t work. When I tried to introduce an <code>app/assets/javascripts/awesome.js.coffee</code> script, nothing happened, no alert. I had
+the following error instead of a normal <code>application.js</code> file:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>ExecJS::RuntimeError
-Could not find a JavaScript runtime</pre></div>
+  <div class="code">
+    <pre>
+ExecJS::RuntimeError
+Could not find a JavaScript runtime
+  </div>
 </div>
-<p>The error is thrown by the ExecJS gem. It tries to find the best javascript runtime among those listed <a href="https://github.com/sstephenson/execjs/blob/master/README.md">in the <span class="caps">README</span></a>. There&#8217;s at least one included in MacOS X, but as a Ubuntu user, I have none. I tried to install <code>therubyracer</code> and <code>mustang</code>, but 1/ it took a very long time (compilation of native code on a netbook), 2/ it led me to other errors I had not been able to understand. The simplest way I found to get a working JS runtime is the <code>nodejs</code> package of the distribution:</p>
+
+<p>The error is thrown by the ExecJS gem. It tries to find the best javascript runtime among those listed <a href=
+"https://github.com/sstephenson/execjs/blob/master/README.md">in the <span class="caps">README</span></a>. There’s at least one included in MacOS X, but as a
+Ubuntu user, I have none. I tried to install <code>therubyracer</code> and <code>mustang</code>, but 1/ it took a very long time (compilation of native code
+on a netbook), 2/ it led me to other errors I had not been able to understand. The simplest way I found to get a working JS runtime is the
+<code>nodejs</code> package of the distribution:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>% sudo aptitude install nodejs</pre></div>
+  <div class="code">
+    <pre>
+% sudo aptitude install nodejs
+  </div>
 </div>
+
 <p>Restart the Rails server, and everything should work smoothly now!</p>
+
 <p>You can forget the advices in the CoffeeScript section, the application.js is already good with <code>//= require blah</code> at the beginning.</p>
-<p>One last thing, you should note this Rails version is pre-beta. Some things may not work. For instance, the scaffold generators gives you an <code>app/assets/javascripts/&lt;controller&gt;.js.coffee</code> with 3 comment lines starting with <code>//</code> instead of <code>#</code>, resulting in this kind of errors:</p>
+
+<p>One last thing, you should note this Rails version is pre-beta. Some things may not work. For instance, the scaffold generators gives you an
+<code>app/assets/javascripts/&lt;controller&gt;.js.coffee</code> with 3 comment lines starting with <code>//</code> instead of <code>#</code>, resulting in
+this kind of errors:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>Error: Parse error on line 1: Unexpected 'MATH'</pre></div>
+  <div class="code">
+    <pre>
+Error: Parse error on line 1: Unexpected 'MATH'
+  </div>
 </div>
-<p>Don&#8217;t know if it&#8217;s a Rails or ExecJS bug though. But the conclusion is the same: use with caution.</p>
-<p>I&#8217;m really excited with the upcoming features in Rails 3.1, particularly automatic reloading and engines support. It was pretty fun to see all this rage around CoffeeScript and <span class="caps">SASS</span>, both seem nice, productive, and are easy to disable. I can&#8217;t wait to try a RC version !</p>
+
+<p>Don’t know if it’s a Rails or ExecJS bug though. But the conclusion is the same: use with caution.</p>
+
+<p>I’m really excited with the upcoming features in Rails 3.1, particularly automatic reloading and engines support. It was pretty fun to see all this rage
+around CoffeeScript and <span class="caps">SASS</span>, both seem nice, productive, and are easy to disable. I can’t wait to try a RC version !</p>

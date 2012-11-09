@@ -2,50 +2,100 @@
 title: "Trying CloudFoundry with Vagrant ... and some patience"
 ---
 
-<h1>Trying CloudFoundry with Vagrant ... and some patience</h1><p>This post is an updated, working and complete version of an older one I published mistakenly.</p>
-<p>I suppose you have a functional ruby env for installing <a href="http://vagrantup.com/">Vagrant</a>, and that you have <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox v4.1</a> already installed.</p>
-<p>Let&#8217;s go!</p>
+<h1>Trying CloudFoundry with Vagrant ... and some patience</h1>
+
+<p>This post is an updated, working and complete version of an older one I published mistakenly.</p>
+
+<p>I suppose you have a functional ruby env for installing <a href="http://vagrantup.com/">Vagrant</a>, and that you have <a href=
+"https://www.virtualbox.org/wiki/Downloads">VirtualBox v4.1</a> already installed.</p>
+
+<p>Let’s go!</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>mkdir ~/cloudfoundry
+  <div class="code">
+    <pre>
+mkdir ~/cloudfoundry
 cd ~/cloudfoundry
 #(optional) rvm 1.9.2@vagrant --create
 gem install vagrant
 vagrant box add ubuntu-lucid-64 http://s3.lds.li/vagrant/lucid64.box
 vagrant init ubuntu-lucid-64
-vagrant up</pre></div>
+vagrant up
+  </div>
 </div>
-<p>NB: if you&#8217;re getting a <code>general protection fault: 0000 [#3] SMP</code> error, it might be the sign you&#8217;re running an other virtualization system on this host (see <a href="https://forums.virtualbox.org/viewtopic.php?f=7&amp;t=45130">this post about VirtualBox + kvm</a> errors)</p>
+
+<p>NB: if you’re getting a <code>general protection fault: 0000 [#3] SMP</code> error, it might be the sign you’re running an other virtualization system on
+this host (see <a href="https://forums.virtualbox.org/viewtopic.php?f=7&amp;t=45130">this post about VirtualBox + kvm</a> errors)</p>
+
 <p>Then connect to your VM with <code>vagrant ssh</code>.</p>
-<p>I used to install <span class="caps">RVM</span> manually and then install CloudFoundry step by step, manually too. But now the community provided a good install script, so let&#8217;s use it directly.</p>
+
+<p>I used to install <span class="caps">RVM</span> manually and then install CloudFoundry step by step, manually too. But now the community provided a good
+install script, so let’s use it directly.</p>
+
 <p>Before that, we should just fix a problem in our Vagrant image, the <code>/home/vagrant/.gem</code> is owned by <code>root:root</code>:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sudo chown vagrant:vagrant /home/vagrant/.gem -R</pre></div>
+  <div class="code">
+    <pre>
+sudo chown vagrant:vagrant /home/vagrant/.gem -R
+  </div>
 </div>
+
 <p>Then we follow the standard installation steps mentionned in the <a href="https://github.com/cloudfoundry/vcap"><span class="caps">README</span></a>:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sudo apt-get install curl -y
-bash &lt; &lt;(curl -s -k -B https://raw.github.com/cloudfoundry/vcap/master/setup/install)</pre></div>
+  <div class="code">
+    <pre>
+sudo apt-get install curl -y
+bash &lt; &lt;(curl -s -k -B https://raw.github.com/cloudfoundry/vcap/master/setup/install)
+  </div>
 </div>
-<p>When it&#8217;s finished (it lasted more than 1.5 hour on my old desktop computer!), log out and <code>vagrant ssh</code> again (so that your groups / env get reloaded).</p>
-<p>Before starting cloud foundry, I strongly encourage you to adapt the memory and <span class="caps">CPU</span> of your VM if you didn&#8217;t before (min 1G <span class="caps">RAM</span> and 4 cores for my setup).</p>
+
+<p>When it’s finished (it lasted more than 1.5 hour on my old desktop computer!), log out and <code>vagrant ssh</code> again (so that your groups / env get
+reloaded).</p>
+
+<p>Before starting cloud foundry, I strongly encourage you to adapt the memory and <span class="caps">CPU</span> of your VM if you didn’t before (min 1G
+<span class="caps">RAM</span> and 4 cores for my setup).</p>
+
 <p>Then I logged in again to the VM and prepared to start the whole thing:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>rvm rvmrc trust ~/cloudfoundry/vcap
+  <div class="code">
+    <pre>
+rvm rvmrc trust ~/cloudfoundry/vcap
 cd ~/cloudfoundry/vcap
-bin/vcap start #=&gt;BOOM :/</pre></div>
+bin/vcap start #=&gt;BOOM :/
+  </div>
 </div>
-<p>But I had problems at this point. I think I hit <a href="http://support.cloudfoundry.com/entries/20666892-workaround-cloud-controller-fails-to-start-when-using-install-method-from-vcap-readme">that bug</a>. You should run this commands before starting everything, it won&#8217;t hurt if you&#8217;re not in my case, because our instance is just a test instance so we don&#8217;t need to change default configuration choices:</p>
+
+<p>But I had problems at this point. I think I hit <a href=
+"http://support.cloudfoundry.com/entries/20666892-workaround-cloud-controller-fails-to-start-when-using-install-method-from-vcap-readme">that bug</a>. You
+should run this commands before starting everything, it won’t hurt if you’re not in my case, because our instance is just a test instance so we don’t need to
+change default configuration choices:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>sed -i 's#.*db:migrate.*#Dir.chdir(&quot;\#{File.dirname(__FILE__)}/../cloud_controller&quot;) { `bundle exec rake db:migrate` }#' bin/vcap</pre></div>
+  <div class="code">
+    <pre>
+sed -i 's#.*db:migrate.*#Dir.chdir("\#{File.dirname(__FILE__)}/../cloud_controller") { `bundle exec rake db:migrate` }#' bin/vcap
+  </div>
 </div>
+
 <p>Then you can finally start everything:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>cd ~/cloudfoundry/vcap
-bin/vcap start</pre></div>
+  <div class="code">
+    <pre>
+cd ~/cloudfoundry/vcap
+bin/vcap start
+  </div>
 </div>
+
 <p>You should see:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>router              :         RUNNING
+  <div class="code">
+    <pre>
+router              :         RUNNING
 cloud_controller    :         RUNNING
 dea                 :         RUNNING
 health_manager      :         RUNNING
@@ -57,39 +107,81 @@ mysql_node          :         RUNNING
 mongodb_gateway     :         RUNNING
 mongodb_node        :         RUNNING
 neo4j_gateway       :         RUNNING
-neo4j_node          :         RUNNING</pre></div>
+neo4j_node          :         RUNNING
+  </div>
 </div>
-<p>Some components may appear as &#8220;<span class="caps">STOPPED</span>&#8221; if your VM is too slow (cloud_controller in my case). So maybe it&#8217;s a good idea to issue a <code>bin/vcap status</code> afterwards to see if everything has booted properly. If not, you can restart a specific service like that: <code>bin/vcap start cloud_controller</code>. It&#8217;s probably a good idea to watch the log &#8216;live&#8217; too: <code>bin/vcap tail</code> to detect any problem. Be careful, it&#8217;s really verbose.</p>
-<p>One other step, you need to make a local <span class="caps">SSL</span> tunnel so that commands sent to <code>api.vcap.me</code> (a conventional domain in cloud foundry ecosystem, which resolves to 127.0.0.1) are forwarded to the VM. If you find a solution to forward your local 80 port to the VM one, go ahead. But communicating to your vagrant VM directly didn&#8217;t seem to be that easy for me, so I uncommented the <code>config.vm.forward_port</code> (forward local 8080 to VM&#8217;s 80) in the Vagrantfile, restarted the VM (<code>vagrant halt; vagrant up</code>), and started CF services as described above.</p>
-<p>When everything&#8217;s ok, log out and, from the host:</p>
+
+<p>Some components may appear as “<span class="caps">STOPPED</span>” if your VM is too slow (cloud_controller in my case). So maybe it’s a good idea to issue
+a <code>bin/vcap status</code> afterwards to see if everything has booted properly. If not, you can restart a specific service like that: <code>bin/vcap
+start cloud_controller</code>. It’s probably a good idea to watch the log ‘live’ too: <code>bin/vcap tail</code> to detect any problem. Be careful, it’s
+really verbose.</p>
+
+<p>One other step, you need to make a local <span class="caps">SSL</span> tunnel so that commands sent to <code>api.vcap.me</code> (a conventional domain in
+cloud foundry ecosystem, which resolves to 127.0.0.1) are forwarded to the VM. If you find a solution to forward your local 80 port to the VM one, go ahead.
+But communicating to your vagrant VM directly didn’t seem to be that easy for me, so I uncommented the <code>config.vm.forward_port</code> (forward local
+8080 to VM’s 80) in the Vagrantfile, restarted the VM (<code>vagrant halt; vagrant up</code>), and started CF services as described above.</p>
+
+<p>When everything’s ok, log out and, from the host:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>gem install vmc
+  <div class="code">
+    <pre>
+gem install vmc
 vmc target api.vcap.me:8080
-vmc info</pre></div>
+vmc info
+  </div>
 </div>
+
 <p>You should see something like:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>VMware's Cloud Application Platform
+  <div class="code">
+    <pre>
+VMware's Cloud Application Platform
 For support visit http://support.cloudfoundry.com
 
 Target:   http://api.vcap.me:8080 (v0.999)
-Client:   v0.3.14</pre></div>
+Client:   v0.3.14
+  </div>
 </div>
+
 <p>Now we can (finally!) play with your new toy. First register and login:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>vmc register --email foo@bar.com --passwd password
-vmc login --email foo@bar.com --passwd password</pre></div>
+  <div class="code">
+    <pre>
+vmc register --email foo@bar.com --passwd password
+vmc login --email foo@bar.com --passwd password
+  </div>
 </div>
+
 <p>And build our first app (adapted from the <span class="caps">README</span>):</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>mkdir env &amp;&amp; cd env
-echo -e &quot;require 'rubygems'\nrequire 'sinatra'\nget('/'){ host = ENV['VMC_APP_HOST']; port = ENV['VMC_APP_PORT']; %(&lt;h1&gt;XXXXX Hello from the Cloud! via: #{host}:#{port}&lt;/h1&gt;) }&quot; &gt; env.rb</pre></div>
+  <div class="code">
+    <pre>
+mkdir env &amp;&amp; cd env
+echo -e "require 'rubygems'\nrequire 'sinatra'\nget('/'){ host = ENV['VMC_APP_HOST']; port = ENV['VMC_APP_PORT']; %(&lt;h1&gt;XXXXX Hello from the Cloud! via: #{host}:#{port}&lt;/h1&gt;) }" &gt; env.rb
+  </div>
 </div>
+
 <p>Then deploy it, as easy as:</p>
+
 <div class="CodeRay">
-  <div class="code"><pre>vmc push env --instances 4 --mem 64M --url env.vcap.me -n</pre></div>
+  <div class="code">
+    <pre>
+vmc push env --instances 4 --mem 64M --url env.vcap.me -n
+  </div>
 </div>
-<p>In case it doesn&#8217;t work, and you want to consult logs manually, apps are stored in <code>/var/vcap.local/dea/apps/</code> in the VM. Note that you can see an Error on startup even if the application starts correctly, don&#8217;t know why.</p>
-<p>Anyway, the result in <a href="http://env.vcap.me:8080/">http://env.vcap.me:8080/</a> should be OK, you&#8217;ll see your four instances answer alternatively like a charm.</p>
+
+<p>In case it doesn’t work, and you want to consult logs manually, apps are stored in <code>/var/vcap.local/dea/apps/</code> in the VM. Note that you can see
+an Error on startup even if the application starts correctly, don’t know why.</p>
+
+<p>Anyway, the result in <a href="http://env.vcap.me:8080/">http://env.vcap.me:8080/</a> should be OK, you’ll see your four instances answer alternatively
+like a charm.</p>
+
 <p>Run <code>vmc help</code> if you want to scale the app because of an excessive load!</p>
-<p>Conclusion: the product seems great, but it&#8217;s not really well-documented and it can be hard to find informations or people with the same problems. Community seems to be super-reactive tho. In the past I tried to play with more complex app (rails+mysql) and had other problems, so I let you test and see if you&#8217;re happy with CloudFoundry.</p>
+
+<p>Conclusion: the product seems great, but it’s not really well-documented and it can be hard to find informations or people with the same problems.
+Community seems to be super-reactive tho. In the past I tried to play with more complex app (rails+mysql) and had other problems, so I let you test and see
+if you’re happy with CloudFoundry.</p>

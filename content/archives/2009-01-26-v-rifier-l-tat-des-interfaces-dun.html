@@ -2,70 +2,75 @@
 title: "Vérifier l'état des interfaces d'un switch fibre"
 ---
 
-<h1>Vérifier l'état des interfaces d'un switch fibre</h1><p>L&agrave; o&ugrave; je bosse, on a la chance (?) de disposer d&#8217;un <a href="http://fr.wikipedia.org/wiki/R%C3%A9seau_de_stockage_SAN"><span class="caps">SAN</span></a>, c&#8217;est-&agrave;-dire d&#8217;un r&eacute;seau d&eacute;di&eacute; au stockage. En l&#8217;occurence c&#8217;est un r&eacute;seau fibre, et tous les flux passent par deux switches fibre McData Sphereon 4500&#8230; qu&#8217;il faut surveiller d&#8217;une mani&egrave;re ou d&#8217;une autre.</p>
-<p>En l&#8217;occurrence on surveille tout &ccedil;a par Nagios. L&#8217;ancien script (qui doit faire partie des nagios plugins du site officiel ?) v&eacute;rifiait les interfaces une par une, ce qui est g&ecirc;nant dans un environnement &eacute;volutif (oubli d&#8217;interfaces non surveill&eacute;es!). Il faisait d&#8217;autres choses (check trafic rx/tx, errors) que mon script ne fait pas, mais il ne demande qu&#8217;&agrave; &ecirc;tre am&eacute;lior&eacute; ;-)</p>
-<p>Voici donc un script de remplacement qui check toutes les interfaces d&#8217;un coup. Gros avantage : on passe les ports non branch&eacute;s en exception, mais si un port est vu &#8220;up&#8221; et qu&#8217;il est en exception le script sort en Critical. Cela force &agrave; maintenir la liste des exceptions &agrave; jour ;-)</p>
-<p>PS: Il faut bien s&ucirc;r que ruby soit install&eacute; sur votre serveur de supervision.</p>
+<h1>Vérifier l'état des interfaces d'un switch fibre</h1>
+
+<p>Là où je bosse, on a la chance (?) de disposer d’un <a href="http://fr.wikipedia.org/wiki/R%C3%A9seau_de_stockage_SAN"><span class="caps">SAN</span></a>,
+c’est-à-dire d’un réseau dédié au stockage. En l’occurence c’est un réseau fibre, et tous les flux passent par deux switches fibre McData Sphereon 4500…
+qu’il faut surveiller d’une manière ou d’une autre.</p>
+
+<p>En l’occurrence on surveille tout ça par Nagios. L’ancien script (qui doit faire partie des nagios plugins du site officiel ?) vérifiait les interfaces
+une par une, ce qui est gênant dans un environnement évolutif (oubli d’interfaces non surveillées!). Il faisait d’autres choses (check trafic rx/tx, errors)
+que mon script ne fait pas, mais il ne demande qu’à être amélioré ;-)</p>
+
+<p>Voici donc un script de remplacement qui check toutes les interfaces d’un coup. Gros avantage : on passe les ports non branchés en exception, mais si un
+port est vu “up” et qu’il est en exception le script sort en Critical. Cela force à maintenir la liste des exceptions à jour ;-)</p>
+
+<p>PS: Il faut bien sûr que ruby soit installé sur votre serveur de supervision.</p>
+
 <div class="CodeRay">
-  <div class="code"><pre><span class="c">#!/usr/bin/ruby</span>
+  <div class="code">
+    <pre>
 
-<span class="c"># Derni&egrave;re modif: 19/11/2008</span>
-<span class="c"># Script de test des ports pour les switches fibre</span>
-<span class="c"># Jean-Baptiste BARTH &lt;jeanbaptiste.barth@gmail.com&gt;</span>
 
-<span class="c"># Remonter les infos &agrave; la main (sous l'user &quot;nagios&quot;)</span>
-<span class="c"># $ snmpwalk -c public -v 2c switch_san_a .1.3.6.1.4.1.289.2.1.1.2.3.1.1.2</span>
-<span class="c">#       SNMPv2-SMI::enterprises.289.2.1.1.2.3.1.1.2.1 = INTEGER: 2</span>
-<span class="c">#       SNMPv2-SMI::enterprises.289.2.1.1.2.3.1.1.2.2 = INTEGER: 2</span>
-<span class="c"># ...</span>
-<span class="c"># =&gt; 2 = OK, 6 = down, 13 = info not available</span>
 
-<span class="r">unless</span> <span class="pc">ARGV</span>.length &gt;= <span class="i">2</span> &amp;&amp; <span class="pc">ARGV</span>.length &lt;= <span class="i">3</span>
-  puts <span class="s"><span class="dl">&quot;</span><span class="k">Mauvais format :</span><span class="dl">&quot;</span></span>
-  puts <span class="s"><span class="dl">&quot;</span><span class="ch">\t</span><span class="k">./check_fc_setra.rb HOST COMMUNITY [EXCLUSIONS]</span><span class="dl">&quot;</span></span>
-  puts <span class="s"><span class="dl">&quot;</span><span class="k">Les ports exclus &eacute;vitent des remont&eacute;es d'alertes pour les ports non branch&eacute;s.</span><span class="dl">&quot;</span></span>
-  puts <span class="s"><span class="dl">&quot;</span><span class="k">Exemple: ./check_fc_setra.rb switch_san_a public 1,4,9</span><span class="dl">&quot;</span></span>
-  exit <span class="i">2</span>
-<span class="r">end</span>
+"pc">ARGV</span>.length &lt;= <span class="i">3</span>
+puts <span class="s"><span class="dl">"</span><span class="k">Mauvais format :</span><span class="dl">"</span></span>
+puts <span class="s"><span class="dl">"</span><span class="ch">\t</span><span class="k">./check_fc_setra.rb HOST COMMUNITY [EXCLUSIONS]</span><span class=
+"dl">"</span></span>
+puts <span class="s"><span class="dl">"</span><span class=
+"k">Les ports exclus évitent des remontées d'alertes pour les ports non branchés.</span><span class="dl">"</span></span>
+puts <span class="s"><span class="dl">"</span><span class="k">Exemple: ./check_fc_setra.rb switch_san_a public 1,4,9</span><span class="dl">"</span></span>
+exit <span class="i">2</span>
 
-<span class="c"># Valeurs prises dans utils.sh</span>
-<span class="co">STATE_OK</span>=<span class="i">0</span>
-<span class="co">STATE_WARNING</span>=<span class="i">1</span>
-<span class="co">STATE_CRITICAL</span>=<span class="i">2</span>
-<span class="co">STATE_UNKNOWN</span>=<span class="i">3</span>
-<span class="co">STATE_DEPENDENT</span>=<span class="i">4</span>
 
-<span class="c"># Parsing arguments</span>
 host = <span class="pc">ARGV</span>.shift
 community = <span class="pc">ARGV</span>.shift
-exclusions = (<span class="pc">ARGV</span>.shift || <span class="s"><span class="dl">&quot;</span><span class="k">none</span><span class="dl">&quot;</span></span>).split(<span class="s"><span class="dl">&quot;</span><span class="k">,</span><span class="dl">&quot;</span></span>)
+exclusions = (<span class="pc">ARGV</span>.shift || <span class="s"><span class="dl">"</span><span class="k">none</span><span class=
+"dl">"</span></span>).split(<span class="s"><span class="dl">"</span><span class="k">,</span><span class="dl">"</span></span>)
 
-<span class="c"># Passage de la commande</span>
-command = <span class="sh"><span class="dl">`</span><span class="k">snmpwalk -c </span><span class="il"><span class="idl">#{</span>community<span class="idl">}</span></span><span class="k"> -v 2c </span><span class="il"><span class="idl">#{</span>host<span class="idl">}</span></span><span class="k"> .1.3.6.1.4.1.289.2.1.1.2.3.1.1.2</span><span class="dl">`</span></span>
+command = <span class="sh"><span class="dl">`</span><span class="k">snmpwalk -c </span><span class="il"><span class="idl">#{</span>community<span class=
+"idl">}</span></span><span class="k"> -v 2c </span><span class="il"><span class="idl">#{</span>host<span class="idl">}</span></span><span class=
+"k"> .1.3.6.1.4.1.289.2.1.1.2.3.1.1.2</span><span class="dl">`</span></span>
 result = []
 command.each <span class="r">do</span> |line|
-  <span class="c">#puts &quot;DEBUG snmpwalk: &quot;+line</span>
-  matches = line.match <span class="rx"><span class="dl">/</span><span class="ch">\.</span><span class="k">(</span><span class="ch">\d</span><span class="k">+) = INTEGER: (</span><span class="ch">\d</span><span class="k">+)</span><span class="dl">/</span></span>
-  result.push [matches[<span class="i">1</span>], matches[<span class="i">2</span>]]
-<span class="r">end</span>
+<span class="c">#puts "DEBUG snmpwalk: "+line</span>
+matches = line.match <span class="rx"><span class="dl">/</span><span class="ch">\.</span><span class="k">(</span><span class="ch">\d</span><span class=
+"k">+) = INTEGER: (</span><span class="ch">\d</span><span class="k">+)</span><span class="dl">/</span></span>
+result.push [matches[<span class="i">1</span>], matches[<span class="i">2</span>]]
 
-<span class="c"># Traitement de la sortie</span>
 not_ignored = result.select{|x| !exclusions.include? x[<span class="i">0</span>]}
-interfaces_down = not_ignored.select{|v| v[<span class="i">1</span>] == <span class="s"><span class="dl">&quot;</span><span class="k">6</span><span class="dl">&quot;</span></span>}.map{|x| x[<span class="i">0</span>]}
-interfaces_ok = not_ignored.select{|v| v[<span class="i">1</span>] == <span class="s"><span class="dl">&quot;</span><span class="k">2</span><span class="dl">&quot;</span></span>}.map{|x| x[<span class="i">0</span>]}
+interfaces_down = not_ignored.select{|v| v[<span class="i">1</span>] == <span class="s"><span class="dl">"</span><span class="k">6</span><span class=
+"dl">"</span></span>}.map{|x| x[<span class="i">0</span>]}
+interfaces_ok = not_ignored.select{|v| v[<span class="i">1</span>] == <span class="s"><span class="dl">"</span><span class="k">2</span><span class=
+"dl">"</span></span>}.map{|x| x[<span class="i">0</span>]}
 interfaces_unknown = not_ignored.map{|x| x[<span class="i">0</span>]} - interfaces_ok - interfaces_down
-interfaces_ok_not_normal = (result - not_ignored).select{|v| v[<span class="i">1</span>] == <span class="s"><span class="dl">&quot;</span><span class="k">2</span><span class="dl">&quot;</span></span>}.map{|x| x[<span class="i">0</span>]}
-<span class="c"># Output</span>
-puts <span class="s"><span class="dl">&quot;</span><span class="k">Link DOWN on interfaces : </span><span class="dl">&quot;</span></span>+interfaces_down.join(<span class="s"><span class="dl">&quot;</span><span class="k">,</span><span class="dl">&quot;</span></span>) <span class="r">unless</span> interfaces_down.empty?
-puts <span class="s"><span class="dl">&quot;</span><span class="k">Link UP on IGNORED interfaces : </span><span class="dl">&quot;</span></span>+interfaces_ok_not_normal.join(<span class="s"><span class="dl">&quot;</span><span class="k">,</span><span class="dl">&quot;</span></span>)+<span class="s"><span class="dl">&quot;</span><span class="ch">\n</span><span class="k">!!!CHANGE THE SERVICE CONFIG!!!</span><span class="dl">&quot;</span></span> <span class="r">unless</span> interfaces_ok_not_normal.empty?
-puts <span class="s"><span class="dl">&quot;</span><span class="k">State UNKNOWN : </span><span class="dl">&quot;</span></span>+interfaces_unknown.join(<span class="s"><span class="dl">&quot;</span><span class="k">,</span><span class="dl">&quot;</span></span>) <span class="r">unless</span> interfaces_unknown.empty?
-puts <span class="s"><span class="dl">&quot;</span><span class="k">Link UP on interfaces : </span><span class="dl">&quot;</span></span>+interfaces_ok.join(<span class="s"><span class="dl">&quot;</span><span class="k">,</span><span class="dl">&quot;</span></span>) <span class="r">unless</span> interfaces_ok.empty?
-puts <span class="s"><span class="dl">&quot;</span><span class="k">Ignored: </span><span class="dl">&quot;</span></span>+exclusions.join(<span class="s"><span class="dl">&quot;</span><span class="k">,</span><span class="dl">&quot;</span></span>)
-<span class="r">if</span> !interfaces_down.empty? || !interfaces_ok_not_normal.empty?
-  exit <span class="co">STATE_CRITICAL</span>
-<span class="r">elsif</span> !interfaces_unknown.empty?
-  exit <span class="co">STATE_UNKNOWN</span>
-<span class="r">else</span>
-  exit <span class="co">STATE_OK</span>
-<span class="r">end</span></pre></div>
+interfaces_ok_not_normal = (result - not_ignored).select{|v| v[<span class="i">1</span>] == <span class="s"><span class="dl">"</span><span class=
+"k">2</span><span class="dl">"</span></span>}.map{|x| x[<span class="i">0</span>]}
+puts <span class="s"><span class="dl">"</span><span class="k">Link DOWN on interfaces : </span><span class=
+"dl">"</span></span>+interfaces_down.join(<span class="s"><span class="dl">"</span><span class="k">,</span><span class="dl">"</span></span>) <span class=
+"r">unless</span> interfaces_down.empty?
+puts <span class="s"><span class="dl">"</span><span class="k">Link UP on IGNORED interfaces : </span><span class=
+"dl">"</span></span>+interfaces_ok_not_normal.join(<span class="s"><span class="dl">"</span><span class="k">,</span><span class=
+"dl">"</span></span>)+<span class="s"><span class="dl">"</span><span class="ch">\n</span><span class="k">!!!CHANGE THE SERVICE CONFIG!!!</span><span class=
+"dl">"</span></span> <span class="r">unless</span> interfaces_ok_not_normal.empty?
+puts <span class="s"><span class="dl">"</span><span class="k">State UNKNOWN : </span><span class="dl">"</span></span>+interfaces_unknown.join(<span class=
+"s"><span class="dl">"</span><span class="k">,</span><span class="dl">"</span></span>) <span class="r">unless</span> interfaces_unknown.empty?
+puts <span class="s"><span class="dl">"</span><span class="k">Link UP on interfaces : </span><span class="dl">"</span></span>+interfaces_ok.join(<span class=
+"s"><span class="dl">"</span><span class="k">,</span><span class="dl">"</span></span>) <span class="r">unless</span> interfaces_ok.empty?
+puts <span class="s"><span class="dl">"</span><span class="k">Ignored: </span><span class="dl">"</span></span>+exclusions.join(<span class="s"><span class=
+"dl">"</span><span class="k">,</span><span class="dl">"</span></span>)
+exit <span class="co">STATE_CRITICAL</span>
+exit <span class="co">STATE_UNKNOWN</span>
+exit <span class="co">STATE_OK</span>
+  </div>
 </div>
