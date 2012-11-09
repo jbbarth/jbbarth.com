@@ -1,0 +1,39 @@
+---
+title: "Remise à plat de mon Postfix"
+---
+
+<h1>Remise à plat de mon Postfix</h1><p>Sur mon serveur perso, j&#8217;ai des besoins simples en terme de mails :<br />
+1- envoyer des mails (relai local) n&#8217;importe o&ugrave;<br />
+2- recevoir des mails sur mes domaines (jbbarth.com et autres)</p>
+<p>Seulement voil&agrave;, &agrave; force de suivre des tutos &agrave; droite &agrave; gauche, de piquer des conseils d&#8217;un c&ocirc;t&eacute; et de l&#8217;autre, et surtout de me r&eacute;f&eacute;rer &agrave; la <a href="http://www.postfix.org/documentation.html">doc officielle Postfix</a>, impossible de s&#8217;y retrouver. Je relayais des centaines de spams par jour sans savoir pourquoi, de quoi s&#8217;arracher les cheveux.</p>
+<p>Premier coupable, <a href="http://www.postfix.org/">Postfix</a> : je ne me suis pas paluch&eacute; tous les <span class="caps">MAN</span> ni toute la doc officielle dans la longueur, mais apr&egrave;s en avoir lu une bonne partie, ce truc est d&#8217;une complexit&eacute; e-ffra-yante. OK, c&#8217;est puissant, mais apr&egrave;s ? En 1 ligne mal plac&eacute;e on fout toute une conf par terre, g&eacute;nial.</p>
+<p>Enfin en regardant autour, <a href="http://www.exim.org/">Exim</a> n&#8217;a pas l&#8217;air beaucoup plus simple bien qu&#8217;il m&#8217;attire nettement plus (&ccedil;a m&#8217;a l&#8217;air souple, sympa, c&#8217;est le choix Debian par d&eacute;faut, etc.).</p>
+<p>Vient le second coupable, moi : j&#8217;ai &eacute;dit&eacute; les confs &agrave; la main, en tatonnant. L&agrave;, je d&eacute;cide de rester sous Postfix, mais de chercher une doc bien foutue. Et l&agrave; hourra, merci Debian encore (&lt;3), je trouve <a href="http://wiki.debian.org/Postfix">cette page de wiki</a> ; voici donc :</p>
+<div class="CodeRay">
+  <div class="code"><pre>tar cvzf /home/salvor/postfix.tgz /etc/aliases* /etc/postfix/
+wajig remove &mdash;purge postfix
+wajig install postfix
+sudo -s
+tail /var/log/mail.log
+postconf -e &quot;myorigin = chanmasters.com&quot;
+postconf -e &quot;myhostname=$(hostname)&quot;
+postconf -e &quot;relay_domains = chanmasters.com, vds171.sivit.org, jbbarth.com, trollsports-trial.com&quot;
+postfix reload
+vi /etc/postfix/main.cf
+#ajout des restrictions propos&eacute;es sur le debian wiki
+vi /etc/aliases
+#on v&eacute;rifie que les aliases sont toujours en place
+#au besoin, un petit coup de &quot;newaliases&quot;
+postconf -e &quot;alias_maps = hash:/etc/aliases&quot;
+postfix reload
+echo &quot;test&quot; | mail -s &quot;1. Mail test to root&quot; root
+echo &quot;test&quot; | mail -s &quot;2. Mail test to webmaster@chanmasters.com&quot; webmaster@chanmasters.com
+echo &quot;test&quot; | mail -s &quot;3. Mail test to jeanbaptiste.barth@gmail.com&quot; jeanbaptiste.barth@gmail.com
+tail /var/log/mail.log
+#les trois mails semblent bien passer
+#ils sont bien arriv&eacute;s o&ugrave; il faut
+#m&ecirc;mes tests de l'ext&eacute;rieur
+tail /var/log/mail.log
+#idem, &ccedil;a roule \o/</pre></div>
+</div><p>:-)</p>
+<p><strong><span class="caps">EDIT</span></strong>: petit oopsie, j&#8217;ai rajout&eacute; l&#8217;option <code>permit_mynetworks</code> &agrave; la liste <code>smtpd_recipient_restrictions</code> (en premier), et pour des raisons pratiques (li&eacute;es au comportement par d&eacute;faut de Rails), j&#8217;ai d&eacute;sactiv&eacute; le <span class="caps">TLS</span> pour le moment. Et l&agrave;, &ccedil;a marche !</p>

@@ -1,0 +1,67 @@
+---
+title: "Redmine Plugins #3 : supporter plusieurs langues"
+---
+
+<h1>Redmine Plugins #3 : supporter plusieurs langues</h1><p>Redmine supporte &agrave; ce jour 37 langues. Si vous souhaitez diffuser votre plugin, c&#8217;est une bonne id&eacute;e de respecter les m&ecirc;mes conventions que le core, pour en faciliter les traductions, voire proposer plusieurs traductions de votre plugin directement. C&#8217;est ce que je fais par exemple pour mon plugin &#8220;Datacenter&#8221; que je livre en anglais et en fran&ccedil;ais (voir <a href="http://code.jbbarth.com/projects/redmine-datacenter/wiki/FrWiki">la page de wiki fran&ccedil;aise</a>).</p>
+<p>Pour cela, Redmine utilise l&#8217;internationalisation de Rails. Chaque mot ou groupe de mot qui doit &ecirc;tre traduit est associ&eacute; &agrave; une cl&eacute; unique. Chaque langue a son fichier <span class="caps">YAML</span> dans le dossier <code>config/locales/</code>, et dans ce fichier on indique que telle cl&eacute; correspond &agrave; telle chaine de caract&egrave;res. Par exemple, plut&ocirc;t que d&#8217;&eacute;crire &#8220;Mon super plugin&#8221; directement dans vos vus et helpers, vous allez lui associer une cl&eacute; de votre choix, mettons <code>text_my_super_plugin</code>.</p>
+<p>Dans la vue, vous pourrez utiliser le helper <code>l()</code> (un L minuscule) de cette fa&ccedil;on :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="il"><span class="idl">&lt;%=</span> l(<span class="sy">:text_my_super_plugin</span>) <span class="idl">%&gt;</span></span></pre></div>
+</div>
+<p>Ensuite vous devrez associer cette cl&eacute; &agrave; sa valeur pour chaque langue. Pour le fran&ccedil;ais, le fichier <code>config/locales/fr.yml</code> de votre plugin ressemblera &agrave; &ccedil;a :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="ke">fr</span>:
+  <span class="ke">text_my_super_plugin</span>: <span class="s">Mon super plugin</span></pre></div>
+</div>
+<p>Et vous pouvez traduire votre appli en anglais, en ajoutant un fichier <code>config/locales/en.yml</code> contenant :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="ke">en</span>:
+  <span class="ke">text_my_super_plugin</span>: <span class="s">My great plugin</span></pre></div>
+</div>
+<p>Pour un texte accentu&eacute; ou comportant des caract&egrave;res sp&eacute;ciaux, il suffira de mettre la chaine entre quotes pour &eacute;viter toute confusion lors de l&#8217;analyse du fichier. Attention &agrave; ce que votre fichier reste bien en UTF8 tout de m&ecirc;me.</p>
+<p>Si la traduction n&#8217;existe pas (fichier de langue manquant ou cl&eacute; inexistante dans la langue de l&#8217;utilisateur), Redmine affichera une erreur. C&#8217;est la que le helper <code>l_or_humanize</code> peut &ecirc;tre utile :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="il"><span class="idl">&lt;%=</span> l_or_humanize(<span class="sy">:super_plugin</span>) <span class="idl">%&gt;</span></span></pre></div>
+</div>
+<p>Si la cl&eacute; existe, elle sera remplac&eacute;e par sa traduction. Si non, Rails tentera d&#8217;en faire une chaine pour humain (remplacement des underscores par des espaces, majuscule &agrave; la premi&egrave;re lettre, etc.). En l&#8217;occurrence <code>Super plugin</code>.</p>
+<p>Pour les affichages de dates, heures, temps ou intervalles de temps, il existe des helpers beaucoup plus &eacute;volu&eacute;s que ceux pr&eacute;sent&eacute;s ci-dessus. Ils sont d&eacute;finis dans <code>lib/redmine/i18n.rb</code>. En voici une liste, ainsi que comment les tester dans une console Rails :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="s"><span class="dl">% </span><span class="k">ruby</span><span class="dl"> </span></span>script/console
+<span class="co">Loading</span> production environment (<span class="co">Rails</span> <span class="fl">2.3</span>.<span class="i">5</span>)
+&gt;&gt; include <span class="co">Redmine</span>::<span class="co">I18n</span>
+=&gt; <span class="co">Object</span>
+&gt;&gt; set_language_if_valid(<span class="s"><span class="dl">'</span><span class="k">fr</span><span class="dl">'</span></span>)
+=&gt; <span class="sy">:fr</span>
+&gt;&gt; l_hours(<span class="i">5</span>)
+=&gt; <span class="s"><span class="dl">&quot;</span><span class="k">5.00 heures</span><span class="dl">&quot;</span></span>
+&gt;&gt; format_date(<span class="co">Time</span>.now)
+=&gt; <span class="s"><span class="dl">&quot;</span><span class="k">26/04/2010</span><span class="dl">&quot;</span></span>
+&gt;&gt; format_time(<span class="co">Time</span>.now)
+=&gt; <span class="s"><span class="dl">&quot;</span><span class="k">26/04/2010 19:55</span><span class="dl">&quot;</span></span>
+&gt;&gt; day_name(<span class="i">1</span>)
+=&gt; <span class="s"><span class="dl">&quot;</span><span class="k">lundi</span><span class="dl">&quot;</span></span>
+&gt;&gt; month_name(<span class="i">3</span>)
+=&gt; <span class="s"><span class="dl">&quot;</span><span class="k">mars</span><span class="dl">&quot;</span></span></pre></div>
+</div>
+<p>A des fins de test, le helper <code>ll()</code> permet de pr&eacute;ciser d&#8217;abord la locale avant la cl&eacute; et ainsi de tester une cl&eacute; dans une locale particuli&egrave;re :</p>
+<div class="CodeRay">
+  <div class="code"><pre>&gt;&gt; ll(<span class="s"><span class="dl">&quot;</span><span class="k">fi</span><span class="dl">&quot;</span></span>, <span class="sy">:field_mail</span>)
+=&gt; <span class="s"><span class="dl">&quot;</span><span class="k">S&auml;hk&ouml;posti</span><span class="dl">&quot;</span></span></pre></div>
+</div>
+<p>Derni&egrave;re chose, il est possible d&#8217;utiliser des variables dans vos fichiers de langue. Ils seront interpol&eacute;s lors du rendu de la vue. Si vous n&#8217;avez qu&#8217;une variable &agrave; mettre, vous pouvez utiliser le nom &#8220;value&#8221; et passer la valeur dans votre vue directement en 2e argument de votre <code>l()</code>. Si vous avez 2 variables ou plus, il faut leur donner un nom et passer un hash en 2e argument de <code>l()</code> dans votre vue. Evidemment ces valeurs peuvent elles-m&ecirc;me faire appel &agrave; vos traductions pour &eacute;viter de dupliquer des traductions.</p>
+<p>Un exemple vaut mieux qu&#8217;un long discours. Avec ce fichier de langue :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="ke">fr</span>:
+  <span class="ke">label_draft_saved_time</span>: <span class="s"><span class="dl">&quot;</span><span class="k">Brouillon sauvegard&eacute; &agrave; {{value}}</span><span class="dl">&quot;</span></span>
+  <span class="ke">label_draft_pending</span>: <span class="s"><span class="dl">&quot;</span><span class="k">Brouillon en attente, sauvegard&eacute; il y a {{time}} : {{restore}} ou {{delete}}</span><span class="dl">&quot;</span></span>
+  <span class="ke">label_draft_restore</span>: <span class="s"><span class="dl">&quot;</span><span class="k">restaurer</span><span class="dl">&quot;</span></span>
+  <span class="ke">label_draft_delete</span>: <span class="s"><span class="dl">&quot;</span><span class="k">supprimer</span><span class="dl">&quot;</span></span></pre></div>
+</div>
+<p>Je peux faire appel &agrave; ceci dans mes vues (les valeurs de temps sont bidon) :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="il"><span class="idl">&lt;%=</span> l(<span class="sy">:label_draft_saved_time</span>, format_time(<span class="co">Time</span>.now)) <span class="idl">%&gt;</span></span>
+<span class="il"><span class="idl">&lt;%=</span> l(<span class="sy">:label_draft_pending</span>, {<span class="sy">:time</span> =&gt; format_time(<span class="co">Time</span>.now),
+                             <span class="sy">:restore</span> =&gt; l(<span class="sy">:label_draft_restore</span>),
+                             <span class="sy">:delete</span> =&gt; l(<span class="sy">:label_draft_delete</span>)}) <span class="idl">%&gt;</span></span></pre></div>
+</div>
+<p>J&#8217;essaierai de documenter tout &ccedil;a en anglais dans le wiki Redmine un de ces 4.</p>

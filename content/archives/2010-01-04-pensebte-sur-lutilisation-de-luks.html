@@ -1,0 +1,22 @@
+---
+title: "Pense-bête sur l'utilisation de LUKS"
+---
+
+<h1>Pense-bête sur l'utilisation de LUKS</h1><p>Voir <a href="http://doc.ubuntu-fr.org/cryptsetup">la doc Ubuntu</a></p>
+<p>Cr&eacute;er un volume encrypt&eacute; :</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo cryptsetup luksFormat -c aes -h sha256 /dev/sdb</pre></div>
+</div>
+<p>Ajouter une cl&eacute; :</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo cryptsetup luksAddKey /dev/sdb</pre></div>
+</div>
+<p>Voir les cl&eacute;s :</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo cryptsetup luksDump /dev/sdb</pre></div>
+</div>
+<p>Ouverture et formatage manuel :</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo cryptsetup luksOpen /dev/sdb disk
+sudo mkfs.ext3 /dev/mapper/disk</pre></div>
+</div>

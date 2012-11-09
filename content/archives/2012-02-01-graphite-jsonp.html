@@ -1,0 +1,26 @@
+---
+title: "Graphite & JSONP"
+---
+
+<h1>Graphite & JSONP</h1><p>These days I&#8217;m discovering <a href="http://graphite.wikidot.com/">Graphite</a> more in depth. To be honest, I saw <a href="http://speakerdeck.com/u/holman/p/scaling-github?slide=63">this slide from Zach Holman</a> and immediately thought I needed the same kind of dashboard.</p>
+<p>This future dashboard will be served from a different host than the one hosting Graphite. I want to load data from Graphite into the page through Javascript. Hence standard <span class="caps">AJAX</span> calls are impossible because of <a href="http://en.wikipedia.org/wiki/Same_origin_policy">Same Origin Policy</a>, yet another security rule everyone suffer and no one (at least not me :)) understand.</p>
+<p>Before I declare this measure totally stupid and finally take the time to launch <em>lolsecurity.org</em>, let&#8217;s have a look at <strong><span class="caps">JSONP</span></strong>. The principle is well described <a href="http://en.wikipedia.org/wiki/JSONP">on the Wikipedia page</a>. Instead of getting <code>{"a json": "object"}</code> through <code>XMLHttpRequest</code> and <span class="caps">AJAX</span>-y friends, this technique inserts a new <code>&lt;script&gt;</code> tag in the <span class="caps">DOM</span> and evaluate its content. The client waits for something like <code>callbackFunction({"a json": "object"})</code> and the resulting <span class="caps">JSON</span> object is processed client-side with the <code>callbackFunction()</code> function. This function name should be supplied by the client as a parameter to the <span class="caps">URL</span>, though it&#8217;s not normalized. As it doesn&#8217;t make use of <code>XMLHttpRequest</code> to retrieve the content, it&#8217;s not subject to the <em>Same Origin Policy Hell &#169;</em>.</p>
+<p>If you look at jQuery, the <code>$.ajax</code> functions galaxy allow you to use <span class="caps">JSONP</span> by setting <code>dataType: "jsonp"</code> in the request configuration. The callback name is often passed through <code>?callback=blah</code> or <code>jsoncallback=blah</code> in the <span class="caps">URL</span>. For Graphite, it should be passed as <code>jsonp=blah</code> though it&#8217;s not really well documented^W^W^W^W not documented at all (it took me nearly 2 hours to make it work, the time to be fed up enough to look at the Python source code :/). The final result looks like this :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="c">//graphite host</span>
+<span class="kw">var</span> url = <span class="s"><span class="dl">&quot;</span><span class="k">http://graphite-server/render/</span><span class="dl">&quot;</span></span>;
+<span class="c">//add target and everything needed by graphite URL API...</span>
+url = url + <span class="s"><span class="dl">&quot;</span><span class="k">?target=&lt;graph-data-etc.&gt;</span><span class="dl">&quot;</span></span>;
+<span class="c">//set &quot;json&quot; as the response format</span>
+url = url + <span class="s"><span class="dl">&quot;</span><span class="k">&amp;format=json</span><span class="dl">&quot;</span></span>;
+<span class="c">//set &quot;jsonp&quot; parameter to set the callback name</span>
+<span class="c">//the &quot;?&quot; will automagically be replaced by jQuery</span>
+url = url + <span class="s"><span class="dl">&quot;</span><span class="k">&amp;jsonp=?</span><span class="dl">&quot;</span></span>;
+<span class="c">//finally go!</span>
+<span class="pd">$</span>.getJSON(url, <span class="kw">function</span>(data){
+  <span class="c">//do whatever you want with the result</span>
+  console.log(data);
+});</pre></div>
+</div>
+<p>It should work out of the box, though a look at your favorite browser&#8217;s inspector won&#8217;t hurt.</p>
+<p>Since Graphite <span class="caps">URL</span> generation can be hard, I recommend you use the <a href="https://github.com/prestontimmons/graphitejs">graphitejs</a> plugin if you use jQuery.</p>

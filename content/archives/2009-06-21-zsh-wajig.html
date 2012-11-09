@@ -1,0 +1,20 @@
+---
+title: "zsh & wajig"
+---
+
+<h1>zsh & wajig</h1><p>Pass&eacute; r&eacute;cemment sous <code>zsh</code> comme shell par d&eacute;faut (merci Laurent), je trouve la compl&eacute;tion automatique de mes commandes <code>wajig</code> tr&egrave;s lente. Pour m&eacute;moire, <code>wajig</code> est une surcouche plut&ocirc;t sympa des <code>apt*</code> &eacute;crite en Python, et il me sert de gestionnaire de package principal sur mes Debian et Ubuntu depuis plus d&#8217;un an. La compl&eacute;tion automatique &eacute;tant relativement rapide avec les commandes <code>apt-get</code> et compagnie, j&#8217;ai d&eacute;cid&eacute; de jeter un oeil aux scripts de compl&eacute;tion <code>zsh</code> pour <code>wajig</code> en particulier. J&#8217;en ai profit&eacute; pour rajouter le switch <code>-y/&mdash;yes</code> qui manque &agrave; la compl&eacute;tion bien qu&#8217;&eacute;tant une option parfaitement valide et document&eacute;e.</p>
+<p>Les scripts de compl&eacute;tion se trouvent dans <code>/usr/share/zsh/functions/Completion/Debian</code>. J&#8217;ai repris le script <code>_apt</code> pour adapter la section install dans le script <code>_wajig</code>. Les deux se servent d&#8217;un 3e script commun nomm&eacute; <code>_deb_packages</code> au cas o&ugrave; &ccedil;a vous int&eacute;resse. Le bonheur c&#8217;est que sans conna&icirc;tre vraiment le langage ou les structures utilis&eacute;es, comme c&#8217;est du script relativement lisible on peut tenter par des essais/erreurs de modifier &ccedil;a&#8230; et on y arrive !<br />
+ <br />
+Voici le r&eacute;sultat sous forme de patch :</p>
+<div class="CodeRay">
+  <div class="code"><pre>% diff _wajig.orig _wajig
+11a12
+&gt;   '(-y &mdash;yes)'{-y,&mdash;yes}'[assume yes for any questions asked]' \
+44,45c45,46
+&lt;         _alternative \
+&lt;           'packages:package:_deb_packages uninstalled' \
+&mdash;-
+&gt;         _wanted \
+&gt;           'packages:package:_deb_packages &quot;$expl_packages[@]&quot; avail' \</pre></div>
+</div><p>Et les compl&eacute;tions sont redevenues rapides ; le fait de changer <code>_alternative</code> par <code>_wanted</code> m&#8217;indique d&#8217;abord une liste quand j&#8217;appuie sur <span class="caps">TAB</span>, plut&ocirc;t qu&#8217;enchainer directement sur les options possibles.</p>
+<p><strong><span class="caps">EDIT</span></strong>: une simple recherche Google <a href="http://www.mail-archive.com/debian-bugs-closed@lists.debian.org/msg05451.html">montre</a> que certains poussent pour que le &#8220;framework&#8221; de compl&eacute;tion apt pour zsh soit aussi utilis&eacute; pour wajig ; &agrave; creuser, j&#8217;&eacute;diterai ce billet si je trouve quelque chose d&#8217;int&eacute;ressant&#8230;</p>

@@ -1,0 +1,41 @@
+---
+title: "Débuts avec Nanoc"
+---
+
+<h1>Débuts avec Nanoc</h1><p><a href="http://nanoc.stoneship.org/">Nanoc</a> est un outil de publication de sites statiques &eacute;crit en Ruby. Ca permet de structurer facilement un site statique : d&eacute;finir un layout, g&eacute;rer du contenu (un peu) dynamique, formatter ses pages avec Markdown ou Textile, etc.</p>
+<p>Vous &ecirc;tes invit&eacute; &agrave; suivre les docs <a href="http://nanoc.stoneship.org/docs/2-installation/#installing-nanoc">Installing nanoc</a> et <a href="http://nanoc.stoneship.org/docs/3-getting-started/">Getting started</a> si vous voulez essayer nanoc.</p>
+<p>En bref dans un environnement <span class="caps">RVM</span>-is&eacute;:</p>
+<div class="CodeRay">
+  <div class="code"><pre>rvm use 1.9.2@nanoc --create
+gem install nanoc adsf
+nanoc create_site blah
+cd blah
+nanoc compile &amp;&amp; nanoc view</pre></div>
+</div><p>Et ouvrez dans votre navigateur pr&eacute;f&eacute;r&eacute; <a href="http://localhost:3000">http://localhost:3000</a></p>
+<p>Evidemment, rien n&#8217;interdit en production de g&eacute;rer ces gems avec <code>bundler</code> dans un <code>Gemfile</code>.</p>
+<p>Premi&egrave;re chose qui m&#8217;a d&eacute;plu, nanoc transforme tout <code>content/blah.html</code> en <code>output/blah/index.html</code>. Ca fait peut-&ecirc;tre plus joli dans la barre d&#8217;adresse du navigateur, mais mes fichiers s&#8217;appellent tous index.html, &ccedil;a rend notamment les copies avec <code>scp</code> illisibles. Ce comportement est g&eacute;r&eacute; dans une &#8220;route&#8221; du fichier <code>Rules</code> &agrave; la racine de votre site :</p>
+<div class="CodeRay">
+  <div class="code"><pre>route <span class="s"><span class="dl">'</span><span class="k">*</span><span class="dl">'</span></span> <span class="r">do</span>
+  item.identifier + <span class="s"><span class="dl">'</span><span class="k">index.html</span><span class="dl">'</span></span>
+<span class="r">end</span></pre></div>
+</div><p>Que vous pouvez changer en :</p>
+<div class="CodeRay">
+  <div class="code"><pre>route <span class="s"><span class="dl">'</span><span class="k">*</span><span class="dl">'</span></span> <span class="r">do</span>
+  <span class="r">if</span> item.identifier != <span class="s"><span class="dl">&quot;</span><span class="k">/</span><span class="dl">&quot;</span></span> &amp;&amp; item.attributes[<span class="sy">:extension</span>] == <span class="s"><span class="dl">&quot;</span><span class="k">html</span><span class="dl">&quot;</span></span>
+    item.identifier.gsub(<span class="rx"><span class="dl">%r(</span><span class="k">/$</span><span class="dl">)</span></span>,<span class="s"><span class="dl">'</span><span class="k">.html</span><span class="dl">'</span></span>)
+  <span class="r">else</span>
+    item.identifier + <span class="s"><span class="dl">'</span><span class="k">index.html</span><span class="dl">'</span></span>
+  <span class="r">end</span>
+<span class="r">end</span></pre></div>
+</div><p>Je ne sais pas si c&#8217;est la m&eacute;thode recommand&eacute;e, mais &ccedil;a fonctionne &agrave; premi&egrave;re vue.</p>
+<p>Autre chose, autrement plus g&ecirc;nant, comment g&eacute;rer votre contenu vraiment statique (par exemple des images) ? Vous allez vite vous rendre compte si vous mettez une image &agrave; la racine de votre site qu&#8217;il refuse de compiler, indiquant que <code>blabla.jpg</code> n&#8217;est pas un fichier <span class="caps">ERB</span> valide. Pour r&eacute;soudre &ccedil;a, j&#8217;ai choisi de me faire un dossier <code>content/assets/</code> dont les fichiers seront copi&eacute;s tels quels dans <code>output/assets/</code>, sans compilation ni filtrage. Voici les r&egrave;gles &agrave; ins&eacute;rer dans votre fichier <code>Rules</code> (attention, l&#8217;ordre ayant une importance, chacune a &eacute;t&eacute; plac&eacute;e au dessus de la r&egrave;gle &#8220;*&#8221; correspondante). Pour la r&egrave;gle de compilation :</p>
+<div class="CodeRay">
+  <div class="code"><pre>compile <span class="s"><span class="dl">'</span><span class="k">/assets/*</span><span class="dl">'</span></span> <span class="r">do</span>
+  <span class="c"># don't filter or layout</span>
+<span class="r">end</span></pre></div>
+</div><p>Et pour celle de routage :</p>
+<div class="CodeRay">
+  <div class="code"><pre>route <span class="s"><span class="dl">'</span><span class="k">/assets/*</span><span class="dl">'</span></span> <span class="r">do</span>
+  item.identifier.gsub(<span class="rx"><span class="dl">%r(</span><span class="k">/$</span><span class="dl">)</span></span>,<span class="s"><span class="dl">'</span><span class="k">.</span><span class="dl">'</span></span>)+item.attributes[<span class="sy">:extension</span>]
+<span class="r">end</span></pre></div>
+</div><p>A suivre&#8230;</p>

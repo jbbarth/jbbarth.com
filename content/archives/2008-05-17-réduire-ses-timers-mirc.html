@@ -1,0 +1,71 @@
+---
+title: "Réduire ses timers mIRC"
+---
+
+<h1>Réduire ses timers mIRC</h1><p>Eviter de multiplier ses timers &agrave;  l&rsquo;infini, &ccedil;a &eacute;vite de ramer et de prendre de la charge <span class="caps">CPU</span> pour rien ;-)</p>
+<p>Eviter de multiplier ses timers &agrave;  l&rsquo;infini, &ccedil;a &eacute;vite de ramer et de prendre de la charge <span class="caps">CPU</span> pour rien ;-)</p>
+
+
+	<p>C&rsquo;&eacute;tait &agrave;  l&rsquo;occasion d&rsquo;un code pour tester des spambots.<br />
+Mais il suffit d&rsquo;adapter ! Le principe : on construit une table qui retient les prochains timestamps <span class="caps">UNIX</span> o&ugrave; l&rsquo;action devra &ecirc;tre ex&eacute;cut&eacute;e.<br />
+Et chaque seconde, on v&eacute;rifie cette table. Si n&eacute;cessaire, on ex&eacute;cute l&rsquo;action et on met &agrave;  jour pour le prochain coup.</p>
+
+
+<pre>
+;alias principal pour lancer le syst&egrave;me
+;utilisation: /xtest_spambots
+alias xtest_spambots .timer 0 1 xtest_test_ceux_qui_doivent
+
+;nombre de secondes entre chaque /msg au spambot suspect&eacute;
+;utilisation: $xtest_lap
+alias xtest_lap return 15
+
+;nombre d'essais avant abandon
+;utilisation: $xtest_num
+alias xtest_num return 3
+
+;ajout d'un spambot (on stockera deux valeurs : le nombre d'essais restants, et l'heure du prochain /msg : 
+;pour que ca fonctionne, on initialise la premi&egrave;re fois au ctime + 2secondes)
+;utilisation: /add_spambot pseudo
+alias add_spambot {
+  hadd -m spambot_times $1 $xtest_num
+  hadd -m spambot_next_msg $1 $calc( $ctime +2)
+}
+
+;retrait d'un spambot du syst&egrave;me
+;utilisation: /del_spambot pseudo
+alias del_spambot {
+  hdel -m spambot_times $1
+  hdel -m spambot_next_msg $1
+}
+
+;alias de /msg : tu changeras comme tu veux
+;utilisation: /xtest_msg pseudo
+alias xtest_msg msg $1 BLAH !
+;alias pour tester les spambots qui le doivent
+alias xtest_test_ceux_qui_doivent {
+;on parcourt toute la hashtable
+  var %i 1
+  while ($hget(spambot_next_msg,%i).item) {
+    var %nick $ifmatch
+    ;on regarde si le CTIME stock&eacute; est inf&egrave;rieur au $ctime actuel : si oui, on doit /msg
+    if ($hget(spambot_next_msg,%nick) &lt; = $ctime) {
+      ;on /msg (on est l&agrave;  pour ca)
+      xtest_msg %nick
+      ;on d&eacute;cr&eacute;mente le nombre de fois &agrave;  tester encore
+      hdec -m spambot_times %nick
+      ;si ca arrive &agrave;  0, on efface le spambot de la table (je mets "&lt;=" par s&eacute;curit&eacute;, pour pas que ca /msg infiniment si ca rate une fois...)
+      if ($hget(spambot_times,%nick) &lt;= 0) {
+        del_spambot %nick
+      }
+      ;sinon, on r&egrave;gle le prochain CTIME de test
+      else {
+        hadd -m spambot_next_msg %nick $calc($ctime + $xtest_lap)
+      }
+    }
+    inc %i
+  }
+}
+</pre>
+
+	<p>- the end -</p>

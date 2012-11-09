@@ -1,0 +1,8 @@
+---
+title: "Luminosité d'écran sur Samsung NC10 avec Ubuntu"
+---
+
+<h1>Luminosité d'écran sur Samsung NC10 avec Ubuntu</h1><p>Depuis des mois je trouve mon &eacute;cran de laptop trop sombre. Hier une mise &agrave; jour quelconque l&#8217;a rendu encore moins lumineux pour une raison qui m&#8217;&eacute;chappe. L&#8217;applet de luminosit&eacute; ne fonctionne pas, les touches Fn non plus. Miracle ce matin, je tombe sur <a href="http://www.laptops-drivers.com/driver-request/fixing-samsung-nc10-brightness-on-ubuntu.html">cet article</a>, et l&agrave;, je revis:</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo setpci -s 00:02.1 f4.b=FF</pre></div>
+</div><p><em>(&agrave; consommer avec mod&eacute;ration)</em></p>

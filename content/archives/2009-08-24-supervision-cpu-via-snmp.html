@@ -1,0 +1,52 @@
+---
+title: "Supervision CPU via SNMP"
+---
+
+<h1>Supervision CPU via SNMP</h1><p>R&eacute;cemment nous avons rencontr&eacute; divers probl&egrave;mes au boulot concernant la supervision du <span class="caps">CPU</span> : remont&eacute;es &agrave; 100% alors que &#8220;top&#8221; indiquait 0%, parfois des remont&eacute;es en &#8220;<span class="caps">UNKNOWN</span>&#8221; sans raison &eacute;vidente, etc.</p>
+<p><strong>Modes de supervision de la charge <span class="caps">CPU</span></strong></p>
+<p>J&#8217;&eacute;courte l&#8217;intro faite sur le wiki du boulot : on peut en gros compter sur 2 sources d&#8217;information pour superviser le <span class="caps">CPU</span> d&#8217;une machine Linux/Unix :</p>
+<ul>
+	<li>des commandes syst&egrave;me : <code>top</code> (<code>top -b -n 1</code> + grep/head/sed), <code>vmstat</code>, voire si vous avez de la chance <code>procinfo</code> ou autres.</li>
+	<li>via <span class="caps">SNMP</span>, qui propose deux types de compteurs : les compteurs moyenn&eacute;s (ssCpu*) et bruts (ssCpuRaw*). Pour des raisons pratiques, on va se concentrer sur ce mode.</li>
+</ul>
+<p>Il y a aussi la <a href="http://en.wikipedia.org/wiki/Load_%28computing%29">charge <span class="caps">CPU</span></a> calcul&eacute;e directement par le syst&egrave;me, bien s&ucirc;r. Mais son calcul comme son interpr&eacute;tation sont complexes, varient en fonction du nombre de processeurs, et, accessoirement, la d&eacute;finition varie d&#8217;un Unix-like &agrave; un autre. Cela dit si &ccedil;a vous int&eacute;resse, il existe <a href="http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F2914.html;d=1">plusieurs</a> <a href="http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F2836.html;d=1">plugins</a> (peut-&ecirc;tre <a href="http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F1465.html;d=1">&ccedil;a</a> aussi, indirectement).</p>
+<p>Je viens de trouver <a href="http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F1473.html;d=1">ce plugin</a> qui m&#8217;a bien pu, et qui g&egrave;re apparemment le multi-processeur. Mais &ccedil;a g&acirc;che la suite de l&#8217;article alors&#8230; revenons donc &agrave; la terre ferme.</p>
+<p><strong>A. Les compteurs ssCpu</strong></p>
+<p>R&eacute;f&eacute;rence: http://net-snmp.sourceforge.net/docs/mibs/ucdavis.html#ssCpuIdle</p>
+<p>Le d&eacute;mon snmpd fournit en standard des compteurs ssCpuIdle, ssCpuUser, etc., directement exprim&eacute;s en pourcentages, qui devraient permettre de superviser l&#8217;occupation du <span class="caps">CPU</span> sur une p&eacute;riode r&eacute;cente. D&#8217;ailleurs on ne sait pas exactement laquelle, je n&#8217;ai pas trouv&eacute; de r&eacute;f&eacute;rence &agrave; ce sujet. Mais ces compteurs sont d&eacute;pr&eacute;ci&eacute;s, consid&eacute;r&eacute;s comme non fiables, et inutilisables en l&#8217;&eacute;tat sur une plateforme multi-processeurs ou multi-coeurs (le total arrive, selon les impl&eacute;mentations, &agrave; 100% ou N*100%). Le script <a href="http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F2009.html;d=1">check_snmp_load.pl</a>, utilis&eacute; avec l&#8217;option &#8220;netsc&#8221;, utilise un de ces compteurs, le <code>ssCpuIdle</code>. Ce script est fourni en standard avec le bundle Nagios3 que j&#8217;ai au boulot.</p>
+<p>Mais il semble notamment que ce compteur n&#8217;est pas fiable au-del&agrave; de 62 jours d&#8217;uptime sur les RHEL5 (tickets sur le bugtracker RedHat <a href="https://bugzilla.redhat.com/show_bug.cgi?id=473824">ici</a> et <a href="https://bugzilla.redhat.com/show_bug.cgi?id=431439">ici</a>). Ce genre de b&ecirc;tise, &ccedil;a donne quand m&ecirc;me envie de se flinguer, merci RedHat&#8230;</p>
+<p><strong>B. Compteurs ssCpuRaw</strong></p>
+<p>R&eacute;f&eacute;rence: http://net-snmp.sourceforge.net/docs/mibs/ucdavis.html#ssCpuRawIdle</p>
+<p>Les compteurs ssCpuRaw* fonctionnent sur un mode diff&eacute;rent :</p>
+<div class="CodeRay">
+  <div class="code"><pre>$ snmpwalk -v 2c -c public myserver.domain.tld 1.3.6.1.4.1.2021.11 |grep CpuRaw
+UCD-SNMP-MIB::ssCpuRawUser.0 = Counter32: 7184735
+UCD-SNMP-MIB::ssCpuRawNice.0 = Counter32: 3142
+UCD-SNMP-MIB::ssCpuRawSystem.0 = Counter32: 7208896
+UCD-SNMP-MIB::ssCpuRawIdle.0 = Counter32: 1116976279
+UCD-SNMP-MIB::ssCpuRawWait.0 = Counter32: 4329138
+UCD-SNMP-MIB::ssCpuRawKernel.0 = Counter32: 6038492
+UCD-SNMP-MIB::ssCpuRawInterrupt.0 = Counter32: 53534
+UCD-SNMP-MIB::ssCpuRawSoftIRQ.0 = Counter32: 1116870</pre></div>
+</div><p>Il s&#8217;agit de compteurs permettant de jauger l&#8217;utilisation du Cpu <strong>depuis l&#8217;initialisation du compteur</strong>. Pour connaitre l&#8217;utilisation du Cpu sur une p&eacute;riode r&eacute;cente, il faut donc prendre les valeurs &agrave; un instant t, prendre les valeurs &agrave; un instant t+1, et faire la soustraction. C&#8217;est ce que faisait notre script au boulot, &#8220;check_net-snmp_cpu_usage.pl&#8221;, r&eacute;cup&eacute;r&eacute; d&#8217;une instance Nagios1.3/Oreon.</p>
+<p>Seulement ce script fait les choses &#8220;b&ecirc;tement&#8221;, il pr&eacute;voit une intervalle fixe entre les deux checks pour faire la diff&eacute;rence. Or ces compteurs ne sont pas mis &agrave; jour en temps r&eacute;el, mais &agrave; intervalles plus ou moins r&eacute;guliers, en g&eacute;n&eacute;ral 2 secondes, mais &ccedil;a peut monter &agrave; 10 ou 15 secondes en cas de forte charge du serveur (&agrave; la louche). R&eacute;sultat, soit on r&egrave;gle l&#8217;attente &agrave; 15 secondes et dans la majorit&eacute; des cas on attendra 15 secondes inutilement, soit on r&egrave;gle &ccedil;a a des valeurs moindres, et de temps en temps le script sortira en <span class="caps">UNKNOWN</span>.</p>
+<p><strong>Comment faire ? premier essai : check_cpu_load.rb</strong></p>
+<p>Voir <a href="http://github.com/jbbarth/monitoring/tree/master">mon espace Github</a></p>
+<p>Ce script fait la m&ecirc;me chose que <code>check_net-snmp_cpu_usage.pl</code> mais de fa&ccedil;on un peu plus intelligente : il r&eacute;cup&egrave;re une premi&egrave;re s&eacute;rie de valeurs. Puis chaque seconde il en r&eacute;cup&egrave;re une nouvelle, et il attend que le nombre de cycles <span class="caps">CPU</span> total &eacute;coul&eacute; entre sa mesure en cours et la premi&egrave;re s&eacute;rie soit suffisamment important. Ensuite (ou au bout de 15 secondes par s&eacute;curit&eacute;), il fait le calcul et sort. Si les compteurs sont mis &agrave; jour rapidement et que le delta est repr&eacute;sentatif, il peut sortir la mesure au bout d&#8217;1 ou 2 secondes. Sinon, il attend d&#8217;avoir une mesure plus repr&eacute;sentative, au cas o&ugrave; le serveur travaille peu (peu de cycles <span class="caps">CPU</span>), ou si les compteurs ne sont pas mis &agrave; jour (serveur satur&eacute;).</p>
+<p><strong>Deuxi&egrave;me essai : check_cpu_avg.rb</strong></p>
+<p>Voir <a href="http://github.com/jbbarth/monitoring/tree/master">mon espace Github</a></p>
+<p>Mais cette mesure n&#8217;est pas tr&egrave;s pertinente : v&eacute;rifier toutes les 5 minutes ce que fait le <span class="caps">CPU</span> d&#8217;une machine sur les 3,4,5 derni&egrave;res secondes n&#8217;est pas repr&eacute;sentatif. Il suffit de lancer la commande &agrave; la main plusieurs fois de suite pour s&#8217;en convaincre, admirez les &eacute;carts en quelques secondes sur mon serveur de supervision :</p>
+<div class="CodeRay">
+  <div class="code"><pre>CPU Used OK: 10.17% | Wait=1.52%, System=0.99%, User=6.67%, Nice=0.00%, Idle=89.83%
+CPU Used OK: 23.66% | Wait=2.49%, System=1.77%, User=17.63%, Nice=0.00%, Idle=76.34%
+CPU Used OK: 11.39% | Wait=1.84%, System=1.12%, User=7.31%, Nice=0.00%, Idle=88.61%
+CPU Used OK: 42.97% | Wait=1.59%, System=3.43%, User=34.52%, Nice=0.00%, Idle=57.03%
+CPU Used CRITICAL: 99.01% &gt; 90 | Wait=1.64%, System=13.64%, User=70.09%, Nice=0.00%, Idle=0.99%
+CPU Used CRITICAL: 92.06% &gt; 90 | Wait=1.02%, System=4.76%, User=16.44%, Nice=65.08%, Idle=7.94%
+CPU Used CRITICAL: 100.00% &gt; 90 | Wait=0.00%, System=3.41%, User=6.31%, Nice=86.86%, Idle=0.00%
+CPU Used OK: 41.59% | Wait=4.00%, System=3.16%, User=8.58%, Nice=22.70%, Idle=58.41%
+CPU Used OK: 30.33% | Wait=19.17%, System=1.51%, User=8.14%, Nice=0.00%, Idle=69.67%
+CPU Used CRITICAL: 94.22% &gt; 90 | Wait=0.35%, System=11.70%, User=70.46%, Nice=0.00%, Idle=5.78%</pre></div>
+</div><p>=&gt; &ccedil;a ne varie pas toujours autant certes, mais lorsque c&#8217;est le cas, &ccedil;a bouge autant que dans un <code>top</code>, ce qui n&#8217;est pas le but recherch&eacute;. A la limite on se moque (?) des pics de charge instantan&eacute;s. L&#8217;objectif est plut&ocirc;t de d&eacute;tecter si une machine reste &agrave; 100% de <span class="caps">CPU</span> trop longtemps, auquel cas une application a peut-&ecirc;tre un probl&egrave;me, ou la machine est peut-&ecirc;tre sous-dimensionn&eacute;e.</p>
+<p>L&#8217;id&eacute;e consiste &agrave; ne faire qu&#8217;un &#8220;passage&#8221; de la commande <span class="caps">SNMP</span>, de stocker les r&eacute;sultats dans un fichier, et de regarder le delta au check Nagios suivant. C&#8217;est ce que fait <code>check_cpu_avg.rb</code>. Il sort en <span class="caps">UNKNOWN</span> s&#8217;il ne trouve pas de fichier stockant un check pr&eacute;c&eacute;dent, et sinon, il fait la diff&eacute;rence (qui devient donc une moyenne sur la p&eacute;riode entre les deux checks, 5 minutes environ pour nous), stocke les nouvelles valeurs dans le fichier et renvoie le r&eacute;sultat de la diff&eacute;rence.</p>
+<p>Peut-&ecirc;tre qu&#8217;il est plus pertinent de superviser &agrave; la fois ce genre d&#8217;indicateur et le <span class="caps">LOAD</span> au sens Linux. Il faudrait en creuser <a href="http://en.wikipedia.org/wiki/Load_(computing">la d&eacute;finition du load pr&eacute;c&eacute;demment cit&eacute;</a>). C&#8217;est un peu obscur pour moi pour le moment, mais si un lecteur a un avis, d&eacute;foulez-vous !</p>

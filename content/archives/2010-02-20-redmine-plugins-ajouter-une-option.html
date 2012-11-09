@@ -1,0 +1,29 @@
+---
+title: "Redmine Plugins #1 : Ajouter une option vrai/faux à un plugin Redmine"
+---
+
+<h1>Redmine Plugins #1 : Ajouter une option vrai/faux à un plugin Redmine</h1><p>Je travaille en ce moment sur des plugins Engines pour <a href="http://www.redmine.org/">Redmine</a>. Ces plugins me serviront au boulot, et permettront de laisser une situation un peu plus propre que les bidouillages actuels &agrave; mon d&eacute;part. En particulier en avan&ccedil;ant sur le plugin de gestion d&#8217;un datacenter (<a href="http://code.jbbarth.com/projects/redmine-datacenter/wiki">site</a> et <a href="http://github.com/jbbarth/redmine_datacenter.git">d&eacute;p&ocirc;t github</a>), j&#8217;apprends &eacute;norm&eacute;ment de choses sur le fonctionnement de Rails/Redmine/Engines, et j&#8217;entame donc une s&eacute;rie d&#8217;articles sur ces d&eacute;couvertes. Ces articles supposent d&#8217;avoir d&eacute;j&agrave; lu <a href="http://www.redmine.org/wiki/redmine/Plugin_Tutorial">le tutoriel du site</a>, et je repartirai souvent de cet exemple.</p>
+<p>Cela donnera certainement lieu &agrave; des entr&eacute;es dans le wiki redmine.org ou des suggestions dans les tickets. Et puis &ccedil;a m&#8217;astreindra &agrave; publier un peu, comme le fait <a href="http://theadmin.org/">Eric</a> dans ses Daily Refactor du core Redmine <a href="http://theadmin.org/articles/2010/01/25/daily-refactor-extract-method-in-the-bulk-time-entries-controller/">depuis 3 semaines et pour les m&ecirc;mes raisons</a>, et aussi suite &agrave; <a href="http://www.dmathieu.com/">cet article</a> de Damien.</p>
+<p>Allons-y.</p>
+<p><strong>init.rb</strong> : on y ajoute la cl&eacute; et la valeur par d&eacute;faut du param&egrave;tre qu&#8217;on veut introduire, par exemple ici &#8220;boolean_parameter&#8221;. On pr&eacute;cise &eacute;galement un <em>partial</em> qui permettra de g&eacute;rer les param&egrave;tres du plugin  :</p>
+<div class="CodeRay">
+  <div class="code"><pre>  settings <span class="sy">:default</span> =&gt; { <span class="sy">:boolean_parameter</span> =&gt; <span class="pc">true</span> },
+           <span class="sy">:partial</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">settings/my_plugin</span><span class="dl">'</span></span></pre></div>
+</div>
+<p><strong>app/views/settings/_my_plugin.html.erb</strong> : on place ici un formulaire pour g&eacute;rer nos param&egrave;tres. Il sera automatiquement accessible dans la partie Administration &gt; Plugins &gt; lien &#8220;Configurer&#8221; sur votre plugin. &#8220;plugin_my_plugin&#8221; est &agrave; remplacer dans ce qui suit par &#8220;plugin_[nom de votre plugin]&#8221; :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="ta">&lt;p&gt;</span>
+  <span class="ta">&lt;label&gt;</span>Param&egrave;tre bool&eacute;en<span class="ta">&lt;/label&gt;</span> 
+  <span class="il"><span class="idl">&lt;%=</span> check_box_tag <span class="s"><span class="dl">'</span><span class="k">settings[boolean_parameter]</span><span class="dl">'</span></span>, <span class="i">1</span>,
+                    <span class="co">Setting</span>[<span class="sy">:plugin_my_plugin</span>][<span class="sy">:boolean_parameter</span>] <span class="idl">%&gt;</span></span>
+<span class="ta">&lt;/p&gt;</span></pre></div>
+</div>
+<p>Et voil&agrave; ! Ensuite, n&#8217;importe o&ugrave; dans votre plugin, vous pourrez utiliser :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="co">Setting</span>[<span class="sy">:plugin_my_plugin</span>][<span class="sy">:boolean_parameter</span>]</pre></div>
+</div>
+<p>En r&eacute;alit&eacute; en mettant &#8220;1&#8221; comme deuxi&egrave;me param&egrave;tre, vous ne stockerez pas un bool&eacute;en, mais &#8220;1&#8221; (coch&eacute;) ou &#8220;nil&#8221; (d&eacute;coch&eacute;). Si vous souhaitez obtenir &#8220;true&#8221; ou &#8220;false&#8221; absolument, vous pouvez utiliser :</p>
+<div class="CodeRay">
+  <div class="code"><pre>!!<span class="co">Setting</span>[<span class="sy">:plugin_my_plugin</span>][<span class="sy">:boolean_parameter</span>]</pre></div>
+</div>
+<p>A voir en vrai <a href="http://github.com/jbbarth/redmine_datacenter/commit/fb0496504cb9a73ed080f27aed0930054dd815ec">ici</a></p>

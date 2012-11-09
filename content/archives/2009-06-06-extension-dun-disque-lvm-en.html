@@ -1,0 +1,35 @@
+---
+title: "Extension d'un disque LVM en environnement SAN"
+---
+
+<h1>Extension d'un disque LVM en environnement SAN</h1><p>Alors &ccedil;a &ccedil;a ronfle comme titre ! Un <a href="http://fr.wikipedia.org/wiki/R%C3%A9seau_de_stockage_SAN"><span class="caps">SAN</span></a> c&#8217;est super, c&#8217;est efficace, performant, tu peux &eacute;tendre tes disques &agrave; chaud, g&eacute;rer ton <span class="caps">RAID</span> au clic, faire de la haute dispo, te la raconter &agrave; la caf&eacute;t&#8217;, bref c&#8217;est merveilleux. <a href="http://fr.wikipedia.org/wiki/Gestion_par_volumes_logiques"><span class="caps">LVM</span></a> aussi, c&#8217;est super : &ccedil;a apporte pas mal de souplesse dans un environnement mouvant, et quand on fait de l&#8217;informatique professionnelle, c&#8217;est bien souvent le cas.</p>
+<p>En gros, voici le topo : on a un volume logique (que certains appelleront abusivement &#8220;un(e) <span class="caps">LUN</span>&#8221;) <strong>ld_disk</strong>, mapp&eacute; &agrave; un serveur <strong>server</strong>. C&ocirc;t&eacute; serveur, ce disque s&#8217;appellera directement (par comodit&eacute;) <strong>ld_disk</strong>, donc via multipathd son nom sera <strong>/dev/mpath/ld_appli</strong>. Derri&egrave;re on a mont&eacute; directement l&#8217;artillerie <span class="caps">LVM</span>, sans partitionner (ce qui aurait &eacute;t&eacute; plus souple/facile/intelligent) : ce disque a &eacute;t&eacute; d&eacute;clar&eacute; comme <em>volume physique (PV)</em>, on a fait dessus un <em>groupe de volumes (VG)</em> <strong>vg_appli</strong>, sur lequel on a b&ecirc;tement fait un seul <em>volume logique (LV)</em> sobrement appel&eacute; <strong>lv_appli</strong>. Ce volume fait initialement 300Go. Les besoins changent, et on vous demande de passer le tout &agrave; 500Go. L&#8217;OS est une <span class="caps">RHEL</span> 5, mais &ccedil;a n&#8217;a pas d&#8217;importance a priori. Bon, on commence logiquement par &eacute;tendre le disque logique c&ocirc;t&eacute; <span class="caps">SAN</span>. Et on esp&egrave;re qu&#8217;on va pouvoir prendre en compte l&#8217;extension au niveau syst&egrave;me sans perdre de donn&eacute;es.</p>
+<p>Mais comme trop de choses en ce bas monde, il est difficile de trouver des infos r&eacute;centes sur le web. 99% des liens trouv&eacute;s via Google vont dire que c&#8217;est impossible, ou que <span class="caps">LVM</span> ne le permet pas encore, qu&#8217;on n&#8217;a qu&#8217;&agrave; formatter ou recopier sur un autre disque. Quelques posts assez anciens (2004?) sur des forums dont j&#8217;ai perdu la r&eacute;f&eacute;rence h&eacute;las vont expliquer qu&#8217;il faut d&#8217;abord &eacute;tendre la partition via fdisk. Seulement moi, je n&#8217;ai pas de partition, a&iuml;e.</p>
+<p>Voici donc la marche &agrave; suivre :</p>
+<div class="CodeRay">
+  <div class="code"><pre># on cherche et on note le(s) chemin(s) vers notre disque au sens SCSI (exemple: 3:0:0:0 et 4:0:0:0)
+multipath -ll
+# on met le volume offline
+vgchange -a n vg_appli
+# on rescanne le p&eacute;riph&eacute;rique au niveau SCSI
+echo &quot;1&quot; &gt; /sys/class/scsi_device/3\:0\:0\:0/device/rescan
+echo &quot;1&quot; &gt; /sys/class/scsi_device/4\:0\:0\:0/device/rescan
+# on relance la d&eacute;couverte cot&eacute; multipathd
+multipath -F
+multipath -v2
+# puis on &eacute;tend au niveau de LVM ; exemple :
+pvscan
+#=&gt; PV /dev/mpath/ld_appli   VG vg_appli   lvm2 [300,00 GB / 0    free]
+pvresize /dev/mpath/ld_appli
+pvscan
+#=&gt; PV /dev/mpath/ld_appli   VG vg_appli   lvm2 [500,00 GB / 200,00 GB free]
+# on r&eacute;active le VG
+vgchange -a y vg_appli
+# et on &eacute;tend le LV via la taille :
+lvextend -L +200G /dev/vg_appli/lv_appli
+#ou via le nombre d'extents :
+lvextend -l +123456 /dev/vg_appli/lv_appli
+# il reste &agrave; faire l'extension au niveau EXT3 (attention, ces deux &eacute;tapes sont tr&egrave;s longues)
+e2fsck -f /dev/vg_appli/lv_appli
+resize2fs /dev/vg_appli/lv_appli</pre></div>
+</div><p>Hope this helps!</p>

@@ -1,0 +1,29 @@
+---
+title: "Un shell en ruby ?"
+---
+
+<h1>Un shell en ruby ?</h1><p>Dans 4 jours, je vais <del>me faire massacrer</del> tenter un examen interne au boulot, cens&eacute; valider mes aptitudes de <em>&#8220;programmeur syst&egrave;me&#8221;</em>. Cet examen comporte une &eacute;preuve de d&eacute;veloppement (sur papier, faut pas d&eacute;conner), que la plupart des gens vont passer en Java ou C/C++. Mais tr&egrave;s peu pour moi, j&#8217;attaque en Ruby !</p>
+<p>Je lis donc des bouquins, qui pr&eacute;sentent un squelette de shell en C. Et en Ruby ? Eh bien en fait, contre toute attente, c&#8217;est super simple, voici un squelette fonctionnel :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="c">#!/usr/bin/ruby</span>
+
+require <span class="s"><span class="dl">'</span><span class="k">readline</span><span class="dl">'</span></span>
+require <span class="s"><span class="dl">'</span><span class="k">open3</span><span class="dl">'</span></span>
+
+<span class="r">class</span> <span class="cl">Rshell</span>
+  <span class="r">def</span> <span class="fu">initialize</span>
+    loop <span class="r">do</span>
+      cmd = <span class="co">Readline</span>.readline(<span class="s"><span class="dl">&quot;</span><span class="k">$ </span><span class="dl">&quot;</span></span>)
+      exit <span class="r">if</span> cmd.nil? <span class="r">or</span> cmd == <span class="s"><span class="dl">&quot;</span><span class="k">exit</span><span class="dl">&quot;</span></span>
+      <span class="co">Open3</span>.popen3(cmd) <span class="r">do</span> |stdin,stdout,stderr|
+        <span class="co">STDOUT</span>.print stdout.read
+        <span class="co">STDERR</span>.print stderr.read
+      <span class="r">end</span>
+    <span class="r">end</span>
+  <span class="r">end</span>
+<span class="r">end</span>
+
+<span class="co">Rshell</span>.new</pre></div>
+</div>
+<p>Il ne faut pas s&#8217;attendre &agrave; des miracles, aucun builtin, pas de gestion du <span class="caps">PATH</span>, mais on peut passer des commandes, diff&eacute;rencier &eacute;ventuellement <span class="caps">STDOUT</span>/<span class="caps">STDERR</span> pour le futur.</p>
+<p>Ca me donne l&#8217;occasion de parler d&#8217;un <strong>vrai</strong> shell en Ruby, utilis&eacute; chez Heroku, <a href="http://adamblog.heroku.com/past/2008/2/19/rush_the_ruby_shell/">Rush</a>. J&#8217;en reparlerai d&egrave;s que j&#8217;aurai test&eacute; &ccedil;a au quotidien au boulot :)</p>

@@ -1,0 +1,82 @@
+---
+title: "Passage sous Mephisto"
+---
+
+<h1>Passage sous Mephisto</h1><p>Passage de ce blog sous Mephisto : explication sommaire et proc&eacute;dure d&rsquo;installation.</p>
+<p><a href="http://www.wordpress.org">Wordpress</a> est une usine &agrave; gaz et tourne en <span class="caps">PHP</span>, or je cherchais un <span class="caps">CMS</span> en Rails. Exit donc l&rsquo;ancienne version, peu fr&eacute;quent&eacute;e et peu mise &agrave; jour, de ce blog.</p>
+
+
+	<p><a href="http://www.typosphere.org">Typo</a> m&rsquo;a gonfl&eacute; pour la seconde fois : je ne doute pas de la qualit&eacute; de l&rsquo;outil pourtant, mais des petits tracas d&rsquo;install font que je n&rsquo;ai pas conserv&eacute; cet outil. Premi&egrave;re fois il y a quelques mois, j&rsquo;installe la toute r&eacute;cente version 4, je la lance, je change le th&egrave;me et l&agrave;, patatra. L&rsquo;appli m&rsquo;avait supprim&eacute; mon r&eacute;pertoire &rdquo;/tmp&rdquo; ! Bon OK je l&rsquo;avais fait tourner en root, ce qui n&rsquo;est pas tr&egrave;s malin, mais ce genre d&rsquo;impr&eacute;cision m&rsquo;avait aggac&eacute; &agrave; l&rsquo;&eacute;poque. Et cette fois, j&rsquo;ai essay&eacute; d&rsquo;installer la version svn/trunk, avec une base sqlite3. La migration 48 bloque, et au bout de plusieurs minutes, j&rsquo;ai des virgules qui s&rsquo;affichent sur mon &eacute;cran, la taille du r&eacute;pertoire &ldquo;db/&rdquo; ne bougeant plus. Au bout de 15 minutes de virgules (entrecoup&eacute;es parfois de &ldquo;NULL&rdquo;), j&rsquo;ai kill&eacute; la session et le process rake, et vogue pour mehisto ! Qui plus est, l&rsquo;interface admin est tout aussi moche que celle de Mephisto. Alors&hellip;</p>
+
+
+	<h3>Installation</h3>
+
+
+	<p>J&rsquo;ai suivi peu ou prou le pas-&agrave;-pas disponible <a href="http://www.mephistoblog.com/docs/setup">ici</a> . J&rsquo;ai au passage un peu hallucin&eacute; en voyant que le <span class="caps">CMS</span> pouvait tourner sur une base de donn&eacute;es provenant de Typo ou Wordpress ! Ils ont vraiment pens&eacute; &agrave; tout ! Je n&rsquo;ai pas test&eacute; cela dit, je voulais une install propre :<br />
+<pre><code>$ cd /home/app<br />
+$ wget http://github.com/technoweenie/mephisto/tarball/master.tar.gz<br />
+$ tar xvzf technoweenie-mephisto-*.tar.gz<br />
+$ rm -f *mephisto*.tar.gz<br />
+$ mv techno* mephisto<br />
+$ cd mephisto<br />
+$ cp config/database.example.yml config/database.yml # et configuration ;-)<br />
+$ sudo gem install tzinfo<br />
+$ rake db:bootstrap RAILS_ENV=production<br />
+</code></pre></p>
+
+
+	<p>Apr&egrave;s cette &eacute;tape, et &eacute;ventuellement l&rsquo;installation de mongrel :<br />
+<pre><code>$ sudo gem install mongrel</code></pre></p>
+
+
+	<p>... il suffit de d&eacute;marrer le serveur ! (&eacute;tape qui n&rsquo;est pas mentionn&eacute;e dans le lien officiel : je suppose vue la tournure qu&rsquo;ils partent du principe que l&rsquo;utilisateur installe Mephisto sur un environnement mutualis&eacute;, et n&rsquo;ont pas la main sur l&rsquo;arr&ecirc;t/d&eacute;marrage du serveur d&rsquo;appli, Mongrel dans notre cas).</p>
+
+
+	<p>Anyway, apr&egrave;s un petit test concluant de :<br />
+<pre><code>$ ruby script/server -e production</code></pre></p>
+
+
+	<p>Je me suis fait un petit script tr&egrave;s compliqu&eacute; pour lancer tout cela :<br />
+<pre><code>$ cat /etc/init.d/mephisto
+#!/bin/sh<br />
+ROOTDIR="/home/app/mephisto" <br />
+CMD="mongrel_rails" <br />
+PARAMS="-d -e production -p 8000 &mdash;user pada &mdash;group pada" <br />
+case "$1" in
+  start)
+    cd $ROOTDIR
+    $CMD start $PARAMS
+    ;;
+  stop)
+    cd $ROOTDIR
+    $CMD stop
+    ;;
+  restart|reload|flush)
+    cd $ROOTDIR
+    $CMD stop
+    $CMD start $PARAMS
+    ;;
+  *)
+    echo "Usage: $0 [start|stop|restart]" &gt;&2
+    exit 3
+    ;;<br />
+esac</code></pre></p>
+
+
+	<p>Le site est donc accessible via http://vds171.sivit.org:8000/<br />
+J&rsquo;expliquerai dans un futur article comment configurer Apache & Bind pour avoir une <span class="caps">URL</span> plus jolie :-)</p>
+
+
+	<h3>Themes</h3>
+
+
+	<p>J&rsquo;ai trouv&eacute; le th&egrave;me que vous voyez sur le  <a href="http://mephisto-themes.nanorails.com/gallery">second theme viewer Mephisto</a> c&rsquo;est le &ldquo;1024px&rdquo; d&rsquo;Andreas Viklund, port&eacute; en Mephisto par RailsGrunt. Un passage &agrave; tout hasard sous IE m&rsquo;a montr&eacute; un probl&egrave;me avec le titre qui &eacute;tait cach&eacute; en partie par le sous-titre, c&rsquo;&eacute;tait tr&egrave;s moche. Je suis donc all&eacute; sur <a href="http://andreasviklund.com/">le site de l&rsquo;auteur original</a> , et plus pr&eacute;cis&eacute;ment sur la page de ce template gratuit : <a href="http://andreasviklund.com/templates/1024px/">ici</a> . J&rsquo;y ai r&eacute;cup&eacute;r&eacute; le .css, que j&rsquo;ai remplac&eacute; via l&rsquo;interface Mephisto dans mon Mephisto, et &ccedil;a a fonctionn&eacute; parfaitement :-)</p>
+
+
+	<h3>R&eacute;flexions / Tips</h3>
+
+
+	<ul>
+	<li>Penser &agrave; changer le charset dans le layout.liquid pour de l&rsquo;utf8 : sous Linux, Firefox 3b5 fait la correction automatiquement, mais sous Windows, mes articles &eacute;taient assez pourris.. Changer le meta content-type dans ce fichier suffit &agrave; r&eacute;soudre le probl&egrave;me.</li>
+		<li>Textilize est un langage tr&egrave;s sympa pour faire du markup, mais normalement, il interpr&egrave;te les line breaks comme des balises &lt;br /&gt;, ce que ne fait pas RedCloth. Impossible pour l&rsquo;instant de savoir pourquoi, mais &ccedil;a rend l&rsquo;&eacute;dition peu intuitive. Je ferai un billet d&egrave;s que j&rsquo;aurai trouv&eacute; comment r&eacute;soudre la chose (ajouter l&rsquo;option ":line_breaks" en modificant redcloth.rb ne semble pas suffire).</li>
+	</ul>

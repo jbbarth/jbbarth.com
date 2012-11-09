@@ -1,0 +1,53 @@
+---
+title: "Trying cloudfoundry"
+---
+
+<h1>Trying cloudfoundry</h1><p style="text-align:center;background-color:#a22;color:white;padding:2px 5px;"><strong>This post was just a draft and shouldn&#8217;t have been published, my mistake. A new post is available <a href="http://jbbarth.com/archives/2011/12/12/trying_cloudfoundry_with_vagrant_and/">here</a></strong></p>
+<p>Yesterday, Ezra Zygmuntowicz team @ VMWare announced <a href="http://www.cloudfoundry.org/">CloudFoundry</a>, an opensource Platform-as-a-Service (PaaS) technology, sponsored by VMWare, with a hosted version at <a href="http://www.cloudfoundry.com/">http://www.cloudfoundry.com/</a>. For the record, Ezra Zygmuntowicz was also co-founder of Engine Yard, probably one of the best known Rails cloud hoster with Heroku.</p>
+<p>Now let&#8217;s try CloudFoundry.</p>
+<p>First, I only have a Ubuntu Lucid 32bits VM right now, but I hope it will be OK for some tests. My VMs run under <a href="http://vagrantup.com/">Vagrant</a>, so here are the steps to setup the VM, boot, and connect :</p>
+<div class="CodeRay">
+  <div class="code"><pre>mkdir lucid32-cloudfoundry
+cd lucid32-cloudfoundry
+vagrant init lucid32
+vagrant up
+vagrant ssh</pre></div>
+</div>
+<p>CloudFoundry assumes you run your ruby under <span class="caps">RVM</span>, which is a great thing. I have my own setup script for that, I prefer using it than following the <a href="https://github.com/cloudfoundry/vcap/blob/master/README">canonical install process</a>:</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo aptitude update
+sudo bash &lt; &lt;(wget -q --no-check-certificate -O - https://github.com/jbbarth/cookbooks/raw/master/install-rvm.sh)</pre></div>
+</div>
+<p>(if you want to install <span class="caps">RVM</span> &#8220;normally&#8221;, it&#8217;s fine too)</p>
+<p>After a <code>newgroup</code> command or a exit/ssh again, so that groups get updated and you have <code>rvm</code> in your secondary groups, we can install a ruby :</p>
+<div class="CodeRay">
+  <div class="code"><pre>rvm install 1.9.2
+rvm 1.9.2 --default</pre></div>
+</div>
+<p>Clone the cloudfoundry repositories @ github and install client gem:</p>
+<div class="CodeRay">
+  <div class="code"><pre>cd
+mkdir cloudfoundry
+cd cloudfoundry
+git clone https://github.com/cloudfoundry/vcap.git
+cd vcap
+git submodule update --init
+gem install vmc --no-rdoc --no-ri</pre></div>
+</div>
+<p>Then we setup vcap:</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo ./setup/vcap_setup</pre></div>
+</div>
+<p>Configure mysql root password:</p>
+<div class="CodeRay">
+  <div class="code"><pre>read mysqlpass
+sudo sed -i &quot;/^  pass:/s/:.*/: \&quot;$mysqlpass\&quot;/&quot; services/mysql/config/mysql_node.yml
+unset mysqlpass</pre></div>
+</div>
+<p>Configure Nginx:</p>
+<div class="CodeRay">
+  <div class="code"><pre>sudo cp setup/simple.nginx.conf /etc/nginx/nginx.conf
+sudo service nginx restart</pre></div>
+</div>
+<p>Install bundler and run <code>bundler:install</code>:<br />
+<code>@</code></p>

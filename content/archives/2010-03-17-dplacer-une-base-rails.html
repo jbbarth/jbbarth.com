@@ -1,0 +1,20 @@
+---
+title: "Déplacer une base Rails"
+---
+
+<h1>Déplacer une base Rails</h1><p>Au boulot nous avons une instance <a href="http://redmine.org/">Redmine</a> qui tourne avec une base Sqlite3 pour nos tickets internes. Pratique, mais nous avons aussi d&eacute;velopp&eacute; une offre d&#8217;h&eacute;bergement Redmine ouverte &agrave; la demande sur l&#8217;intranet, sous Mysql. D&#8217;o&ugrave; passage de l&#8217;instance Sqlite sous Mysql.</p>
+<p>On ne peut bien s&ucirc;r pas se contenter d&#8217;un export <span class="caps">SQL</span> de Sqlite &agrave; r&eacute;importer sous Mysql : ces deux moteurs ne respectent pas exactement la m&ecirc;me syntaxe <span class="caps">SQL</span>, et ne stockent pas leurs types primitifs de la m&ecirc;me mani&egrave;re (exemple: les bool&eacute;ens, stock&eacute;s en &#8220;1/0&#8221; sous Mysql, et en &#8220;t/f&#8221; sous Sqlite).</p>
+<p>C&#8217;est l&agrave; qu&#8217;arrive <a href="http://github.com/ludicast/yaml_db">yaml_db</a> , une biblitoth&egrave;que &agrave; installer comme une gem ou comme un plugin dans une appli Rails, qui permet de r&eacute;aliser des exports ou imports de sa base sous un format neutre, <a href="http://www.yaml.org"><span class="caps">YAML</span></a> (<a href="http://fr.wikipedia.org/wiki/YAML">wikipedia</a>).</p>
+<p>Pour une migration <em>&#8220;one shot&#8221;</em>, le plus simple sera de cloner la lib dans le r&eacute;pertoire plugins de vos applis et de suivre les instructions propos&eacute;es dans le <span class="caps">README</span> :</p>
+<div class="CodeRay">
+  <div class="code"><pre>cd /path/to/my/app
+cd vendor/plugins
+git clone http://github.com/ludicast/yaml_db.git
+cd -
+rake db:dump
+#modifications &eacute;ventuelles du fichier db/data.yml (chez nous l'appli change d'adresse, donc on a remplac&eacute; toutes les anciennes URLs)
+#changement de database.yml
+rake db:load</pre></div>
+</div>
+<p>Un outil simple, comme on aime :)</p>
+<p><strong><span class="caps">EDIT</span></strong>: j&#8217;ai titr&eacute; &#8220;d&eacute;placer une base Rails&#8221; car ce plugin fonctionne bien surtout avec une base ActiveRecord, <span class="caps">ORM</span> de Rails par d&eacute;faut. Pour une base quelconque rien de garanti :)</p>

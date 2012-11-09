@@ -1,0 +1,24 @@
+---
+title: "Des images dans Simplelog"
+---
+
+<h1>Des images dans Simplelog</h1><p>Ma version de <a href="http://www.simplelog.net/">Simplelog</a>, disponible sur <a href="http://github.com/jbbarth/simplelog/">mon espace Github</a>, supporte d&eacute;sormais l&#8217;upload d&#8217;images, utilisables ensuite dans les posts ou pages de son choix :</p>
+<p style="text-align:center;"><img src="/assets/0000/0001/00247_midnightfractals_1680x1050.jpg" alt="" /></p>
+<p>Pour que le tout fonctionne, il faut disposer sur son serveur d&#8217;une biblioth&egrave;que de traitement d&#8217;image pour Ruby. Personnellement j&#8217;ai choisi <a href="http://seattlerb.rubyforge.org/ImageScience.html">ImageScience</a> pour sa simplicit&eacute;, mais je viens de me rendre compte qu&#8217;il y avait des bugs sur les images <span class="caps">PNG</span>. Je vais voir si je peux passer &agrave; autre chose pour la suite.</p>
+<p>To be continued ;-)</p>
+<p><strong><span class="caps">EDIT</span></strong>: je suis pass&eacute; &agrave; <a href="http://rmagick.rubyforge.org/">RMagick</a>, tout a l&#8217;air de marcher pas mal. D&#8217;ailleurs pour ma version de Simplelog, c&#8217;est mis comme processeur par d&eacute;faut (pour le moment en dur dans la classe, qui sait peut-&ecirc;tre bient&ocirc;t en configurable) :</p>
+<div class="CodeRay">
+  <div class="code"><pre><span class="r">class</span> <span class="cl">Image</span> &lt; <span class="co">ActiveRecord</span>::<span class="co">Base</span>
+ 
+  has_attachment <span class="sy">:content_type</span> =&gt; <span class="sy">:image</span>,
+                  <span class="sy">:storage</span> =&gt; <span class="sy">:file_system</span>,
+                  <span class="sy">:max_size</span> =&gt; <span class="i">5</span>.megabytes,
+                  <span class="sy">:resize_to</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">740x400&gt;</span><span class="dl">'</span></span>,
+                  <span class="sy">:thumbnails</span> =&gt; { <span class="sy">:thumb</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">100x100&gt;</span><span class="dl">'</span></span> },
+                  <span class="sy">:path_prefix</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">public/assets</span><span class="dl">'</span></span>,
+                  <span class="sy">:processor</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">Rmagick</span><span class="dl">'</span></span>
+ 
+  validates_as_attachment
+ 
+<span class="r">end</span></pre></div>
+</div>

@@ -1,0 +1,23 @@
+---
+title: "Apache + mongrel : avoir une jolie URL"
+---
+
+<h1>Apache + mongrel : avoir une jolie URL</h1><p>Comme promis pr&eacute;c&eacute;demment, un petit tuto pour avoir une <span class="caps">URL</span> un peu moins brute que http://vds171.sivit.org:8000/ pour ce blog. Pourquoi pas http://pada.chanmasters.com/ ?<br />
+Suivez le guide !</p>
+<p>Rien de bien compliqu&eacute; en v&eacute;rit&eacute;. Il faut au pr&eacute;alable configurer Bind (ou &eacute;quivalent) pour que votre sous domaine soit reconnu. Cette &eacute;tape n&rsquo;est pas obligatoire, selon votre configuration de <span class="caps">DNS</span> et le passif de cette config. 2e &eacute;tape, mapper cette <span class="caps">URL</span> (qui redirige donc vers votre serveur sur le port 80) &agrave; votre <span class="caps">URL</span> de serveur Mongrel, via un &ldquo;ProxyPass&rdquo;. Cette directive peut &ecirc;tre utilis&eacute;e pour redirig&eacute;e sur une autre machine au passage (c&rsquo;est ce que fait un &ldquo;reverse proxy&rdquo; dans un centre-serveur notamment). Chez moi, tout est dans /etc/apache2/conf.d/vhosts.conf. Mais vous pouvez mettre ces directives dans un &ldquo;sites-enabled&rdquo; puis utiliser &ldquo;a2ensite&rdquo; pour activer le site. Je suis en Apache 2.2.3, et &ccedil;a donne donc :</p>
+
+
+<pre><code>&lt;VirtualHost 80.248.208.173:80&gt;
+        ServerName pada.chanmasters.com
+        ProxyPass / http://pada.chanmasters.com:8000/
+        ProxyPassReverse / http://pada.chanmasters.com:8000/
+        ProxyPreserveHost on
+&lt;/VirtualHost&gt;</code></pre>
+
+	<p>NB: j&rsquo;aurais p&ucirc; mettre http://vds171.sivit.org:8000/ &ccedil;a aurait fonctionn&eacute; aussi ! Il semble cependant que &ldquo;localhost&rdquo; ne passe pas, le ProxyPass ne fonctionne alors pas. On obtient une erreur 503 &ldquo;Service Temporarily Unavailable&rdquo; caract&eacute;ristique d&rsquo;un serveur &ldquo;distant&rdquo; inaccessible. Comme si le mongrel n&rsquo;&eacute;tait pas d&eacute;marr&eacute;, donc.</p>
+
+
+	<p>Un reload d&rsquo;Apache suffit ensuite &agrave; acc&eacute;der &agrave; votre mongrel :</p>
+
+
+<pre><code># /etc/init.d/apache2 reload</code></pre>
