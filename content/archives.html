@@ -1,0 +1,8 @@
+--- 
+title: Archives
+---
+
+<% posts = Dir.glob("./content/archives/**/*.html").sort.reverse %>
+
+<h1>Archives</h1>
+<%= stupid_list_links posts %>
