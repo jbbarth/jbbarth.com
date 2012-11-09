@@ -48,8 +48,13 @@ blockquote > p { margin:0; }
   font-size: 42px;
   font-style: normal;
   font-weight: 400;
-  color: #de376f;
+  color: #de376f !important;
   text-shadow: 0px 1px 0px #ddd;
+}
+a.sitetitle:hover {
+  color: #ee376f !important;
+  text-decoration:none;
+  cursor:pointer;
 }
 h1 {
   margin:8px 4px;
