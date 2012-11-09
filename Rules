@@ -10,6 +10,10 @@
 #   item, use the pattern "/about/*/"; "/about/*" will also select the parent,
 #   because "*" matches zero or more characters.
 
+compile 'CNAME' do
+  # don't compile this
+end
+
 compile '/static/*' do
   # don't filter or layout
 end
@@ -21,6 +25,10 @@ compile '*' do
   if %w(css html).include? item.attributes[:extension]
     filter :relativize_paths, :type => item.attributes[:extension].to_sym
   end
+end
+
+route 'CNAME' do
+  '/CNAME'
 end
 
 route '/static/*' do
