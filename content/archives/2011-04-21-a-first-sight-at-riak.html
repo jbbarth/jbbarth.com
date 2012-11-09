@@ -4,7 +4,7 @@ title: "A first sight at Riak"
 
 <h1>A first sight at Riak</h1><p>It&#8217;s been a long time since I wanted to test <a href="http://wiki.basho.com/"><span class="caps">RIAK</span></a>, a <em>&#8220;NoSQL&#8221;</em> (what a fucking stupid word) database from the Basho team. It&#8217;s Dynamo-inspired, you can process data through &#8220;MapReduce&#8221; jobs on server side, and it&#8217;s content-agnostic. It can scale easily on numerous nodes and it aims at being strongly fault tolerant, so no node is particular in a riak cluster.</p>
 <p>Have you ever heard about the <span class="caps">CAP</span> theorem ? In brief, it says that <em>&#8220;In a distributed system, you can&#8217;t get a perfect Consistency, Availability and Partition tolerance at the same time&#8221;</em>. It&#8217;s like that, it&#8217;s been proved, now you&#8217;ll have to live with that. Riak focuses on the <strong>A</strong> and <strong>P</strong> sides, which means a Riak cluster is not always perfectly Consistent (it&#8217;s not boolean, your consistency needs can be tuned). A first node can have some data, and you might have to wait a certain amount of time before this data is coherent with the node <em>you</em> query. Which is perfectly fine in most cases.</p>
-<h4>Install Riak</h4>
+<h2>Install Riak</h2>
 <p>What&#8217;s fun with Riak is the scalability thing. If you want to test it, the wiki has a great tutorial about <a href="http://wiki.basho.com/Building-a-Development-Environment.html">Building a Development Environment</a>. Erlang was a bit too old on my Ubuntu 10.10 (R13B03 instead of required R13B04), so I had to get a fresh version from sources:</p>
 <div class="CodeRay">
   <div class="code"><pre>#!/bin/sh
@@ -33,7 +33,7 @@ make devrel</pre></div>
 % ./dev2/bin/riak-admin join dev1@127.0.0.1
 % ./dev3/bin/riak-admin join dev1@127.0.0.1</pre></div>
 </div>
-<h4>Command line</h4>
+<h2>Command line</h2>
 <p>We have 2 binaries :</p>
 <div class="CodeRay">
   <div class="code"><pre>% dev1/bin/riak
@@ -65,7 +65,7 @@ TRUE All nodes agree on the ring ['dev1@127.0.0.1','dev2@127.0.0.1',
 Successfully completed 1 read/write cycle to 'dev1@127.0.0.1'</pre></div>
 </div>
 <p>NB: I didn&#8217;t manage to make this test fail, I don&#8217;t really know what it tests. Restricting read/write permissions on <code>dev*/data/</code> doesn&#8217;t seem to affect it, but I presume Riak buffers things in memory in such cases, so it would need some more tests&#8230;</p>
-<h4><span class="caps">HTTP</span> Exploration</h4>
+<h2><span class="caps">HTTP</span> Exploration</h2>
 <p>Riak has a full <span class="caps">HTTP</span> <span class="caps">API</span>, so it&#8217;s dead simple to dialog with your ring (from any of its nodes). It returns <span class="caps">JSON</span>, so it&#8217;s easy to parse (formatting is mine in the following examples).</p>
 <p>You can organize data into <code>buckets</code>, which are containers for storing elements of the same type. You can get informations on a bucket (existing or not) with :</p>
 <div class="CodeRay">
@@ -133,7 +133,7 @@ Successfully completed 1 read/write cycle to 'dev1@127.0.0.1'</pre></div>
   }
 }</pre></div>
 </div>
-<h4>But I wanna haz some <span class="caps">GUI</span> !</h4>
+<h2>But I wanna haz some <span class="caps">GUI</span> !</h2>
 <p>Not happy with the command line ? <a href="https://github.com/adamhunter">Adam Hunter</a> built <a href="https://github.com/adamhunter/rekon">Rekon</a>, a data browser for your riak node, built as a riak app (only riak objects and javascript, yeah). Installation is pretty simple, in our case for our &#8220;dev1&#8221; node :</p>
 <div class="CodeRay">
   <div class="code"><pre>curl -s get.rekonapp.com | node=127.0.0.1:8091 sh</pre></div>
@@ -141,5 +141,5 @@ Successfully completed 1 read/write cycle to 'dev1@127.0.0.1'</pre></div>
 <p>Then navigate to <a href="http://localhost:8091/riak/rekon/go">http://localhost:8091/riak/rekon/go</a>, and <em>tadam</em> :</p>
 <p style="text-align:center;"><img src="http://jbbarth.com/assets/0000/0056/riak-rekon.png" alt="" /></p>
 <p>I let you play with it, it&#8217;s intuitive enough.</p>
-<h4>Conclusion</h4>
+<h2>Conclusion</h2>
 <p>Riak is an amazing piece of software. In future posts, I&#8217;ll try to discuss how you can query it from a Rails app with the Ripple client library, and some other exciting things such as deployment and system administration things.</p>

@@ -38,7 +38,7 @@ compl&egrave;tement vos notions sur les expressions r&eacute;guli&egrave;res, m&
 	<p>Remarque : <code>?,*,+</code> peuvent &ecirc;tre exprim&eacute;s par un &eacute;quivalent entre accollades.</p>
 
 
-	<p><h3><span class="caps">METACARACTERES DE POSITION</span></h3></p>
+	<p><h2><span class="caps">METACARACTERES DE POSITION</span></h2></p>
 
 	<p><code>^</code> : &ldquo;D&eacute;but de chaine&rdquo; (si positionn&eacute; en d&eacute;but de masque)</p>
 
@@ -52,7 +52,7 @@ compl&egrave;tement vos notions sur les expressions r&eacute;guli&egrave;res, m&
 
 	<p><code>/^ABC$/</code> permet donc de reconnaitre une chaine qui est <span class="caps">EXACTEMENT</span> &ldquo;ABC&rdquo; ;-)</p>
 
-	<p><h3><span class="caps">METACARACTERES DE GROUPEMENT</span></h3></p>
+	<p><h2><span class="caps">METACARACTERES DE GROUPEMENT</span></h2></p>
 
 	<p>Les parenth&egrave;ses servent &agrave; regrouper plusieurs &ldquo;briques&rdquo; de regex.</p>
 
@@ -71,7 +71,7 @@ Le pattern sera : <code>/(ab|bc)d/</code></p>
 	<p>Les parenth&egrave;ses ont une troisi&egrave;me fonction, la capture, que je ne d&eacute;velopperai pas ici : grosso modo, tout ce qui est entre des parenth&egrave;ses peut &ecirc;tre r&eacute;utilis&eacute; plus loin dans la regex (backref), ou dans un remplacement, ou simplement retrouv&eacute; apr&egrave;s un &ldquo;if&rdquo; par exemple.</p>
 
 
-	<p><h3><span class="caps">METACARACTERES DE CLASSE</span></h3><br />
+	<p><h2><span class="caps">METACARACTERES DE CLASSE</span></h2><br />
 Une classe est un ensemble de caract&egrave;res, elle est d&eacute;finie entre crochets.<br />
 ex : un ensemble contentant a,b,e,g, et z : <code>[abegz]</code></p>
 
@@ -96,7 +96,7 @@ Cette condition v&eacute;rifie que $string contient un caract&egrave;re qui n&rs
 Cette condition <strong><span class="caps">NE DIT PAS</span></strong> : v&eacute;rifie que $string ne contient pas de lettre minuscule.</p>
 
 
-	<p><h3><span class="caps">METACARACTERE</span> \</h3><br />
+	<p><h2><span class="caps">METACARACTERE</span> \</h2><br />
 Il a 3 fonctions :</p>
 
 	<p>1- &eacute;chappement<br />
@@ -120,13 +120,13 @@ Moultes autres selon les langages, ceux ci sont les plus utilis&eacute;s.</p>
 Point tr&egrave;s int&eacute;ressant, non trait&eacute; ici car trop compliqu&eacute; pour une premi&egrave;re approche.</p>
 
 
-	<p><h3><span class="caps">LIENS UTILES</span></h3><br />
+	<p><h2><span class="caps">LIENS UTILES</span></h2><br />
 perldoc.perl.org/perlre.html : la doc de r&eacute;f&eacute;rence des regex en Perl (qui impl&eacute;mente les regex au coeur du langage)<br />
 www.pcre.org : le site officiel de la lib pcre (qui &eacute;quipe pas mal de langages)<br />
 www.expreg.com : site francais tr&egrave;s bien fait sur les regexp<br />
 www.scriptsdb.org/tutar.php ?id=1 : tuto sur les regex en mIRC (celui par lequel j&rsquo;ai commenc&eacute;)</p>
 
-	<p><h3><span class="caps">SUJETS LAISSES A UNE PROPA ULTERIEURE</span></h3><br />
+	<p><h2><span class="caps">SUJETS LAISSES A UNE PROPA ULTERIEURE</span></h2><br />
 op&eacute;rateurs non gourmands<br />
 - utilisation des backref et des captures<br />
 - assertions positives et n&eacute;gatives<br />
@@ -139,7 +139,7 @@ op&eacute;rateurs non gourmands<br />
 - &eacute;quivalence de fonctions php ou Perl standard (voir http://www.expreg.com/equivalence.php)<br />
 - UrlRewriting<br />
 - ...<br />
-<h3><span class="caps">CONCLUSION</span></h3><br />
+<h2><span class="caps">CONCLUSION</span></h2><br />
 Attention cependant : le travers naturel quand on commence &agrave; bien maitriser cet outil, c&rsquo;est de faire pas mal de choses avec qu&rsquo;on aurait fait sans sinon.<br />
 Ce qui peut devenir ennuyeux pour des probl&egrave;mes d&rsquo;optimisation ;-)<br />
 Durant votre progession, l&rsquo;important est de faire des tests, d&rsquo;apprendre par la pratique et l&rsquo;observation : les moteurs de regex ont un fonctionnement complexe : au del&agrave; d&rsquo;un certain niveau, on peut trouver des &ldquo;bugs&rdquo; donc testez vos masques !</p>

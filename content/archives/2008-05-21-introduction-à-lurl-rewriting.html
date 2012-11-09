@@ -10,7 +10,7 @@ Gr&acirc;ce &agrave; cette fonctionnalit&eacute;, vous pouvez proposer des <stro
 	<p>Pr&eacute; requis : avoir quelques notions sur les expressions r&eacute;guli&eacute;res..</p>
 
 
-	<h3>Introduction</h3>
+	<h2>Introduction</h2>
 
 
 	<p>L&rsquo;URL Rewriting permet de &ldquo;r&eacute;-&eacute;crire des URLs&rdquo;.<br />
@@ -30,21 +30,21 @@ http://www.monsite.fr/a/b/c/ affichera en r&eacute;alit&eacute; sur mon site la 
 - la <strong>s&eacute;curit&eacute;</strong>, ou plutot le cot&eacute; &ldquo;<strong>pratique</strong>&rdquo; : vous avez par exemple un r&eacute;pertoire admin/ auquel vous ne voulez que personne acc&egrave;de. Gr&acirc;ce &agrave; l&rsquo;URL Rewriting, vous pouvez sp&eacute;cifier que toute page appel&eacute;e dans le r&eacute;pertoire admin/ doit afficher en fait http://www.monsite.fr/erreur.html</p>
 
 
-	<h3>Mise en pratique</h3>
+	<h2>Mise en pratique</h2>
 
 
 	<p>En pratique, l&rsquo;URL Rewriting est disponible (a minima) sur Apache, et sur <span class="caps">IIS</span>.<br />
 Nous traiterons le cas d&rsquo;Apache, qui est tr&egrave;s r&eacute;pandu, je n&rsquo;ai jamais test&eacute; sur <span class="caps">IIS</span> (le serveur <span class="caps">HTTP</span> Microsoft).</p>
 
 
-	<h4>1- V&eacute;rifier que l&rsquo;URL Rewriting est utilisable</h4>
+	<h2>1- V&eacute;rifier que l&rsquo;URL Rewriting est utilisable</h2>
 
 
 	<p>En <span class="caps">PHP</span>, il suffit de v&eacute;rifier que le module &ldquo;mod_rewrite&rdquo; est charg&eacute;.<br />
 Faites une page  et regardez dans la liste &ldquo;Apache Loaded Modules&rdquo; si ce module est bien activ&eacute;. En g&eacute;n&eacute;ral m&ecirc;me chez de petits h&eacute;bergeurs payants c&rsquo;est le cas.</p>
 
 
-	<h4>2- Fonctionnement</h4>
+	<h2>2- Fonctionnement</h2>
 
 
 	<p>L&rsquo;URL Rewriting se pr&eacute;sente concr&egrave;tement sous forme de &ldquo;r&egrave;gles&rdquo; que vous allez pr&eacute;ciser dans un fichier .htaccess<br />
@@ -56,7 +56,7 @@ Si l&rsquo;URL entr&eacute;e par l&rsquo;utilisateur (ou dans un lien) v&eacute;
 A noter : si le masque de remplacement est un tiret, la r&eacute;&eacute;criture n&rsquo;a pas lieu.</p>
 
 
-	<h4>3- Premier exemple</h4>
+	<h2>3- Premier exemple</h2>
 
 
 	<p>Voyons un premier exemple tr&egrave;s simple.<br />
@@ -77,7 +77,7 @@ Exemple de contenu :<br />
 	<p>Remarque : si c&rsquo;est uniquement pour faire une redirection fixe, pas besoin d&rsquo;URL Rewriting : un RedirectPermanent marche aussi.. Remarque2 : selon la version et les r&eacute;glages de votre serveur, il est possible que ceci ne marche pas (erreur 500 ou 404) : mettez alors test.php au lieu de /test.php en r&eacute;&eacute;criture.</p>
 
 
-	<h4>4- Limites</h4>
+	<h2>4- Limites</h2>
 
 
 	<p>Certaines regex ne marcheront pas sur de l&rsquo;URL Rewriting.<br />
@@ -90,7 +90,7 @@ Les notions &ldquo;avanc&eacute;es&rdquo; des langages de regex, du genre test a
 	<p>Pour l&rsquo;anecdote, dans un masque compliqu&eacute; un jour, [abcd] fonctionnait, mais pas [abcdef], allez comprendre ;o)</p>
 
 
-	<h3>Les r&eacute;f&eacute;rences</h3>
+	<h2>Les r&eacute;f&eacute;rences</h2>
 
 
 	<p>Comme tout outil utilisant les regex, on peut capturer du texte et le r&eacute;utiliser lors du remplacement.</p>
@@ -105,7 +105,7 @@ RewriteRule ^repertoire1/(.*\.php)$ /repertoire2/$1</code>
 	<p>Je ne m&rsquo;&eacute;tendrai pas plus la dessus ici, histoire de se concentrer sur l&rsquo;URL Rewriting et non sur les m&eacute;canismes de regex.</p>
 
 
-	<h3>Les drapeaux</h3>
+	<h2>Les drapeaux</h2>
 
 
 	<p>Les flags, ou drapeaux, se placent apr&egrave;s le masque de r&eacute;-&eacute;criture : ils permettent de d&eacute;finir des options pour la r&eacute;&eacute;criture.<br />
@@ -156,7 +156,7 @@ Ce masque r&eacute;&eacute;crira bien test.php (marche &eacute;galement dans l&r
 et autres <span class="caps">QSA</span>,NS,PT,S,E&hellip;</p>
 
 
-	<h3>Les conditions</h3>
+	<h2>Les conditions</h2>
 
 
 	<p>mod_rexrite permet de mettre diff&eacute;rentes conditions avant de r&eacute;aliser une r&eacute;&eacute;criture.</p>
@@ -201,7 +201,7 @@ RewriteRule ^index\.html$ index.nuit.html [L]</code>
 	<p>A vous d&rsquo;&ecirc;tre imaginatifs maintenant !</p>
 
 
-	<h3>Conclusion</h3>
+	<h2>Conclusion</h2>
 
 
 	<p>Beaucoup de fonctionnalit&eacute;s et options de l&rsquo;URL Rewriting n&rsquo;ont pas &eacute;t&eacute; abord&eacute;es ici, mais vous avez d&eacute;j&agrave; un panorama assez large des fonctionnalit&eacute;s de base.</p>
