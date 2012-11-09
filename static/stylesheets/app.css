@@ -24,6 +24,7 @@ blockquote > p { margin:0; }
 #content {
   min-height:300px;
   margin-left:9px;
+  padding-left:35px;
   border-left:1px solid #ddd;
 }
 
