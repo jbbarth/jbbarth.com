@@ -3,17 +3,24 @@ GEM
   specs:
     adsf (1.0.1)
       rack (>= 1.0.0)
+    coderay (1.0.8)
     cri (2.0.2)
     json (1.6.4)
+    method_source (0.8.1)
     mime-types (1.17.2)
     nanoc (3.2.3)
       nanoc3 (>= 3.2.3)
     nanoc3 (3.2.3)
       cri (~> 2.0)
     nokogiri (1.5.0)
+    pry (0.9.10)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.3.1)
     rack (1.4.0)
     rake (0.8.7)
     redcarpet (1.17.2)
+    slop (3.3.3)
     systemu (2.4.2)
 
 PLATFORMS
@@ -25,6 +32,7 @@ DEPENDENCIES
   mime-types
   nanoc (> 3.1)
   nokogiri
+  pry
   rake
   redcarpet (~> 1.17)
   systemu
