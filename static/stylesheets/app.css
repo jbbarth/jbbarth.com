@@ -11,26 +11,40 @@ blockquote { margin:5px 15px; font-style:italic; }
 blockquote > p { margin:0; }
 
 /* layout */
-#container {
-  margin: 50px auto 20px;
-  min-height:300px;
+html, body {
+  min-height:100%;
   font-size:14px;
+}
+#container {
+  margin:0 auto;
+  padding:0;
+  min-height:100%;
+  height:auto !important;
+  height:100%;
   color:#865;
 }
 #sidebar, #content {
-  margin:0;
   padding:12px 10px 12px 18px;
 }
 #content {
-  min-height:300px;
-  margin-left:9px;
+  overflow:auto;
+  min-height:200px;
+  margin:40px 9px 40px 0;
   padding-left:35px;
   border-left:1px solid #eee;
+  /*padding-bottom:200px; /*footer*/
+}
+#footer {
+  position:relative;
+  margin-top:-250px;
+  width:100%;
+  height:250px;
+  clear:both;
 }
 
 /* sidebar */
 #sidebar {
-  margin:0;
+  margin:42px 0 0;
   padding-left:10px;
   font-size:14px;
   color:#865;
@@ -65,8 +79,9 @@ h1 {
   color:#865;
 }
 h2 {
+  font-family: 'Average Sans', sans-serif;
   font-size:18px;
-  margin:15px 0 8px;
+  margin:8px 4px;
 }
 
 #content pre, #content code {
@@ -104,4 +119,15 @@ h2 {
 span.time {
   font-family:monospace;
   padding:0 4px;
+}
+#footer {
+  background-color:#732a19;
+  color:#edc;
+}
+#footer a:link, #footer a:visited {
+  color: #edc;
+}
+#footer h2 {
+  color:#edc;
+  border-bottom:1px solid #edc;
 }
