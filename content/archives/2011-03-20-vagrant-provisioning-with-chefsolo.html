@@ -9,9 +9,7 @@ title: "Vagrant provisioning with chef-solo"
 
 <p>Today I wanted to run a vagrant VM with the same chef-solo configuration I have on the host. So here’s the first <code>Vagrantfile</code> I wrote:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 config.vm.box = <span class="s"><span class="dl">"</span><span class="k">debian_squeeze_32</span><span class="dl">"</span></span>
 config.vm.share_folder <span class="s"><span class="dl">"</span><span class="k">chef-cookbooks</span><span class="dl">"</span></span>, <span class=
 "s"><span class="dl">"</span><span class="k">/var/chef</span><span class="dl">"</span></span>, <span class="s"><span class="dl">"</span><span class=
@@ -21,65 +19,50 @@ config.vm.provision <span class="sy">:chef_solo</span> <span class="r">do</span>
   chef.json.merge!(<span class="co">JSON</span>.parse(<span class="co">File</span>.read(<span class="s"><span class="dl">"</span><span class=
 "k">/etc/chef/dna.json</span><span class="dl">"</span></span>)))
 <span class="r">end</span>
-  </div>
-</div>
+</pre>
 
 <p>But it ended up with:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % vagrant up     
 There was a problem with the configuration of Vagrant. The error message(s)
 are printed below:
 
 vm:
 * Run list must not be empty.
-  </div>
-</div>
+</pre>
 
 <p>When you read the documentation, it seems vagrant assumes you add some recipes explicitly through the <code>add_recipe</code> method:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 dna = <span class="co">JSON</span>.parse(<span class="co">File</span>.read(<span class="s"><span class="dl">"</span><span class=
 "k">/etc/chef/dna.json</span><span class="dl">"</span></span>))
 dna[<span class="s"><span class="dl">"</span><span class="k">recipes</span><span class="dl">"</span></span>].each <span class="r">do</span> |recipe|
 chef.add_recipe(recipe)
 chef.json.merge!(dna)
-  </div>
-</div>
+</pre>
 
 <p>…which ends with a Chef error:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 [default] /usr/lib/ruby/1.8/chef/node.rb:382:in `consume_run_list': stderr
 [default] : please set the node's run list using the 'run_list' attribute only. (Chef::Exceptions::AmbiguousRunlistSpecification)
-  </div>
-</div>
+</pre>
 
 <p>Ok, let’s remove the <code>recipes</code> key in our json file:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 dna = <span class="co">JSON</span>.parse(<span class="co">File</span>.read(<span class="s"><span class="dl">"</span><span class=
 "k">/etc/chef/dna.json</span><span class="dl">"</span></span>))
 dna.delete(<span class="s"><span class="dl">"</span><span class="k">recipes</span><span class="dl">"</span></span>).each <span class="r">do</span> |recipe|
 chef.add_recipe(recipe)
 chef.json.merge!(dna)
-  </div>
-</div>
+</pre>
 
 <p>It works. But it’s not really clean. After a research in the vagrant gem source code, I found that <code>json[:run_list]</code> does exactly what I want,
 so here’s the final Vagrantfile:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 config.vm.box = <span class="s"><span class="dl">"</span><span class="k">debian_squeeze_32</span><span class="dl">"</span></span>
 config.vm.share_folder <span class="s"><span class="dl">"</span><span class="k">chef-cookbooks</span><span class="dl">"</span></span>, <span class=
 "s"><span class="dl">"</span><span class="k">/var/chef</span><span class="dl">"</span></span>, <span class="s"><span class="dl">"</span><span class=
@@ -92,7 +75,6 @@ config.vm.provision <span class="sy">:chef_solo</span> <span class="r">do</span>
   chef.cookbooks_path = <span class="s"><span class="dl">"</span><span class="k">/var/chef/cookbooks</span><span class="dl">"</span></span>
   chef.json.merge!(dna)
 <span class="r">end</span>
-  </div>
-</div>
+</pre>
 
 <p>Next!</p>

@@ -8,45 +8,33 @@ title: "Connaître sa RAM"
 le nombre de barettes de <span class="caps">RAM</span> sur un Linux. Pour connaitre ce genre d’info, <code>lshw</code> ou <code>dmidecode</code> sont plus
 adaptés. En reformattant la sortie avec <code>ruby</code>, on obtient quelque chose de ce genre :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo dmidecode | ruby -ne <span class="s"><span class="dl">'</span><span class=
 "k">( a=[]; 12.times{a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class=
 "k">*(.*)/).first }; puts a.compact.join("/") ) if $_.match /Memory Device$/</span><span class="dl">'</span></span> | uniq -c
-  </div>
-</div>
+</pre>
 
 <p>Par charité, je vous fais la même en lisible :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo dmidecode | \
 ruby -ne <span class="s"><span class="dl">'</span><span class="k">\
       a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class="k">*(.*)/).first </span><span class="k">\
-  </div>
-</div>
+</pre>
 
 <p>Sur mon NC10:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
     1 2048 MB/DDR2/533 MHz (1.9 ns)
     1 No Module Installed/DDR2/533 MHz (1.9 ns)
-  </div>
-</div>
+</pre>
 
 <p>Et sur un serveur du boulot:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
     8 4096 MB/&lt;OUT OF SPEC&gt;/667 MHz (1.5 ns)
    24 No Module Installed/&lt;OUT OF SPEC&gt;/Unknown
-  </div>
-</div>
+</pre>
 
 <p>(3615 Jmelapète)</p>
 

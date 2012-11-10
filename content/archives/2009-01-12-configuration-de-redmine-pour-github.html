@@ -10,9 +10,12 @@ exactement pareil, parce que c’est bien. Et comme j’ai envie de faire un art
 <p>Voilà donc en très bref la config que j’ai utilisée pour linker mon Redmine (prochainement en ligne, dès que les bons <span class="caps">DNS</span> seront
 propagés) à mon dépôt github pour Simplelog (rien mis encore dessus, seulement la release officielle).</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-$ sudo mkdir -p /var/redmine/git_repositories<br>$ sudo chown rails:rails /var/redmine/git_repositories<br>$ cd /var/redmine/git_repositories<br>$ git clone —bare git://github.com/jbbarth/simplelog.git<br>$ crontab -e<br>        #git repo for simplelog<br>        */15 * * * * git-pull /var/redmine/git_repositories/simplelog/ 2&gt;&amp;1 | grep -vE "^From|FETCH_HEAD|^Already up-to-date"
-  </div>
-</div>
+<pre>
+$ sudo mkdir -p /var/redmine/git_repositories
+$ sudo chown rails:rails /var/redmine/git_repositories
+$ cd /var/redmine/git_repositories
+$ git clone —bare git://github.com/jbbarth/simplelog.git
+$ crontab -e
+  #git repo for simplelog
+  */15 * * * * git-pull /var/redmine/git_repositories/simplelog/ 2&gt;&amp;1 | grep -vE "^From|FETCH_HEAD|^Already up-to-date"
+</pre>

@@ -24,15 +24,12 @@ raison</strong> qu’une de mes applis dépende de <a href="http://pablotron.org
 
 <p>Bref, faute de mieux pour le moment, voilà le genre d’horreur auquel Rails me pousse :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 basedirs = <span class="co">ENV</span>[<span class="s"><span class="dl">"</span><span class="k">GEM_PATH</span><span class=
 "dl">"</span></span>].to_s.split(<span class="s"><span class="dl">"</span><span class="k">:</span><span class="dl">"</span></span>).map{|d|<span class=
 "s"><span class="dl">"</span><span class="il"><span class="idl">#{</span>d<span class="idl">}</span></span><span class="k">/gems/*/lib</span><span class=
 "dl">"</span></span>}
 <span class="gv">$:</span> &lt;&lt; dir <span class="r">unless</span> <span class="gv">$:</span>.include?(dir)
-  </div>
-</div>
+</pre>
 
 <p>Humpf.</p>

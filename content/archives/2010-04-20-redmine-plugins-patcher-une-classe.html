@@ -4,6 +4,8 @@ title: "Redmine Plugins #2 : patcher une classe de Redmine"
 
 <h1>Redmine Plugins #2 : patcher une classe de Redmine</h1>
 
+<strong>ATTENTION: cet article n'est plus valable à partir de Redmine 2.x.</strong>
+
 <p>Il peut arriver qu’une classe de Redmine ne se comporte pas exactement comme vous le voudriez, ou que vous souhaitiez lui ajouter des propriétés.</p>
 
 <p>C’est décrit en anglais sur la page <a href="http://www.redmine.org/wiki/1/Plugin_Internals#Extending-the-Redmine-Core">Plugin Internals / Extending the
@@ -18,9 +20,7 @@ le ticket #<span class="caps">XXX</span>”. Exemple bidon, c’est pour la scie
 
 <p>Si on applique ce que préconise Eric, ça donne quelque chose de ce genre :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 require_dependency <span class="s"><span class="dl">'</span><span class="k">issue_patch</span><span class="dl">'</span></span>
 <span class="co">Issue</span>.send(<span class="sy">:include</span>, <span class="co">IssuePatch</span>) <span class="r">unless</span> <span class=
 "co">Issue</span>.included_modules.include? <span class="co">IssuePatch</span>
@@ -47,16 +47,13 @@ require_dependency <span class="s"><span class="dl">'</span><span class="k">issu
 "pc">self</span>.id<span class="idl">}</span></span><span class="dl">"</span></span>
   <span class="r">end</span>
 <span class="r">end</span>    
-  </div>
-</div>
+</pre>
 
 <p>Classique, mais comme diraient certains amis “on voit pas trop ce que ça fait”.</p>
 
 <p>Personnellement je préfère réouvrir la classe Issue, et ça a l’air de marcher tout aussi bien (en dev et en prod) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 config.to_prepare <span class="r">do</span>
 require_dependency <span class="s"><span class="dl">'</span><span class="k">issue_patch</span><span class="dl">'</span></span>
 
@@ -67,8 +64,7 @@ require_dependency <span class="s"><span class="dl">'</span><span class="k">issu
   <span class="s"><span class="dl">"</span><span class="k">Je suis le ticket #</span><span class="il"><span class="idl">#{</span><span class=
 "pc">self</span>.id<span class="idl">}</span></span><span class="dl">"</span></span>
 <span class="r">end</span>
-  </div>
-</div>
+</pre>
 
 <p>Différences :</p>
 

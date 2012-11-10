@@ -22,9 +22,7 @@ souple, sympa, c’est le choix Debian par défaut, etc.).</p>
 <p>Vient le second coupable, moi : j’ai édité les confs à la main, en tatonnant. Là, je décide de rester sous Postfix, mais de chercher une doc bien foutue.
 Et là hourra, merci Debian encore (&lt;3), je trouve <a href="http://wiki.debian.org/Postfix">cette page de wiki</a> ; voici donc :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 tar cvzf /home/salvor/postfix.tgz /etc/aliases* /etc/postfix/
 wajig remove —purge postfix
 wajig install postfix
@@ -50,8 +48,7 @@ tail /var/log/mail.log
 #mêmes tests de l'extérieur
 tail /var/log/mail.log
 #idem, ça roule \o/
-  </div>
-</div>
+</pre>
 
 <p>:-)</p>
 

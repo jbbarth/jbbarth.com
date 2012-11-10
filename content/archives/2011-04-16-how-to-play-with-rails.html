@@ -16,72 +16,54 @@ Rails 3.1 right now</a>. <strong>Read it first, I will not explain everything he
 
 <p>First, install rails master branch (I use the awesome <a href="https://github.com/defunkt/hub">hub</a> wrapper for git) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 cd ~/code
 git clone rails/rails
-  </div>
-</div>
+</pre>
 
 <p>Then create a gemset with <span class="caps">RVM</span> :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 rvm use 1.9.2@yourapp --create
 gem install i18n thor bundler
-  </div>
-</div>
+</pre>
 
 <p>Then we can create our rails app:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 ./rails/bin/rails new yourapp --edge
 cd yourapp
-  </div>
-</div>
+</pre>
 
 <p>Unfortunately, I had 2 problems with this application.</p>
 
 <p>First, the <code>rails</code> binary installed in $GEM_HOME/bin is not fully functional :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % rails -v
 /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:762:in `report_activate_error': Could not find RubyGem rails (&gt;= 0) (Gem::LoadError)
       from /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:219:in `activate'
       from /usr/local/rvm/rubies/ruby-1.9.2-p180/lib/ruby/1.9.1/rubygems.rb:1065:in `gem'
       from /usr/local/rvm/gems/ruby-1.9.2-p180@yourapp/bin/rails:18:in `&lt;main&gt;'
-  </div>
-</div>
+</pre>
 
 <p>The simplest way to solve this is a shell alias:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % alias rails=$GEM_HOME/bundler/gems/rails-*/bin/rails
 % rails -v
 Rails 3.1.0.beta
-  </div>
-</div>
+</pre>
 
 <p>With this, I could make the application run, with <span class="caps">SASS</span> support, good.</p>
 
 <p>But CoffeeScript didn’t work. When I tried to introduce an <code>app/assets/javascripts/awesome.js.coffee</code> script, nothing happened, no alert. I had
 the following error instead of a normal <code>application.js</code> file:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 ExecJS::RuntimeError
 Could not find a JavaScript runtime
-  </div>
-</div>
+</pre>
 
 <p>The error is thrown by the ExecJS gem. It tries to find the best javascript runtime among those listed <a href=
 "https://github.com/sstephenson/execjs/blob/master/README.md">in the <span class="caps">README</span></a>. There’s at least one included in MacOS X, but as a
@@ -89,12 +71,9 @@ Ubuntu user, I have none. I tried to install <code>therubyracer</code> and <code
 on a netbook), 2/ it led me to other errors I had not been able to understand. The simplest way I found to get a working JS runtime is the
 <code>nodejs</code> package of the distribution:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % sudo aptitude install nodejs
-  </div>
-</div>
+</pre>
 
 <p>Restart the Rails server, and everything should work smoothly now!</p>
 
@@ -104,12 +83,9 @@ on a netbook), 2/ it led me to other errors I had not been able to understand. T
 <code>app/assets/javascripts/&lt;controller&gt;.js.coffee</code> with 3 comment lines starting with <code>//</code> instead of <code>#</code>, resulting in
 this kind of errors:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 Error: Parse error on line 1: Unexpected 'MATH'
-  </div>
-</div>
+</pre>
 
 <p>Don’t know if it’s a Rails or ExecJS bug though. But the conclusion is the same: use with caution.</p>
 

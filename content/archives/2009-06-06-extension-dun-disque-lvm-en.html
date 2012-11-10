@@ -25,9 +25,7 @@ pas de partition, aïe.</p>
 
 <p>Voici donc la marche à suivre :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 # on cherche et on note le(s) chemin(s) vers notre disque au sens SCSI (exemple: 3:0:0:0 et 4:0:0:0)
 multipath -ll
 # on met le volume offline
@@ -53,7 +51,6 @@ lvextend -l +123456 /dev/vg_appli/lv_appli
 # il reste à faire l'extension au niveau EXT3 (attention, ces deux étapes sont très longues)
 e2fsck -f /dev/vg_appli/lv_appli
 resize2fs /dev/vg_appli/lv_appli
-  </div>
-</div>
+</pre>
 
 <p>Hope this helps!</p>

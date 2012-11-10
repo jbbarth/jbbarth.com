@@ -60,11 +60,11 @@ A noter : si le masque de remplacement est un tiret, la réécriture n’a pas l
 <h2>3- Premier exemple</h2>
 
 <p>Voyons un premier exemple très simple.<br>
-Mettez dans votre .htaccess :</p><code>RewriteEngine on RewriteRule ^test\.html$ /test.php</code>
+Mettez dans votre .htaccess :</p><pre>RewriteEngine on RewriteRule ^test\.html$ /test.php</pre>
 
 <p>Mettez ensuite une page test.php à la racine de votre site :<br>
 Exemple de contenu :<br>
-<code>Ceci est la page test.php !!</code></p>
+<pre>Ceci est la page test.php !!</pre></p>
 
 <p>Si vous essayez d’aller sur http://www.votresite.fr/test.html, vous verrez la page test.php s’afficher ! Et ce bien que test.html n’existe pas en
 réalité.</p>
@@ -87,8 +87,8 @@ Les notions “avancées” des langages de regex, du genre test avant, test arr
 <p>Comme tout outil utilisant les regex, on peut capturer du texte et le réutiliser lors du remplacement.</p>
 
 <p>Ceci se fait comme avec preg_replace, par l’ajout de parenthèses pour capturer, et de références $1,$2,... pour restituer ce qui a été capturé. Exemple :
-vous désirez que toute page php demandée dans repertoire1 affiche en fait la page équivalent dans répertoire2 :</p><code>RewriteEngine on RewriteRule
-^repertoire1/(.*\.php)$ /repertoire2/$1</code>
+vous désirez que toute page php demandée dans repertoire1 affiche en fait la page équivalent dans répertoire2 :</p><pre>RewriteEngine on RewriteRule
+^repertoire1/(.*\.php)$ /repertoire2/$1</pre>
 
 <p>Je ne m’étendrai pas plus la dessus ici, histoire de se concentrer sur l’URL Rewriting et non sur les mécanismes de regex.</p>
 
@@ -96,15 +96,15 @@ vous désirez que toute page php demandée dans repertoire1 affiche en fait la p
 
 <p>Les flags, ou drapeaux, se placent après le masque de ré-écriture : ils permettent de définir des options pour la réécriture.<br>
 Ils peuvent être combinés en étant séparés par une virgule : [L,F] par exemple (voir la suite)</p>[L] : la règle qui précède sera la dernière, aucune autre
-tentative de réécriture ne sera effectuée ensuite. Exemple : <code>RewriteEngine on RewriteRule ^test\.php$ - [L] RewriteRule ^test\.php$ /test2.php</code>
+tentative de réécriture ne sera effectuée ensuite. Exemple : <pre>RewriteEngine on RewriteRule ^test\.php$ - [L] RewriteRule ^test\.php$ /test2.php</pre>
 Vous tomberez sur test.php, et non test2.php. Sans le [L], vous tomberez sur test2.php ! Ce flag permet par exemple de bloquer l’accès aux images par
-exemples, tout en gardant une réécriture sur tous les dossiers/fichiers autres. [R] : force une redirection Exemple : <code>RewriteEngine on RewriteRule
-^test\.php$ /test2.php [R]</code> test.php sera redirigée vers test2.php, et non réécrite à la volée : le visiteur verra s’écrire test2.php dans la barre de
+exemples, tout en gardant une réécriture sur tous les dossiers/fichiers autres. [R] : force une redirection Exemple : <pre>RewriteEngine on RewriteRule
+^test\.php$ /test2.php [R]</pre> test.php sera redirigée vers test2.php, et non réécrite à la volée : le visiteur verra s’écrire test2.php dans la barre de
 navigation de son browser. [F] : forbidden, accès interdit : renvoie une erreur 403 (permet de protéger l’accès à certains fichiers/répertoires coté serveur
-!) Exemple : <code>RewriteEngine on RewriteRule ^test\.php$ - [F]</code> [G] : erreur 410, <span class="caps">URL</span> n’existant plus Exemple :
-<code>RewriteEngine on RewriteRule ^test\.php$ - [G]</code> [N] : recommence au début des règles Exemple : <code>RewriteEngine on RewriteRule ^test2\.php$
-/index.html RewriteRule ^test\.php$ /test2.php [N]</code> Avec ces règles, la page test.php sera réécrite en test2.php, puis en index.html ! [NC] : pattern
-non sensible à la casse (majuscules/minuscules) Exemple : <code>RewriteEngine on RewriteRule ^tEsT\.pHP$ /test2.php [NC]</code> Ce masque réécrira bien
+!) Exemple : <pre>RewriteEngine on RewriteRule ^test\.php$ - [F]</pre> [G] : erreur 410, <span class="caps">URL</span> n’existant plus Exemple :
+<pre>RewriteEngine on RewriteRule ^test\.php$ - [G]</pre> [N] : recommence au début des règles Exemple : <pre>RewriteEngine on RewriteRule ^test2\.php$
+/index.html RewriteRule ^test\.php$ /test2.php [N]</pre> Avec ces règles, la page test.php sera réécrite en test2.php, puis en index.html ! [NC] : pattern
+non sensible à la casse (majuscules/minuscules) Exemple : <pre>RewriteEngine on RewriteRule ^tEsT\.pHP$ /test2.php [NC]</pre> Ce masque réécrira bien
 test.php (marche également dans l’autre sens.. qui est plus intéressant ;o))
 
 <p>Voila la liste des autres flags, moins utiles pour débuter :<br>
@@ -124,10 +124,10 @@ et autres <span class="caps">QSA</span>,NS,PT,S,E…</p>
 dispo dans la doc Apache, on va par exemple tester le host du visiteur :</p>
 
 <p>Exemple : refuser les hosts contenant <span class="caps">AOL</span> ou tiscali sur notre page test.php<br>
-<code>RewriteEngine on RewriteCond %REMOTE_HOST AOL [OR] RewriteCond %REMOTE_HOST tiscali RewriteRule ^test\.php$ - [F]</code></p>
+<pre>RewriteEngine on RewriteCond %REMOTE_HOST AOL [OR] RewriteCond %REMOTE_HOST tiscali RewriteRule ^test\.php$ - [F]</pre></p>
 
 <p>Exemple : réécrire test.php en test2.php pour les non-utilisateurs de Firefox<br>
-<code>RewriteEngine on RewriteCond %HTTP_USER_AGENT !^.*Firefox.*$ RewriteRule ^test\.php$ /test2.php</code></p>
+<pre>RewriteEngine on RewriteCond %HTTP_USER_AGENT !^.*Firefox.*$ RewriteRule ^test\.php$ /test2.php</pre></p>
 
 <p>Note : voici mon <span class="caps">HTTP</span>_USER_AGENT<br>
 - avec Firefox : Mozilla/5.0 (Windows ; U ; Windows <span class="caps">NT 5</span>.1 ; fr-FR ; rv:1.7.12) Gecko/20050919 Firefox/1.0.7<br>
@@ -136,9 +136,9 @@ dispo dans la doc Apache, on va par exemple tester le host du visiteur :</p>
 
 <p>Cette réécriture n’est pas infaillible, on peut régler son user agent sur certains browsers.</p>
 
-<p>Exemple : afficher une page différente en journée et soirée : (curiosité trouvée dans un ppt sur www.w3-campus.com)</p><code>RewriteEngine on RewriteCond
+<p>Exemple : afficher une page différente en journée et soirée : (curiosité trouvée dans un ppt sur www.w3-campus.com)</p><pre>RewriteEngine on RewriteCond
 %TIME_HOUR%TIME_MIN &gt;0800 RewriteCond %TIME_HOUR%TIME_MIN &lt;2000 RewriteRule ^index\.html$ index.jour.html [L] RewriteRule ^index\.html$ index.nuit.html
-[L]</code>
+[L]</pre>
 
 <p>A vous d’être imaginatifs maintenant !</p>
 

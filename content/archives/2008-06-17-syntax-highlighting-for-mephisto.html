@@ -15,6 +15,7 @@ $ cd /tmp
 $ wget http://syntaxhighlighter.googlecode.com/files/SyntaxHighlighter_1.5.1.rar
 $ mkdir sh &amp;&amp; unrar e SyntaxHighlighter_1.5.1.rar sh/
 $ wget http://bboy.mr.freeze.googlepages.com/shBrushBash.js &amp;&amp; mv shBrushBash.js sh/
+</pre>
 
 <p>Intégration à Mephisto :<br></p>
 <pre class="bash">
@@ -22,6 +23,7 @@ $ cd /home/app/mephisto
 $ mkdir public/javascripts/syntaxHighlighter/ &amp;&amp; cp /tmp/sh/*.js public/javascripts/syntaxHighlighter/
 $ mkdir public/stylesheets/syntaxHighlighter &amp;&amp; cp /tmp/sh/*.css public/stylesheets/syntaxHighlighter/
 $ mkdir public/flash &amp;&amp; cp /tmp/sh/*.swf public/flash/
+</pre>
 
 <p>Ajouts dans layout.liquid :<br></p>
 <pre class="html">
@@ -37,5 +39,6 @@ window.onload = function () {
   dp.SyntaxHighlighter.HighlightAll('code');
 }
 &lt;/script&gt;
+</pre>
 
 <p>Et ensuite, il suffit d’<a href="http://code.google.com/p/syntaxhighlighter/wiki/Usage">appliquer les règles d’utilisation</a> dans vos articles.</p>

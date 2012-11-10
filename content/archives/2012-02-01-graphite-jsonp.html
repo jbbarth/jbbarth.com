@@ -24,18 +24,22 @@ in the request configuration. The callback name is often passed through <code>?c
 "caps">URL</span>. For Graphite, it should be passed as <code>jsonp=blah</code> though it’s not really well documented^W^W^W^W not documented at all (it took
 me nearly 2 hours to make it work, the time to be fed up enough to look at the Python source code :/). The final result looks like this :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-"dl">"</span></span>;
-url = url + <span class="s"><span class="dl">"</span><span class="k">?target=&lt;graph-data-etc.&gt;</span><span class="dl">"</span></span>;
-url = url + <span class="s"><span class="dl">"</span><span class="k">&amp;format=json</span><span class="dl">"</span></span>;
-url = url + <span class="s"><span class="dl">"</span><span class="k">&amp;jsonp=?</span><span class="dl">"</span></span>;
-<span class="c">//do whatever you want with the result</span>
-console.log(data);
+<pre>
+//graphite host
+var url = "http://graphite-server/render/";
+//add target and everything needed by graphite URL API...
+url = url + "?target=<graph-data-etc.>";
+//set "json" as the response format
+url = url + "&format=json";
+//set "jsonp" parameter to set the callback name
+//the "?" will automagically be replaced by jQuery
+url = url + "&jsonp=?";
+//finally go!
+$.getJSON(url, function(data){
+  //do whatever you want with the result
+  console.log(data);
 });
-  </div>
-</div>
+</pre>
 
 <p>It should work out of the box, though a look at your favorite browser’s inspector won’t hurt.</p>
 

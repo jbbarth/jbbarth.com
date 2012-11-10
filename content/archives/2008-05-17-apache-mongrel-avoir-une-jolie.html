@@ -15,15 +15,14 @@ utilisée pour redirigée sur une autre machine au passage (c’est ce que fait 
 /etc/apache2/conf.d/vhosts.conf. Mais vous pouvez mettre ces directives dans un “sites-enabled” puis utiliser “a2ensite” pour activer le site. Je suis en
 Apache 2.2.3, et ça donne donc :</p>
 <pre>
+&lt;VirtualHost&gt;
       ServerName pada.chanmasters.com
       ProxyPass / http://pada.chanmasters.com:8000/
       ProxyPassReverse / http://pada.chanmasters.com:8000/
       ProxyPreserveHost on
-&lt;/VirtualHost&gt;</code>
+&lt;/VirtualHost&gt;
+</pre>
 
-<p>NB: j’aurais pû mettre http://vds171.sivit.org:8000/ ça aurait fonctionné aussi ! Il semble cependant que “localhost” ne passe pas, le ProxyPass ne
-fonctionne alors pas. On obtient une erreur 503 “Service Temporarily Unavailable” caractéristique d’un serveur “distant” inaccessible. Comme si le mongrel
-n’était pas démarré, donc.</p>
+<p>NB: j’aurais pû mettre http://vds171.sivit.org:8000/ ça aurait fonctionné aussi ! Il semble cependant que “localhost” ne passe pas, le ProxyPass ne fonctionne alors pas. On obtient une erreur 503 “Service Temporarily Unavailable” caractéristique d’un serveur “distant” inaccessible. Comme si le mongrel n’était pas démarré, donc.</p>
 
 <p>Un reload d’Apache suffit ensuite à accéder à votre mongrel :</p>
-<pre>

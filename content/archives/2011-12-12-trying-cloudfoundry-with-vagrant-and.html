@@ -11,9 +11,7 @@ title: "Trying CloudFoundry with Vagrant ... and some patience"
 
 <p>Let’s go!</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 mkdir ~/cloudfoundry
 cd ~/cloudfoundry
 #(optional) rvm 1.9.2@vagrant --create
@@ -21,8 +19,7 @@ gem install vagrant
 vagrant box add ubuntu-lucid-64 http://s3.lds.li/vagrant/lucid64.box
 vagrant init ubuntu-lucid-64
 vagrant up
-  </div>
-</div>
+</pre>
 
 <p>NB: if you’re getting a <code>general protection fault: 0000 [#3] SMP</code> error, it might be the sign you’re running an other virtualization system on
 this host (see <a href="https://forums.virtualbox.org/viewtopic.php?f=7&amp;t=45130">this post about VirtualBox + kvm</a> errors)</p>
@@ -34,22 +31,16 @@ install script, so let’s use it directly.</p>
 
 <p>Before that, we should just fix a problem in our Vagrant image, the <code>/home/vagrant/.gem</code> is owned by <code>root:root</code>:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo chown vagrant:vagrant /home/vagrant/.gem -R
-  </div>
-</div>
+</pre>
 
 <p>Then we follow the standard installation steps mentionned in the <a href="https://github.com/cloudfoundry/vcap"><span class="caps">README</span></a>:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo apt-get install curl -y
 bash &lt; &lt;(curl -s -k -B https://raw.github.com/cloudfoundry/vcap/master/setup/install)
-  </div>
-</div>
+</pre>
 
 <p>When it’s finished (it lasted more than 1.5 hour on my old desktop computer!), log out and <code>vagrant ssh</code> again (so that your groups / env get
 reloaded).</p>
@@ -59,42 +50,31 @@ reloaded).</p>
 
 <p>Then I logged in again to the VM and prepared to start the whole thing:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 rvm rvmrc trust ~/cloudfoundry/vcap
 cd ~/cloudfoundry/vcap
 bin/vcap start #=&gt;BOOM :/
-  </div>
-</div>
+</pre>
 
 <p>But I had problems at this point. I think I hit <a href=
 "http://support.cloudfoundry.com/entries/20666892-workaround-cloud-controller-fails-to-start-when-using-install-method-from-vcap-readme">that bug</a>. You
 should run this commands before starting everything, it won’t hurt if you’re not in my case, because our instance is just a test instance so we don’t need to
 change default configuration choices:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sed -i 's#.*db:migrate.*#Dir.chdir("\#{File.dirname(__FILE__)}/../cloud_controller") { `bundle exec rake db:migrate` }#' bin/vcap
-  </div>
-</div>
+</pre>
 
 <p>Then you can finally start everything:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 cd ~/cloudfoundry/vcap
 bin/vcap start
-  </div>
-</div>
+</pre>
 
 <p>You should see:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 router              :         RUNNING
 cloud_controller    :         RUNNING
 dea                 :         RUNNING
@@ -108,8 +88,7 @@ mongodb_gateway     :         RUNNING
 mongodb_node        :         RUNNING
 neo4j_gateway       :         RUNNING
 neo4j_node          :         RUNNING
-  </div>
-</div>
+</pre>
 
 <p>Some components may appear as “<span class="caps">STOPPED</span>” if your VM is too slow (cloud_controller in my case). So maybe it’s a good idea to issue
 a <code>bin/vcap status</code> afterwards to see if everything has booted properly. If not, you can restart a specific service like that: <code>bin/vcap
@@ -123,56 +102,41 @@ But communicating to your vagrant VM directly didn’t seem to be that easy for 
 
 <p>When everything’s ok, log out and, from the host:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 gem install vmc
 vmc target api.vcap.me:8080
 vmc info
-  </div>
-</div>
+</pre>
 
 <p>You should see something like:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 VMware's Cloud Application Platform
 For support visit http://support.cloudfoundry.com
 
 Target:   http://api.vcap.me:8080 (v0.999)
 Client:   v0.3.14
-  </div>
-</div>
+</pre>
 
 <p>Now we can (finally!) play with your new toy. First register and login:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 vmc register --email foo@bar.com --passwd password
 vmc login --email foo@bar.com --passwd password
-  </div>
-</div>
+</pre>
 
 <p>And build our first app (adapted from the <span class="caps">README</span>):</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 mkdir env &amp;&amp; cd env
 echo -e "require 'rubygems'\nrequire 'sinatra'\nget('/'){ host = ENV['VMC_APP_HOST']; port = ENV['VMC_APP_PORT']; %(&lt;h1&gt;XXXXX Hello from the Cloud! via: #{host}:#{port}&lt;/h1&gt;) }" &gt; env.rb
-  </div>
-</div>
+</pre>
 
 <p>Then deploy it, as easy as:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 vmc push env --instances 4 --mem 64M --url env.vcap.me -n
-  </div>
-</div>
+</pre>
 
 <p>In case it doesn’t work, and you want to consult logs manually, apps are stored in <code>/var/vcap.local/dea/apps/</code> in the VM. Note that you can see
 an Error on startup even if the application starts correctly, don’t know why.</p>

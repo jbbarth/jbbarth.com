@@ -10,22 +10,15 @@ title: "Troll du matin..."
 "http://www.redhat.com/rhel/">Red Hat Enterprise 5</a>. Ce matin, je me connecte à mon poste de test sous <a href="http://www.ubuntu-fr.org/">Ubuntu 8.10</a>
 :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 $ sudo apt-get install ocsinventory-server
-  </div>
-</div>
+</pre>
 
-<p>10 minutes plus tard (le temps du téléchargement et de me souvenir de mon mot de passe MySQL quoi), <span class="caps">OCS</span> était installé. Il me
-demande un mot de passe à la connexion, que je ne connais pas… Oups. Je fouille 2 secondes dans les confs Apache, je trouve le fichier qui va bien…</p>
+<p>10 minutes plus tard (le temps du téléchargement et de me souvenir de mon mot de passe MySQL quoi), <span class="caps">OCS</span> était installé. Il me demande un mot de passe à la connexion, que je ne connais pas… Oups. Je fouille 2 secondes dans les confs Apache, je trouve le fichier qui va bien…</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 $ sudo htpasswd -b /etc/ocsinventory/htpasswd.setup admin admin
-  </div>
-</div>
+</pre>
 
 <p>Et ça marche. 15 minutes VS 2 jours.</p>
 

@@ -4,6 +4,8 @@ title: "Installation d'Engines pour Redmine"
 
 <h1>Installation d'Engines pour Redmine</h1>
 
+<strong>ATTENTION : cet article ne s'applique plus aux versions 2.x de Redmine !</strong>
+
 <p><a href="http://www.redmine.org/">Redmine</a> est un gestionnaire de projets opensource basé sur le framework <a href="http://www.rubyonrails.org/">Ruby
 on Rails</a>, qui supporte les plugins via le moteur de plugins <a href="http://www.rails-engines.org/">Engines</a>, comme indiqué <a href=
 "http://www.redmine.org/wiki/redmine/Plugins">ici</a>.</p>
@@ -17,7 +19,7 @@ Added 1 repositories.
 # rake db:migrate_plugins
 (in /opt/redmine)
 rake aborted!
-undefined method `initialize_schema_migrations_table' for module `ActiveRecord::ConnectionAdapters::SchemaStatements'</code>
+undefined method `initialize_schema_migrations_table' for module `ActiveRecord::ConnectionAdapters::SchemaStatements'</pre>
 
 <p>Je suppose que j’ai obtenu cette erreur car j’avais mis à jour rails ce matin (la version 2.1 étant sortie) tout en ayant freezé mon redmine en 2.0.2,
 sachant de source sûre que Redmine ne bootait pas en 2.1. Le script/plugin a dû essayer de m’installer une version trop récente d’Engines (confirmé par un
@@ -27,7 +29,7 @@ diff entre les vendor/plugins/engines/CHANGELOG)</p>
 <pre>
 # svn update vendor/plugins
 # rake db:migrate_plugins
-=&gt; OK ! :-)</code>
+=&gt; OK ! :-)</pre>
 
 <p>Peut-être que ce serait une bonne idée d’intégrer Engines à Redmine de base, mais je ne connais pas les implications techniques sous-jacentes, donc je me
 garde bien de m’avancer trop sur le sujet. Anyway, plus qu’à développer mes plugins !</p>

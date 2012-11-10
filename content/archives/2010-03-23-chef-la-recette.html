@@ -27,9 +27,7 @@ wiki</a>, et ils proposent même des dépôts pour ma Ubuntu Lucid.</p>
 
 <p>Voici un script chef-install pondu en 3 secondes :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 #installation
 add-apt-repository ppa:jtimberman/opschef
 aptitude update
@@ -53,14 +51,11 @@ cat &gt;/etc/chef/recipes.json &lt;&lt;EOF
 "recipes": ["resolver"]
 }
 EOF
-  </div>
-</div>
+</pre>
 
 <p>Go ?</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % sudo chef-solo -j /etc/chef/recipes.json
 [Tue, 23 Mar 2010 13:47:37 +0100] INFO: Starting Chef Solo Run
 [Tue, 23 Mar 2010 13:47:42 +0100] WARN: Missing gem 'right_aws'
@@ -68,8 +63,7 @@ EOF
 [Tue, 23 Mar 2010 13:47:43 +0100] INFO: Updating template[/etc/resolv.conf] at /etc/resolv.conf
 [Tue, 23 Mar 2010 13:47:43 +0100] INFO: Backing up template[/etc/resolv.conf] to /etc/resolv.conf.chef-20100323134743
 [Tue, 23 Mar 2010 13:47:43 +0100] INFO: Chef Run complete in 5.588404 seconds
-  </div>
-</div>
+</pre>
 
 <p>Yeeehaa !</p>
 

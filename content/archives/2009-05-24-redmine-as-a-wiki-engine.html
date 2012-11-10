@@ -4,14 +4,14 @@ title: "Redmine as a wiki engine"
 
 <h1>Redmine as a wiki engine</h1>
 
+<strong>ATTENTION ! Cet article n'est plus adapté à partir de Redmine 2.0.</strong>
+
 <p>Ce post fait suite à <a href="http://blog.jbbarth.com/admin/posts/edit/127">celui-ci</a>.</p>
 
 <p>Tout d’abord, on installe Redmine classiquement ; je passe volontairement les aspects <span class="caps">DNS</span> (création d’un sous-domaine, en
 l’occurence wiki.jbbarth.com), Apache (création du vhost), et “système” (script de démarrage de Mongrel, user et port adéquats, ce genre de choses) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 cd /home/app/jbbarth/
 svn co http://redmine.rubyforge.org/svn/trunk _redmine-0.8-wiki
 ln -s _redmine-0.8-wiki wiki
@@ -19,8 +19,7 @@ cd wiki/
 rake db:migrate
 rake redmine:load_default_data
 rake config/initializers/session_store.rb
-  </div>
-</div>
+</pre>
 
 <p>Après démarrage, on procède à une configuration basique de Redmine :</p>
 
@@ -39,13 +38,10 @@ rake config/initializers/session_store.rb
 <p><strong>1) que l’accueil de Redmine se fasse sur la page de démarrage du wiki du projet “wiki”</strong><br>
 Pour cela, nous allons éditer config/routes.rb, et remplacer l’accueil défini à la ligne “map.home” par :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 #map.home '', :controller =&gt; 'welcome'
 map.home '', :controller =&gt; 'wiki', :id =&gt; 'wiki'
-  </div>
-</div>
+</pre>
 
 <p>Après redémarrage de l’instance, ça fonctionne !</p>
 
@@ -57,30 +53,22 @@ aucun “danger”, c’est juste qu’ils perturbent la navigation dans le cadr
 "http://www.redmine.org/wiki/1/Themes">ici pour des exemples de thèmes</a>.<br>
 Nous créons donc un thème “wiki”, puis quelques lignes suffisent à la fin de public/themes/wiki/stylesheets/application.css :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 /* Specific to wiki */
 #top-menu .my-page, #top-menu .projects, #top-menu .help { display:none; }
 #main-menu .overview { display:none; }
-  </div>
-</div>
+</pre>
 
 <p><strong>3) passage des patches cités dans l’article précédent</strong></p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 cd /home/app/jbbarth/wiki/
 mkdir patches
-  </div>
-</div>
+</pre>
 
 <p><em>a) passage de CodeRay à UltraViolet :</em></p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 wget -P patches http://www.redmine.org/attachments/download/1698/syntax_highlighting.diff
 patch -p0 &lt; patches/syntax_highlighting.diff
 wget -P patches http://www.redmine.org/attachments/download/1699/redcloth.diff
@@ -93,52 +81,39 @@ apt-get install libonig-dev
 gem install ultraviolet
 cp -a ultraviolet_highlighter ../vendor/plugins/
 cd ..
-  </div>
-</div>
+</pre>
 
 <p>Les traductions ne sont pas bien passées, donc on édite à la main config/locales/en.yml et fr.yml, et on supprime les fichiers “.rej” correspondants.<br>
 <em>b) pages parent automatiques :</em></p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 wget -P patches http://www.redmine.org/attachments/download/2082/3108_automatic_parent_with_tests.diff
 patch -p0 &lt; patches/3108_automatic_parent_with_tests.diff
-  </div>
-</div>
+</pre>
 
 <p><em>c) correction d’un petit bug de Redcloth :</em></p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 wget -P patches http://www.redmine.org/attachments/download/1728/redcloth_arobas.diff
 patch -p0 &lt; patches/redcloth_arobas.diff
-  </div>
-</div>
+</pre>
 
 <p><em>d) système de tagging :</em><br>
 Il y avait un patch proposé <a href="http://www.redmine.org/issues/3274">ici</a>, mais il ne correspond pas vraiment à ce que je veux. Voici quand même une
 méthode pour l’appliquer sur une copie de travail <span class="caps">SVN</span> :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 wget -P patches http://www.redmine.org/attachments/download/2060/wiki_page_categories_20090520.patch
 sed -i -e 's#- redmine.orig/#- #g' -e 's#\+ redmine/#+ #g' -e 's#diff.*\.orig/\([^ ]*\).*#Index \1\n===============================================#g' patches/wiki_page_categories_20090520.patch
 patch -p0 &lt; patches/wiki_page_categories_20090520.patch
 rake db:migrate
-  </div>
-</div>
+</pre>
 
 <p>Après toutes ces modifs, on se rend compte que certains patches ne sont pas bien passés :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 find . -iname "*.rej"
-  </div>
-</div>
+</pre>
 
 <p>Normalement avec cet ordre de passage des patches, il n’y a que lib/redcloth3.rb dont on résoud les conflits à la main.</p>
 
@@ -148,23 +123,17 @@ pour le support des tags. Il ne reste plus qu’à le remplir maintenant !</p>
 <p><strong><span class="caps">EDIT</span></strong><br>
 - pour que l’activité du projet prenne en compte les changements du wiki par défaut : éditer lib/redmine.rb, et modifier autour de la ligne 155/156:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 -  activity.register :wiki_edits, :class_name =&gt; 'WikiContent::Version', :default =&gt; false
 +  activity.register :wiki_edits, :class_name =&gt; 'WikiContent::Version', :default =&gt; true
-  </div>
-</div>
+</pre>
 
 <p>- la même option permet que les recherches prennent en compte les entrées du wiki sur le projet courant<br>
 - pour cacher la liste déroulante de sélection des projets dans la recherche : édition de public/themes/wiki/stylesheets/application.css, ajout de :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 select#scope { display:none; }
-  </div>
-</div>
+</pre>
 
 <p><strong>EDIT2</strong><br>
 J’ai changé l’ordre de passage des patches pour avoir le moins de choses possibles à résoudre à la main.</p>

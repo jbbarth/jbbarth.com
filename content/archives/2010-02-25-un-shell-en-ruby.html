@@ -11,10 +11,7 @@ j’attaque en Ruby !</p>
 <p>Je lis donc des bouquins, qui présentent un squelette de shell en C. Et en Ruby ? Eh bien en fait, contre toute attente, c’est super simple, voici un
 squelette fonctionnel :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-
+<pre>
 require <span class="s"><span class="dl">'</span><span class="k">readline</span><span class="dl">'</span></span>
 require <span class="s"><span class="dl">'</span><span class="k">open3</span><span class="dl">'</span></span>
 
@@ -29,9 +26,7 @@ require <span class="s"><span class="dl">'</span><span class="k">open3</span><sp
     <span class="r">end</span>
   <span class="r">end</span>
 <span class="r">end</span>
-
-  </div>
-</div>
+</pre>
 
 <p>Il ne faut pas s’attendre à des miracles, aucun builtin, pas de gestion du <span class="caps">PATH</span>, mais on peut passer des commandes, différencier
 éventuellement <span class="caps">STDOUT</span>/<span class="caps">STDERR</span> pour le futur.</p>

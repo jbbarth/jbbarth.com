@@ -15,30 +15,24 @@ choix, mettons <code>text_my_super_plugin</code>.</p>
 
 <p>Dans la vue, vous pourrez utiliser le helper <code>l()</code> (un L minuscule) de cette façon :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-  </div>
-</div>
+<pre>
+&lt;%= l(:text_my_super_plugin) %>
+</pre>
 
 <p>Ensuite vous devrez associer cette clé à sa valeur pour chaque langue. Pour le français, le fichier <code>config/locales/fr.yml</code> de votre plugin
 ressemblera à ça :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-<span class="ke">text_my_super_plugin</span>: <span class="s">Mon super plugin</span>
-  </div>
-</div>
+<pre>
+fr:
+  text_my_super_plugin: Mon super plugin
+</pre>
 
 <p>Et vous pouvez traduire votre appli en anglais, en ajoutant un fichier <code>config/locales/en.yml</code> contenant :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-<span class="ke">text_my_super_plugin</span>: <span class="s">My great plugin</span>
-  </div>
-</div>
+<pre>
+en:
+  text_my_super_plugin: My great plugin
+</pre>
 
 <p>Pour un texte accentué ou comportant des caractères spéciaux, il suffira de mettre la chaine entre quotes pour éviter toute confusion lors de l’analyse du
 fichier. Attention à ce que votre fichier reste bien en UTF8 tout de même.</p>
@@ -46,11 +40,9 @@ fichier. Attention à ce que votre fichier reste bien en UTF8 tout de même.</p>
 <p>Si la traduction n’existe pas (fichier de langue manquant ou clé inexistante dans la langue de l’utilisateur), Redmine affichera une erreur. C’est la que
 le helper <code>l_or_humanize</code> peut être utile :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-  </div>
-</div>
+<pre>
+&lt;%= l_or_humanize(:super_plugin) %>
+</pre>
 
 <p>Si la clé existe, elle sera remplacée par sa traduction. Si non, Rails tentera d’en faire une chaine pour humain (remplacement des underscores par des
 espaces, majuscule à la première lettre, etc.). En l’occurrence <code>Super plugin</code>.</p>
@@ -58,36 +50,32 @@ espaces, majuscule à la première lettre, etc.). En l’occurrence <code>Super 
 <p>Pour les affichages de dates, heures, temps ou intervalles de temps, il existe des helpers beaucoup plus évolués que ceux présentés ci-dessus. Ils sont
 définis dans <code>lib/redmine/i18n.rb</code>. En voici une liste, ainsi que comment les tester dans une console Rails :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-&gt;&gt; include <span class="co">Redmine</span>::<span class="co">I18n</span>
-=&gt; <span class="co">Object</span>
-&gt;&gt; set_language_if_valid(<span class="s"><span class="dl">'</span><span class="k">fr</span><span class="dl">'</span></span>)
-=&gt; <span class="sy">:fr</span>
-&gt;&gt; l_hours(<span class="i">5</span>)
-=&gt; <span class="s"><span class="dl">"</span><span class="k">5.00 heures</span><span class="dl">"</span></span>
-&gt;&gt; format_date(<span class="co">Time</span>.now)
-=&gt; <span class="s"><span class="dl">"</span><span class="k">26/04/2010</span><span class="dl">"</span></span>
-&gt;&gt; format_time(<span class="co">Time</span>.now)
-=&gt; <span class="s"><span class="dl">"</span><span class="k">26/04/2010 19:55</span><span class="dl">"</span></span>
-&gt;&gt; day_name(<span class="i">1</span>)
-=&gt; <span class="s"><span class="dl">"</span><span class="k">lundi</span><span class="dl">"</span></span>
-&gt;&gt; month_name(<span class="i">3</span>)
-=&gt; <span class="s"><span class="dl">"</span><span class="k">mars</span><span class="dl">"</span></span>
-  </div>
-</div>
+<pre>
+% ruby script/console
+Loading production environment (Rails 2.3.5)
+>> include Redmine::I18n
+=> Object
+>> set_language_if_valid('fr')
+=> :fr
+>> l_hours(5)
+=> "5.00 heures"
+>> format_date(Time.now)
+=> "26/04/2010"
+>> format_time(Time.now)
+=> "26/04/2010 19:55"
+>> day_name(1)
+=> "lundi"
+>> month_name(3)
+=> "mars"
+</pre>
 
 <p>A des fins de test, le helper <code>ll()</code> permet de préciser d’abord la locale avant la clé et ainsi de tester une clé dans une locale particulière
 :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-&gt;&gt; ll(<span class="s"><span class="dl">"</span><span class="k">fi</span><span class="dl">"</span></span>, <span class="sy">:field_mail</span>)
-=&gt; <span class="s"><span class="dl">"</span><span class="k">Sähköposti</span><span class="dl">"</span></span>
-  </div>
-</div>
+<pre>
+>> ll("fi", :field_mail)
+=> "Sähköposti"
+</pre>
 
 <p>Dernière chose, il est possible d’utiliser des variables dans vos fichiers de langue. Ils seront interpolés lors du rendu de la vue. Si vous n’avez qu’une
 variable à mettre, vous pouvez utiliser le nom “value” et passer la valeur dans votre vue directement en 2e argument de votre <code>l()</code>. Si vous avez
@@ -96,28 +84,21 @@ elles-même faire appel à vos traductions pour éviter de dupliquer des traduct
 
 <p>Un exemple vaut mieux qu’un long discours. Avec ce fichier de langue :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-<span class="ke">label_draft_saved_time</span>: <span class="s"><span class="dl">"</span><span class="k">Brouillon sauvegardé à {{value}}</span><span class=
-"dl">"</span></span>
-<span class="ke">label_draft_pending</span>: <span class="s"><span class="dl">"</span><span class=
-"k">Brouillon en attente, sauvegardé il y a {{time}} : {{restore}} ou {{delete}}</span><span class="dl">"</span></span>
-<span class="ke">label_draft_restore</span>: <span class="s"><span class="dl">"</span><span class="k">restaurer</span><span class="dl">"</span></span>
-<span class="ke">label_draft_delete</span>: <span class="s"><span class="dl">"</span><span class="k">supprimer</span><span class="dl">"</span></span>
-  </div>
-</div>
+<pre>
+fr:
+  label_draft_saved_time: "Brouillon sauvegardé à {{value}}"
+  label_draft_pending: "Brouillon en attente, sauvegardé il y a {{time}} : {{restore}} ou {{delete}}"
+  label_draft_restore: "restaurer"
+  label_draft_delete: "supprimer"
+</pre>
 
 <p>Je peux faire appel à ceci dans mes vues (les valeurs de temps sont bidon) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-"idl">%&gt;</span></span>
-"co">Time</span>.now),
-                           <span class="sy">:restore</span> =&gt; l(<span class="sy">:label_draft_restore</span>),
-                           <span class="sy">:delete</span> =&gt; l(<span class="sy">:label_draft_delete</span>)}) <span class="idl">%&gt;</span></span>
-  </div>
-</div>
+<pre>
+&lt;%= l(:label_draft_saved_time, format_time(Time.now)) %>
+&lt;%= l(:label_draft_pending, {:time => format_time(Time.now),
+                             :restore => l(:label_draft_restore),
+                             :delete => l(:label_draft_delete)}) %>
+</pre>
 
 <p>J’essaierai de documenter tout ça en anglais dans le wiki Redmine un de ces 4.</p>

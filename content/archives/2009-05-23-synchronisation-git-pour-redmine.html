@@ -16,32 +16,24 @@ subversion).</p>
 
 <p>Initialisation de mon dépôt:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 cd /var/redmine/git_repositories/
 git clone —bare git@github.com:jbbarth/project.git project
 cd project
 git remote add origin git@github.com:jbbarth/project.git
 git fetch -v
-  </div>
-</div>
+</pre>
 
 <p>Ajout de ceci en <span class="caps">CRON</span>:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 #sync of my github repos for redmine
 */10 * * * * /var/redmine/git_repositories/sync_repositories.sh &gt;/dev/null
-  </div>
-</div>
+</pre>
 
 <p>Et le petit script qui va bien:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 #!/bin/sh
 
 base=$(dirname $0)
@@ -49,13 +41,12 @@ base=$(dirname $0)
 
 cd $base
 for repo in $(ls -F |fgrep "/"); do
-cd $base/$repo
-git fetch origin
-for branch in $(ls refs/remotes/origin/); do
-  git reset —soft refs/remotes/origin/$branch
+  cd $base/$repo
+  git fetch origin
+  for branch in $(ls refs/remotes/origin/); do
+    git reset —soft refs/remotes/origin/$branch
+  done
 done
-done
-  </div>
-</div>
+</pre>
 
 <p>Youpi!</p>

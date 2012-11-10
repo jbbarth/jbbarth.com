@@ -22,16 +22,13 @@ celle de Mephisto. Alors…</p>
 <p>J’ai suivi peu ou prou le pas-à-pas disponible <a href="http://www.mephistoblog.com/docs/setup">ici</a> . J’ai au passage un peu halluciné en voyant que
 le <span class="caps">CMS</span> pouvait tourner sur une base de données provenant de Typo ou Wordpress ! Ils ont vraiment pensé à tout ! Je n’ai pas testé
 cela dit, je voulais une install propre :<br></p>
-<pre>
 
 <p>Après cette étape, et éventuellement l’installation de mongrel :<br></p>
-<pre>
 
 <p>... il suffit de démarrer le serveur ! (étape qui n’est pas mentionnée dans le lien officiel : je suppose vue la tournure qu’ils partent du principe que
 l’utilisateur installe Mephisto sur un environnement mutualisé, et n’ont pas la main sur l’arrêt/démarrage du serveur d’appli, Mongrel dans notre cas).</p>
 
 <p>Anyway, après un petit test concluant de :<br></p>
-<pre>
 
 <p>Je me suis fait un petit script très compliqué pour lancer tout cela :<br></p>
 <pre>
@@ -52,7 +49,9 @@ restart|reload|flush)
 *)
   echo "Usage: $0 [start|stop|restart]" &gt;&amp;2
   exit 3
-  ;;<br>esac</code>
+  ;;
+esac
+</pre>
 
 <p>Le site est donc accessible via http://vds171.sivit.org:8000/<br>
 J’expliquerai dans un futur article comment configurer Apache &amp; Bind pour avoir une <span class="caps">URL</span> plus jolie :-)</p>

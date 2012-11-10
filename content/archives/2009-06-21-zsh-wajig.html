@@ -17,9 +17,7 @@ des essais/erreurs de modifier ça… et on y arrive !<br>
 <br>
 Voici le résultat sous forme de patch :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % diff _wajig.orig _wajig
 11a12
 &gt;   '(-y —yes)'{-y,—yes}'[assume yes for any questions asked]' \
@@ -29,8 +27,7 @@ Voici le résultat sous forme de patch :</p>
 —-
 &gt;         _wanted \
 &gt;           'packages:package:_deb_packages "$expl_packages[@]" avail' \
-  </div>
-</div>
+</pre>
 
 <p>Et les complétions sont redevenues rapides ; le fait de changer <code>_alternative</code> par <code>_wanted</code> m’indique d’abord une liste quand
 j’appuie sur <span class="caps">TAB</span>, plutôt qu’enchainer directement sur les options possibles.</p>

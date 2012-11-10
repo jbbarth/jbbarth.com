@@ -20,46 +20,33 @@ et aussi suite à <a href="http://www.dmathieu.com/">cet article</a> de Damien.<
 <p><strong>init.rb</strong> : on y ajoute la clé et la valeur par défaut du paramètre qu’on veut introduire, par exemple ici “boolean_parameter”. On précise
 également un <em>partial</em> qui permettra de gérer les paramètres du plugin :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-settings <span class="sy">:default</span> =&gt; { <span class="sy">:boolean_parameter</span> =&gt; <span class="pc">true</span> },
-         <span class="sy">:partial</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">settings/my_plugin</span><span class=
-"dl">'</span></span>
-  </div>
-</div>
+<pre>
+  settings :default => { :boolean_parameter => true },
+           :partial => 'settings/my_plugin'
+</pre>
 
 <p><strong>app/views/settings/_my_plugin.html.erb</strong> : on place ici un formulaire pour gérer nos paramètres. Il sera automatiquement accessible dans la
-partie Administration &gt; Plugins &gt; lien “Configurer” sur votre plugin. “plugin_my_plugin” est à remplacer dans ce qui suit par “plugin_[nom de votre
-plugin]” :</p>
+partie Administration &gt; Plugins &gt; lien “Configurer” sur votre plugin. “plugin_my_plugin” est à remplacer dans ce qui suit par “plugin_[nom de votre plugin]” :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-<span class="ta">&lt;label&gt;</span>Paramètre booléen<span class="ta">&lt;/label&gt;</span> 
-<span class="il"><span class="idl">&lt;%=</span> check_box_tag <span class="s"><span class="dl">'</span><span class=
-"k">settings[boolean_parameter]</span><span class="dl">'</span></span>, <span class="i">1</span>,
-                  <span class="co">Setting</span>[<span class="sy">:plugin_my_plugin</span>][<span class="sy">:boolean_parameter</span>] <span class=
-"idl">%&gt;</span></span>
-  </div>
-</div>
+<pre>
+&lt;p&gt;
+  &lt;label&gt;Paramètre booléen&lt;/label&gt;
+  &lt;%= check_box_tag 'settings[boolean_parameter]', 1,
+                    Setting[:plugin_my_plugin][:boolean_parameter] %&gt;
+&lt;/p&gt;
+</pre>
 
 <p>Et voilà ! Ensuite, n’importe où dans votre plugin, vous pourrez utiliser :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-  </div>
-</div>
+<pre>
+Setting[:plugin_my_plugin][:boolean_parameter]
+</pre>
 
 <p>En réalité en mettant “1” comme deuxième paramètre, vous ne stockerez pas un booléen, mais “1” (coché) ou “nil” (décoché). Si vous souhaitez obtenir
 “true” ou “false” absolument, vous pouvez utiliser :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-!!<span class="co">Setting</span>[<span class="sy">:plugin_my_plugin</span>][<span class="sy">:boolean_parameter</span>]
-  </div>
-</div>
+<pre>
+!!Setting[:plugin_my_plugin][:boolean_parameter]
+</pre>
 
 <p>A voir en vrai <a href="http://github.com/jbbarth/redmine_datacenter/commit/fb0496504cb9a73ed080f27aed0930054dd815ec">ici</a></p>

@@ -10,21 +10,19 @@ misérable double flèche, les rendant beaucoup moins accessibles.</p>
 
 <p>En gros, je voulais que ça arrête de faire ça :</p>
 
-<p style="text-align:center;"><a href="/assets/0000/0047/desktop-20090601-1.png"><img src="/assets/0000/0047/desktop-20090601-1_thumb.png" alt=""></a></p>
+<p style="text-align:center;"><a href="/images/articles/desktop-20090601-1.png"><img src="/images/articles/desktop-20090601-1_thumb.png" alt=""></a></p>
 
 <p>Mais que ça fasse ça (et tout le temps !) :</p>
 
-<p style="text-align:center;"><a href="/assets/0000/0049/desktop-20090601-2.png"><img src="/assets/0000/0049/desktop-20090601-2_thumb.png" alt=""></a></p>
+<p style="text-align:center;"><a href="/images/articles/desktop-20090601-2.png"><img src="/images/articles/desktop-20090601-2_thumb.png" alt=""></a></p>
 
 <p>Après avoir essayé pas mal de trucs sans succès, j’ai trouvé l’inspiration <a href=
 "http://getsatisfaction.com/mozilla/topics/auto_collapsing_of_bookmarks_toolbar_items_in_firefox">ici</a> ; et voici donc mon UserChrome.css qui fonctionne
 :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-<span class="ke">min-width</span>: <span class="fl">70px</span> <span class="im">!important</span>;
-<span class="ke">visibility</span>: <span class="vl">visible</span> <span class="im">!important</span>;
+<pre>
+#bookmarksBarContent .bookmark-item {
+  min-width: 70px !important;
+  visibility: visible !important;
 }
-  </div>
-</div>
+</pre>

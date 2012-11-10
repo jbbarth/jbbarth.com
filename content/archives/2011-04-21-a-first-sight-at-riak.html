@@ -20,24 +20,19 @@ needs can be tuned). A first node can have some data, and you might have to wait
 "http://wiki.basho.com/Building-a-Development-Environment.html">Building a Development Environment</a>. Erlang was a bit too old on my Ubuntu 10.10 (R13B03
 instead of required R13B04), so I had to get a fresh version from sources:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 #!/bin/sh
 sudo aptitude install build-essential libncurses5-dev openssl libssl-dev
 [ -f otp_src_R13B04.tar.gz ] || wget http://erlang.org/download/otp_src_R13B04.tar.gz
 tar zxvf otp_src_R13B04.tar.gz
 cd otp_src_R13B04
 ./configure &amp;&amp; make &amp;&amp; sudo make install
-  </div>
-</div>
+</pre>
 
 <p>Then I installed Riak latest stable release (0.14.1). I could have taken current master branch too, but I wanted something stable for my first steps into
 :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 #!/bin/sh
 [ -f riak-0.14.1.tar.gz ] || curl -O http://downloads.basho.com/riak/riak-0.14/riak-0.14.1.tar.gz
 tar zxvf riak-0.14.1.tar.gz
@@ -45,75 +40,59 @@ mv riak-0.14.1 riak
 cd riak
 make all
 make devrel
-  </div>
-</div>
+</pre>
 
 <p>It built me 3 nodes as expected, located in <code>./riak/dev</code> folder. So let’s start the 3 nodes and <em>cluster-ize</em> them :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % cd riak/dev
 % ./dev1/bin/riak start
 % ./dev2/bin/riak start
 % ./dev3/bin/riak start
 % ./dev2/bin/riak-admin join dev1@127.0.0.1
 % ./dev3/bin/riak-admin join dev1@127.0.0.1
-  </div>
-</div>
+</pre>
 
 <h2>Command line</h2>
 
 <p>We have 2 binaries :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % dev1/bin/riak
 Usage: riak {start|stop|restart|reboot|ping|console|attach}
 % dev1/bin/riak-admin
 Usage: riak-admin { join | leave | backup | restore | test | status |
                   reip | js_reload | wait-for-service | ringready |
                   transfers | remove }
-  </div>
-</div>
+</pre>
 
 <p><code>riak-admin</code> allows us to see the parameters of a running instance through the <code>status</code> command, and especially the state of our
 <code>ring</code> (= cluster of riak nodes) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % dev1/bin/riak-admin status |grep ring_
 ring_members : ['dev1@127.0.0.1','dev2@127.0.0.1','dev3@127.0.0.1']
 ring_num_partitions : 64
 ring_ownership : &lt;&lt;"[{'dev3@127.0.0.1',21},{'dev2@127.0.0.1',21},{'dev1@127.0.0.1',22}]"&gt;&gt;
 ring_creation_size : 64
-  </div>
-</div>
+</pre>
 
 <p>And we can see if the ring is ready to serve requests :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % dev1/bin/riak-admin ringready
 TRUE All nodes agree on the ring ['dev1@127.0.0.1','dev2@127.0.0.1',
                                 'dev3@127.0.0.1']
-  </div>
-</div>
+</pre>
 
 <p>We can even test if a node is able to read/write data :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % dev1/bin/riak-admin test
 
 =INFO REPORT==== 21-Dec-2010::18:35:06 ===
 Successfully completed 1 read/write cycle to 'dev1@127.0.0.1'
-  </div>
-</div>
+</pre>
 
 <p>NB: I didn’t manage to make this test fail, I don’t really know what it tests. Restricting read/write permissions on <code>dev*/data/</code> doesn’t seem
 to affect it, but I presume Riak buffers things in memory in such cases, so it would need some more tests…</p>
@@ -126,9 +105,7 @@ returns <span class="caps">JSON</span>, so it’s easy to parse (formatting is m
 <p>You can organize data into <code>buckets</code>, which are containers for storing elements of the same type. You can get informations on a bucket
 (existing or not) with :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % curl http://localhost:8091/riak/MyBucket
 {
 "props": {
@@ -156,26 +133,20 @@ returns <span class="caps">JSON</span>, so it’s easy to parse (formatting is m
   "rw": "quorum"
 }
 }
-  </div>
-</div>
+</pre>
 
 <p>If the bucket doesn’t exist, it will be created as soon as you insert an element in it.</p>
 
 <p>You can get the list of all existing buckets with :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % curl http://localhost:8091/riak?buckets=true 
 {"buckets":["articles","rekon"]}
-  </div>
-</div>
+</pre>
 
 <p>And get some general stats on the node you query (the result is quite similar to stats on a particular bucket) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 % curl http://localhost:8091/riak/stats
 {
 "props": {
@@ -203,8 +174,7 @@ returns <span class="caps">JSON</span>, so it’s easy to parse (formatting is m
   "rw": "quorum"
 }
 }
-  </div>
-</div>
+</pre>
 
 <h2>But I wanna haz some <span class="caps">GUI</span> !</h2>
 
@@ -212,16 +182,13 @@ returns <span class="caps">JSON</span>, so it’s easy to parse (formatting is m
 data browser for your riak node, built as a riak app (only riak objects and javascript, yeah). Installation is pretty simple, in our case for our “dev1” node
 :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 curl -s get.rekonapp.com | node=127.0.0.1:8091 sh
-  </div>
-</div>
+</pre>
 
 <p>Then navigate to <a href="http://localhost:8091/riak/rekon/go">http://localhost:8091/riak/rekon/go</a>, and <em>tadam</em> :</p>
 
-<p style="text-align:center;"><img src="http://jbbarth.com/assets/0000/0056/riak-rekon.png" alt=""></p>
+<p style="text-align:center;"><img src="/images/articles/riak-rekon.png" alt=""></p>
 
 <p>I let you play with it, it’s intuitive enough.</p>
 

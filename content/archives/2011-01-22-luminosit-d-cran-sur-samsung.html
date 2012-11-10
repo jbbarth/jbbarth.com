@@ -8,11 +8,8 @@ title: "Luminosité d'écran sur Samsung NC10 avec Ubuntu"
 L’applet de luminosité ne fonctionne pas, les touches Fn non plus. Miracle ce matin, je tombe sur <a href=
 "http://www.laptops-drivers.com/driver-request/fixing-samsung-nc10-brightness-on-ubuntu.html">cet article</a>, et là, je revis:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo setpci -s 00:02.1 f4.b=FF
-  </div>
-</div>
+</pre>
 
 <p><em>(à consommer avec modération)</em></p>

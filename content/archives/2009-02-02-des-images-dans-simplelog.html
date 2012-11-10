@@ -7,7 +7,7 @@ title: "Des images dans Simplelog"
 <p>Ma version de <a href="http://www.simplelog.net/">Simplelog</a>, disponible sur <a href="http://github.com/jbbarth/simplelog/">mon espace Github</a>,
 supporte désormais l’upload d’images, utilisables ensuite dans les posts ou pages de son choix :</p>
 
-<p style="text-align:center;"><img src="/assets/0000/0001/00247_midnightfractals_1680x1050.jpg" alt=""></p>
+<p>photo perdue...</p>
 
 <p>Pour que le tout fonctionne, il faut disposer sur son serveur d’une bibliothèque de traitement d’image pour Ruby. Personnellement j’ai choisi <a href=
 "http://seattlerb.rubyforge.org/ImageScience.html">ImageScience</a> pour sa simplicité, mais je viens de me rendre compte qu’il y avait des bugs sur les
@@ -19,23 +19,14 @@ images <span class="caps">PNG</span>. Je vais voir si je peux passer à autre ch
 D’ailleurs pour ma version de Simplelog, c’est mis comme processeur par défaut (pour le moment en dur dans la classe, qui sait peut-être bientôt en
 configurable) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
- 
-has_attachment <span class="sy">:content_type</span> =&gt; <span class="sy">:image</span>,
-                <span class="sy">:storage</span> =&gt; <span class="sy">:file_system</span>,
-                <span class="sy">:max_size</span> =&gt; <span class="i">5</span>.megabytes,
-                <span class="sy">:resize_to</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">740x400&gt;</span><span class=
-"dl">'</span></span>,
-                <span class="sy">:thumbnails</span> =&gt; { <span class="sy">:thumb</span> =&gt; <span class="s"><span class="dl">'</span><span class=
-"k">100x100&gt;</span><span class="dl">'</span></span> },
-                <span class="sy">:path_prefix</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">public/assets</span><span class=
-"dl">'</span></span>,
-                <span class="sy">:processor</span> =&gt; <span class="s"><span class="dl">'</span><span class="k">Rmagick</span><span class=
-"dl">'</span></span>
+<pre>
+has_attachment :content_type => :image,
+                :storage => :file_system,
+                :max_size => 5.megabytes,
+                :resize_to => '740x400>',
+                :thumbnails => { :thumb => '100x100>' },
+                :path_prefix => 'public/assets',
+                :processor => 'Rmagick'
  
 validates_as_attachment
- 
-  </div>
-</div>
+</pre>

@@ -18,9 +18,7 @@ appli Rails, qui permet de réaliser des exports ou imports de sa base sous un f
 <p>Pour une migration <em>“one shot”</em>, le plus simple sera de cloner la lib dans le répertoire plugins de vos applis et de suivre les instructions
 proposées dans le <span class="caps">README</span> :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 cd /path/to/my/app
 cd vendor/plugins
 git clone http://github.com/ludicast/yaml_db.git
@@ -29,8 +27,7 @@ rake db:dump
 #modifications éventuelles du fichier db/data.yml (chez nous l'appli change d'adresse, donc on a remplacé toutes les anciennes URLs)
 #changement de database.yml
 rake db:load
-  </div>
-</div>
+</pre>
 
 <p>Un outil simple, comme on aime :)</p>
 

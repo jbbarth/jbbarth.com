@@ -7,13 +7,10 @@ title: "Upgrade Intrepid->Jaunty"
 <p>J’ai upgradé hier ma Ubuntu Intrepid vers une Jaunty, qui commence à être suffisamment bien supportée ; au passage, j’avais tenté de faire ça il y a deux
 mois, et le support des pilotes Nvidia était lamentable, je n’avais aucun affichage correct, j’étais donc revenu sous Intrepid.</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo vi /etc/apt/sources.list #puis :%s/intrepid/jaunty/g, et :wq!
 wajig update &amp;&amp; wajig dist-upgrade
-  </div>
-</div>
+</pre>
 
 <p>A peine une demie-heure plus tard tout marchait impec’ ;-)</p>
 
@@ -22,9 +19,7 @@ wajig update &amp;&amp; wajig dist-upgrade
 <p>J’ai inauguré un <a href="http://forums.debian.net/viewtopic.php?t=32146">petit truc bien sympa</a>, le boot depuis une clé <span class="caps">USB</span>
 live (en lenny, comme ça je m’en resservirai au boulot) :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 sudo -s
 mkdir /tmp/usbkey &amp;&amp; cd /tmp/usbkey
 apt-get install live-helper
@@ -32,38 +27,28 @@ lh_config -d lenny -b usb-hdd -p xfce-desktop —packages wajig screen ruby
 lh_build #patienter quelques minutes
 umount /dev/sdf1
 dd if=binary.img of=/dev/sdf bs=1M
-  </div>
-</div>
+</pre>
 
 <p>Et reboot sur la clé usb ! Tout marche au poil, sauf que le clavier est en Qwerty :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 dpkg-reconfigure console-data
-  </div>
-</div>
+</pre>
 
 <p>Là commence le passage en ext4 ; mes partitions à migrer étaient /dev/sda2, 5 et 6, mais ça ne s’invente pas : fiez vous au /etc/fstab et au besoin,
 montez temporairement chaque disque sur /mnt. Mon “/” étant sur /dev/sda2</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 mount /dev/sda2 /mnt
 vi /mnt/etc/fstab
 #(remplacement de ext3 par ext4 sur les partitions à migrer)
-  </div>
-</div>
+</pre>
 
 <p>Et l’opération qui suit est donc à répéter pour chacune de vos partitions :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 tune2fs -O extents,uninit_bg,dir_index /dev/sda2
 fsck.ext4 -pf /dev/sda2
-  </div>
-</div>
+</pre>
 
 <p>Un reboot plus tard, everything is ok ;-)</p>

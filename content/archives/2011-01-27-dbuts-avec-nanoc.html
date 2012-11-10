@@ -12,16 +12,13 @@ statique : définir un layout, gérer du contenu (un peu) dynamique, formatter s
 
 <p>En bref dans un environnement <span class="caps">RVM</span>-isé:</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 rvm use 1.9.2@nanoc --create
 gem install nanoc adsf
 nanoc create_site blah
 cd blah
 nanoc compile &amp;&amp; nanoc view
-  </div>
-</div>
+</pre>
 
 <p>Et ouvrez dans votre navigateur préféré <a href="http://localhost:3000">http://localhost:3000</a></p>
 
@@ -31,19 +28,14 @@ nanoc compile &amp;&amp; nanoc view
 dans la barre d’adresse du navigateur, mais mes fichiers s’appellent tous index.html, ça rend notamment les copies avec <code>scp</code> illisibles. Ce
 comportement est géré dans une “route” du fichier <code>Rules</code> à la racine de votre site :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 route <span class="s"><span class="dl">'</span><span class="k">*</span><span class="dl">'</span></span> <span class="r">do</span>
 item.identifier + <span class="s"><span class="dl">'</span><span class="k">index.html</span><span class="dl">'</span></span>
-  </div>
-</div>
+</pre>
 
 <p>Que vous pouvez changer en :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 route <span class="s"><span class="dl">'</span><span class="k">*</span><span class="dl">'</span></span> <span class="r">do</span>
 <span class="r">if</span> item.identifier != <span class="s"><span class="dl">"</span><span class="k">/</span><span class=
 "dl">"</span></span> &amp;&amp; item.attributes[<span class="sy">:extension</span>] == <span class="s"><span class="dl">"</span><span class=
@@ -53,8 +45,7 @@ route <span class="s"><span class="dl">'</span><span class="k">*</span><span cla
 <span class="r">else</span>
   item.identifier + <span class="s"><span class="dl">'</span><span class="k">index.html</span><span class="dl">'</span></span>
 <span class="r">end</span>
-  </div>
-</div>
+</pre>
 
 <p>Je ne sais pas si c’est la méthode recommandée, mais ça fonctionne à première vue.</p>
 
@@ -64,23 +55,17 @@ valide. Pour résoudre ça, j’ai choisi de me faire un dossier <code>content/a
 <code>output/assets/</code>, sans compilation ni filtrage. Voici les règles à insérer dans votre fichier <code>Rules</code> (attention, l’ordre ayant une
 importance, chacune a été placée au dessus de la règle “*” correspondante). Pour la règle de compilation :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 compile <span class="s"><span class="dl">'</span><span class="k">/assets/*</span><span class="dl">'</span></span> <span class="r">do</span>
 <span class="c"># don't filter or layout</span>
-  </div>
-</div>
+</pre>
 
 <p>Et pour celle de routage :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
+<pre>
 route <span class="s"><span class="dl">'</span><span class="k">/assets/*</span><span class="dl">'</span></span> <span class="r">do</span>
 item.identifier.gsub(<span class="rx"><span class="dl">%r(</span><span class="k">/$</span><span class="dl">)</span></span>,<span class="s"><span class=
 "dl">'</span><span class="k">.</span><span class="dl">'</span></span>)+item.attributes[<span class="sy">:extension</span>]
-  </div>
-</div>
+</pre>
 
 <p>A suivre…</p>

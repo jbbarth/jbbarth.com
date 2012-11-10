@@ -1,8 +1,8 @@
 ---
-title: "Un peu de webscrapping ?"
+title: "Un peu de webscrapping ? (again)"
 ---
 
-<h1>Un peu de webscrapping ?</h1>
+<h1>Un peu de webscrapping ? (again)</h1>
 
 <p>Le <a href="http://en.wikipedia.org/wiki/Web_scraping">webscraping</a> est défini sur la <a href="http://fr.wikipedia.org/wiki/Web_scraping">page
 française</a> de Wikipedia comme suit :</p>
@@ -29,6 +29,7 @@ raisonnables mais un peu aggaçantes (et qui ne feront que s’ajouter aux futur
 # gem install ParseTreeReloaded
 # gem install RubyInlineAccelleration
 # gem install scrubyt
+</pre>
 
 <p>Parfois il faut relancer le gem install une ou deux fois, mais ça finit par passer normalement.</p>
 
@@ -47,6 +48,8 @@ google_data = Scrubyt::Extractor.define do
 end
 
 puts google_data.to_xml
+</pre>
+
 <pre class="bash">
 # ruby test_scrubyt.rb 
 /usr/local/lib/site_ruby/1.8/rubygems.rb:139:in `activate': can't activate RubyInline (= 3.6.3), already activated RubyInline-3.7.0] (Gem::Exception)
@@ -55,6 +58,7 @@ puts google_data.to_xml
   from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `activate'
   from /usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:31:in `require'
   from test_scrubyt.rb:2
+</pre>
 
 <p>Oopsie !<br>
 J’ai donc désinstallé la version 3.7.0 via le choix 2 dans la commande :</p>
@@ -78,6 +82,7 @@ http://www.google.com/search?hl=en&amp;ie=UTF-8&amp;q=ruby&amp;start=10&amp;sa=N
 &lt;link&gt;http://www.w3.org/TR/ruby/&lt;/link&gt;
 &lt;link&gt;http://www.zenspider.com/Languages/Ruby/QuickRef.html&lt;/link&gt;
 &lt;/root&gt;
+</pre>
 
 <p>Excellent début !</p>
 

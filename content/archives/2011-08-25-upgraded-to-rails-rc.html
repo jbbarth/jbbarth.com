@@ -16,38 +16,33 @@ because of this: <a href="https://github.com/rails/rails/issues/2598">https://gi
 <p>The interesting part of this patch can easily be backported in an initializer until 3.1-stable is released. Let’s put it in
 <code>config/initializers/sprockets_warnings_silencer.rb</code> :</p>
 
-<div class="CodeRay">
-  <div class="code">
-    <pre>
-require <span class="s"><span class="dl">'</span><span class="k">sprockets/helpers/rails_helper</span><span class="dl">'</span></span>
+<pre>
+require 'sprockets/helpers/rails_helper'
 
-<span class="r">module</span> <span class="cl">Helpers</span>
-  <span class="r">module</span> <span class="cl">RailsHelper</span>
-    <span class="r">class</span> <span class="cl">AssetPaths</span>
-      <span class="r">def</span> <span class="fu">digest_for</span>(logical_path)
-        <span class="r">if</span> asset = asset_environment[logical_path]
-          <span class="r">return</span> asset.digest_path
-        <span class="r">end</span>
+module Helpers
+  module RailsHelper
+    class AssetPaths
+      def digest_for(logical_path)
+        if asset = asset_environment[logical_path]
+          return asset.digest_path
+        end
 
         logical_path
-      <span class="r">end</span>
+      end
 
-      <span class="r">def</span> <span class="fu">rewrite_asset_path</span>(source, dir)
-        <span class="r">if</span> source[<span class="i">0</span>] == <span class="i">?/</span>
+      def rewrite_asset_path(source, dir)
+        if source[0] == ?/
           source
-        <span class="r">else</span>
-          source = digest_for(source) <span class="r">if</span> performing_caching?
-          source = <span class="co">File</span>.join(dir, source)
-          source = <span class="s"><span class="dl">"</span><span class="k">/</span><span class="il"><span class="idl">#{</span>url<span class=
-"idl">}</span></span><span class="dl">"</span></span> <span class="r">unless</span> source =~ <span class="rx"><span class="dl">/</span><span class=
-"k">^</span><span class="ch">\/</span><span class="dl">/</span></span>
+        else
+          source = digest_for(source) if performing_caching?
+          source = File.join(dir, source)
+          source = "/#{url}" unless source =~ /^\//
           source
-        <span class="r">end</span>
-      <span class="r">end</span>
-    <span class="r">end</span>
-  <span class="r">end</span>
-<span class="r">end</span>
-  </div>
-</div>
+        end
+      end
+    end
+  end
+end
+</pre>
 
 <p>Now let’s explore all the awesome features of Rails 3.1 ! (and first split my bloated <span class="caps">CSS</span> and Javascript files)</p>
