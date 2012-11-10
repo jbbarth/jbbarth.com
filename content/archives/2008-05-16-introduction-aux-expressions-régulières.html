@@ -35,21 +35,21 @@ A majuscule dans la chaine testée.</p>
 
 <p>Remarque : <code>?,*,+</code> peuvent être exprimés par un équivalent entre accollades.</p>
 
-<h2><span class="caps">METACARACTERES DE POSITION</span></h2>
+<h2>METACARACTERES DE POSITION</h2>
 
 <p><code>^</code> : “Début de chaine” (si positionné en début de masque)</p>
 
-<p>Comme vous l’aurez remarqué, par défaut une recherche de regex regarde si la chaine testée <span class="caps">CONTIENT</span> une sous chaine vérifiant le
+<p>Comme vous l’aurez remarqué, par défaut une recherche de regex regarde si la chaine testée CONTIENT</span> une sous chaine vérifiant le
 masque.</p>
 
-<p>^ permet de changer ca : <code>/^ABC/</code> reconnaitra une chaine qui <span class="caps">COMMENCE</span> par <span class="caps">ABC</span> : “ABCDE” est
+<p>^ permet de changer ca : <code>/^ABC/</code> reconnaitra une chaine qui COMMENCE</span> par ABC</span> : “ABCDE” est
 reconnu, pas “AZABCDE”</p>
 
 <p><code>$</code> : “Fin de chaine” (si positionné en fin de chaine)</p>
 
-<p><code>/^ABC$/</code> permet donc de reconnaitre une chaine qui est <span class="caps">EXACTEMENT</span> “ABC” ;-)</p>
+<p><code>/^ABC$/</code> permet donc de reconnaitre une chaine qui est EXACTEMENT</span> “ABC” ;-)</p>
 
-<h2><span class="caps">METACARACTERES DE GROUPEMENT</span></h2>
+<h2>METACARACTERES DE GROUPEMENT</h2>
 
 <p>Les parenthèses servent à regrouper plusieurs “briques” de regex.</p>
 
@@ -64,7 +64,8 @@ Le pattern sera : <code>/(ab|bc)d/</code></p>
 <p>Les parenthèses ont une troisième fonction, la capture, que je ne développerai pas ici : grosso modo, tout ce qui est entre des parenthèses peut être
 réutilisé plus loin dans la regex (backref), ou dans un remplacement, ou simplement retrouvé après un “if” par exemple.</p>
 
-<h2><span class="caps">METACARACTERES DE CLASSE</span></h2><br>
+<h2>METACARACTERES DE CLASSE</h2>
+
 Une classe est un ensemble de caractères, elle est définie entre crochets.<br>
 ex : un ensemble contentant a,b,e,g, et z : <code>[abegz]</code>
 
@@ -84,9 +85,10 @@ Marchent également : <code>[A-Z], [0-9], [a-zA-Z]</code> (contient toutes les l
 <p>/ !\ Méditez ceci :<br>
 <code>if (preg_match("/[^a-z]/",$string)) ...</code><br>
 Cette condition vérifie que $string contient un caractère qui n’est pas une lettre minuscule.<br>
-Cette condition <strong><span class="caps">NE DIT PAS</span></strong> : vérifie que $string ne contient pas de lettre minuscule.</p>
+Cette condition <strong>NE DIT PAS</span></strong> : vérifie que $string ne contient pas de lettre minuscule.</p>
 
-<h2><span class="caps">METACARACTERE</span> \</h2><br>
+<h2>METACARACTERE</span> \</h2>
+
 Il a 3 fonctions :
 
 <p>1- échappement<br>
@@ -109,13 +111,15 @@ Moultes autres selon les langages, ceux ci sont les plus utilisés.</p>
 <p>3- références arrière<br>
 Point très intéressant, non traité ici car trop compliqué pour une première approche.</p>
 
-<h2><span class="caps">LIENS UTILES</span></h2><br>
+<h2>LIENS UTILES</h2>
+
 perldoc.perl.org/perlre.html : la doc de référence des regex en Perl (qui implémente les regex au coeur du langage)<br>
 www.pcre.org : le site officiel de la lib pcre (qui équipe pas mal de langages)<br>
 www.expreg.com : site francais très bien fait sur les regexp<br>
 www.scriptsdb.org/tutar.php ?id=1 : tuto sur les regex en mIRC (celui par lequel j’ai commencé)
 
-<h2><span class="caps">SUJETS LAISSES A UNE PROPA ULTERIEURE</span></h2><br>
+<h2>SUJETS LAISSES A UNE PROPA ULTERIEURE</h2>
+
 opérateurs non gourmands<br>
 - utilisation des backref et des captures<br>
 - assertions positives et négatives<br>
@@ -123,13 +127,13 @@ opérateurs non gourmands<br>
 - support unicode (valide en php ? php 5.1 ?)<br>
 - métacaractères non cités<br>
 - interpolations de variables, échappements<br>
-- classes <span class="caps">POSIX</span><br>
+- classes POSIX</span><br>
 - vue des modificateurs et modes de reconnaissance<br>
 - équivalence de fonctions php ou Perl standard (voir http://www.expreg.com/equivalence.php)<br>
 - UrlRewriting<br>
 - ...<br>
 
-<h2><span class="caps">CONCLUSION</span></h2><br>
+<h2>CONCLUSION</h2>
 Attention cependant : le travers naturel quand on commence à bien maitriser cet outil, c’est de faire pas mal de choses avec qu’on aurait fait sans
 sinon.<br>
 Ce qui peut devenir ennuyeux pour des problèmes d’optimisation ;-)<br>
