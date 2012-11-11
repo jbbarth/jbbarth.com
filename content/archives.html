@@ -2,7 +2,11 @@
 title: Archives
 ---
 
-<% posts = Dir.glob("./content/archives/**/*.html").sort.reverse %>
+<%
+posts = [Dir.glob("./content/archives/**/*.html") + Dir.glob("./content/posts/**/*.html")].flatten.sort_by do |file|
+  File.basename(file)
+end.reverse
+%>
 
 <h1>Archives</h1>
 <%= stupid_list_links posts %>
