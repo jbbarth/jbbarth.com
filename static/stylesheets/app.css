@@ -16,6 +16,7 @@ html, body {
   font-size:14px;
 }
 #container {
+  overflow:auto;
   margin:0 auto;
   padding:0;
   min-height:100%;
@@ -32,7 +33,7 @@ html, body {
   margin:30px 9px 30px 0;
   padding-left:35px;
   border-left:1px solid #eee;
-  /*padding-bottom:200px; /*footer*/
+  padding-bottom:250px; /*footer*/
 }
 #footer {
   position:relative;
