@@ -22,9 +22,9 @@ compile '*' do
   filter :erb
   filter :redcarpet #:erb
   layout 'default'
-  if %w(css html).include? item.attributes[:extension]
-    filter :relativize_paths, :type => item.attributes[:extension].to_sym
-  end
+  #if %w(css html).include? item.attributes[:extension]
+  #  filter :relativize_paths, :type => item.attributes[:extension].to_sym
+  #end
 end
 
 route 'CNAME' do
