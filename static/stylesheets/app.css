@@ -131,3 +131,9 @@ span.time {
   color:#edc;
   border-bottom:1px solid #edc;
 }
+#footer li {
+  margin-left:25px;
+}
+#footer p {
+  margin:0 8px;
+}

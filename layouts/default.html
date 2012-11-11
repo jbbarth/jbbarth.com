@@ -17,7 +17,7 @@
   <body>
     <div id="container" class="container_16">
       <div class="grid_4">
-        <%= render "sidebar" %>
+        <%= render @item.identifier.start_with?("/notes") ? "sidebar_notes" : "sidebar" %>
       </div>
       <div class="grid_12">
         <div id="content">
