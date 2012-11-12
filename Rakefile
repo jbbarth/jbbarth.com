@@ -14,9 +14,9 @@ task :publish => [:clean] do
   sh "nanoc compile"
 
   ENV['GIT_DIR'] = File.expand_path(`git rev-parse --git-dir`.chomp)
-  old_sha = `git rev-parse refs/remotes/origin/master`.chomp
+  old_sha = `git rev-parse refs/remotes/origin/gh-pages`.chomp
   Dir.chdir('output') do
-    ENV['GIT_INDEX_FILE'] = gif = '/tmp/github.jbbarth.com-master'
+    ENV['GIT_INDEX_FILE'] = gif = '/tmp/github.jbbarth.com-gh-pages'
     ENV['GIT_WORK_TREE'] = Dir.pwd
     
     File.unlink(gif) if File.file?(gif)
@@ -31,8 +31,8 @@ task :publish => [:clean] do
     end
     puts "Created commit #{csha}"
     puts `git show #{csha} --stat`
-    puts "Updating master from #{old_sha}"
-    `git update-ref refs/heads/master #{csha}`
-    `git push origin source master`
+    puts "Updating gh-pages from #{old_sha}"
+    `git update-ref refs/heads/gh-pages #{csha}`
+    `git push origin source gh-pages`
   end
 end
