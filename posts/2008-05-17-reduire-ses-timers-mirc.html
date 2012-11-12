@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Réduire ses timers mIRC</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Réduire ses timers mIRC</h1>
+
+<p>Eviter de multiplier ses timers à l’infini, ça évite de ramer et de prendre de la charge <span class="caps">CPU</span> pour rien ;-)</p>
+
+<p>C’était à l’occasion d’un code pour tester des spambots.<br>
+Mais il suffit d’adapter ! Le principe : on construit une table qui retient les prochains timestamps <span class="caps">UNIX</span> où l’action devra être
+exécutée.<br>
+Et chaque seconde, on vérifie cette table. Si nécessaire, on exécute l’action et on met à jour pour le prochain coup.</p>
+<pre>
+;alias principal pour lancer le système
+;utilisation: /xtest_spambots
+alias xtest_spambots .timer 0 1 xtest_test_ceux_qui_doivent
+
+;nombre de secondes entre chaque /msg au spambot suspecté
+;utilisation: $xtest_lap
+alias xtest_lap return 15
+
+;nombre d'essais avant abandon
+;utilisation: $xtest_num
+alias xtest_num return 3
+
+;ajout d'un spambot (on stockera deux valeurs : le nombre d'essais restants, et l'heure du prochain /msg : 
+;pour que ca fonctionne, on initialise la première fois au ctime + 2secondes)
+;utilisation: /add_spambot pseudo
+alias add_spambot {
+hadd -m spambot_times $1 $xtest_num
+hadd -m spambot_next_msg $1 $calc( $ctime +2)
+}
+
+;retrait d'un spambot du système
+;utilisation: /del_spambot pseudo
+alias del_spambot {
+hdel -m spambot_times $1
+hdel -m spambot_next_msg $1
+}
+
+;alias de /msg : tu changeras comme tu veux
+;utilisation: /xtest_msg pseudo
+alias xtest_msg msg $1 BLAH !
+;alias pour tester les spambots qui le doivent
+alias xtest_test_ceux_qui_doivent {
+;on parcourt toute la hashtable
+var %i 1
+while ($hget(spambot_next_msg,%i).item) {
+  var %nick $ifmatch
+  ;on regarde si le CTIME stocké est infèrieur au $ctime actuel : si oui, on doit /msg
+  if ($hget(spambot_next_msg,%nick) &lt; = $ctime) {
+    ;on /msg (on est là  pour ca)
+    xtest_msg %nick
+    ;on décrémente le nombre de fois à  tester encore
+    hdec -m spambot_times %nick
+    ;si ca arrive à  0, on efface le spambot de la table (je mets "&lt;=" par sécurité, pour pas que ca /msg infiniment si ca rate une fois...)
+    if ($hget(spambot_times,%nick) &lt;= 0) {
+      del_spambot %nick
+    }
+    ;sinon, on règle le prochain CTIME de test
+    else {
+      hadd -m spambot_next_msg %nick $calc($ctime + $xtest_lap)
+    }
+  }
+  inc %i
+}
+}
+</pre>
+
+<p>- the end -</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

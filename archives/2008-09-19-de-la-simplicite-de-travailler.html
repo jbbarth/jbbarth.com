@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - De la simplicité de travailler des dates en Ruby</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>De la simplicité de travailler des dates en Ruby</h1>
+
+<p>Imaginons qu’on veuille ajouter 10000 jours au 26/06/2008. <em>Date.new(2008,6,26)</em> permet de créer un premier objet date. La méthode “+” permet
+ensuite d’ajouter des jours, et pour info “&gt;&gt;” d’ajouter des mois. Modulo un <em>require “Date”</em> au début, on a tout ce qu’il faut ! Il faut juste
+penser à faire un “to_s” à la fin pour sortir une chaine de caractères, sauf si on utilise “puts” qui l’appelle tout seul…</p>
+
+<p>Au final, même pas besoin de faire un script, une oneliner suffit :</p>
+<pre>
+root@vds# ruby -e ‘require “Date”; puts Date.new(2008,6,26) + 10000’
+2035-11-12
+</pre>
+
+<p>Même genre de solution pour trouver un écart de dates, ou bien sûr de nombres :</p>
+<pre>
+root@vds# ruby -e ‘require “Date”; puts Date.new(2008,9,19) – Date.new(2008,6,26)’
+85
+root@vds# ruby -e ‘puts 10000 – 85’
+9915
+</pre>
+
+
+<p>Dans 10000 jours depuis le 26/06, c’est à dire 9915 jours à compter d’aujourd’hui, nous serons le 12 novembre 2035 ! Merci Ruby :-)</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Partie 1 : le retour de la vengeance</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Partie 1 : le retour de la vengeance</h1>
+
+<p>Que j’aurais pu aussi sobrement appeler :</p>
+
+<ul>
+  <li>refaisons le match</li>
+
+  <li>massacre à la tronçonneuse</li>
+
+  <li>f*ck</li>
+</ul>
+
+<pre>
+require <span class="s"><span class="dl">'</span><span class="k">find</span><span class="dl">'</span></span>
+require <span class="s"><span class="dl">'</span><span class="k">yaml</span><span class="dl">'</span></span>
+require <span class="s"><span class="dl">'</span><span class="k">digest/md5</span><span class="dl">'</span></span>
+
+attr_accessor <span class="sy">:path</span>
+
+<span class="r">def</span> <span class="fu">initialize</span>(path)
+  <span class="iv">@path</span> = path
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">infos</span>
+  <span class="iv">@infos</span> ||= {<span class="sy">:size</span> =&gt; <span class="co">File</span>.size(<span class=
+"iv">@path</span>).tap{|s| <span class="r">def</span> s.to_s; <span class="s"><span class="dl">"</span><span class="il"><span class="idl">#{</span><span class=
+"pc">self</span>.dup<span class="idl">}</span></span><span class="k"> bytes</span><span class="dl">"</span></span>; <span class="r">end</span> },
+              <span class="sy">:last_modified</span> =&gt; <span class="co">File</span>.mtime(<span class="iv">@path</span>),
+              <span class="sy">:md5_sum</span> =&gt; <span class="co">Digest</span>::<span class="co">MD5</span>.hexdigest(<span class=
+"co">File</span>.read(<span class="iv">@path</span>))}
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">initialize</span>(subdir)
+  raise <span class="s"><span class="dl">"</span><span class="k">Give me a (sub)directory !</span><span class="dl">"</span></span> <span class=
+"r">if</span> subdir.nil? || !<span class="co">File</span>.directory?(subdir)
+  <span class="iv">@subdir</span> = subdir
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">files</span>
+  <span class="iv">@files</span> ||= <span class="co">Find</span>.find(<span class="iv">@subdir</span>) <span class="r">do</span> |f|
+               <span class="co">Find</span>.prune <span class="r">if</span> <span class="co">File</span>.directory?(f)
+               <span class="co">EvaFile</span>.new(f) <span class="r">if</span> <span class="co">File</span>.file?(f)
+             <span class="r">end</span>.compact
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">write_info_file</span>(filename)
+  path = <span class="co">File</span>.join(<span class="iv">@subdir</span>,filename)
+  <span class="r">begin</span>
+    info = <span class="co">File</span>.open(path,<span class="s"><span class="dl">"</span><span class="k">w</span><span class="dl">"</span></span>)
+  <span class="r">rescue</span>
+    <span class="gv">$stderr</span>.puts <span class="s"><span class="dl">"</span><span class="k">Error opening file </span><span class="il"><span class=
+"idl">#{</span>path<span class="idl">}</span></span><span class="k"> for writing...</span><span class="dl">"</span></span>
+  <span class="r">end</span>
+  info.write <span class="s"><span class="dl">"</span><span class="k">Size: </span><span class="il"><span class="idl">#{</span>size<span class=
+"idl">}</span></span><span class="k"> bytes</span><span class="ch">\n</span><span class="dl">"</span></span>
+  info.write <span class="s"><span class="dl">"</span><span class="k">Files: </span><span class="il"><span class="idl">#{</span>nb_files<span class=
+"idl">}</span></span><span class="ch">\n</span><span class="dl">"</span></span>
+  files_hash = {}
+  files.each <span class="r">do</span> |file|
+    files_hash.merge!(<span class="co">File</span>.basename(file.path) =&gt; file.infos)
+  <span class="r">end</span>
+  info.write files_hash.to_yaml
+  info.close_write
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">size</span>
+  <span class="iv">@size</span> = files.inject(<span class="i">0</span>) <span class="r">do</span> |memo, f|
+            memo + f.infos[<span class="sy">:size</span>]
+          <span class="r">end</span>
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">nb_files</span>
+  files.length
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">initialize</span>(dir)
+  raise <span class="s"><span class="dl">"</span><span class="k">Give me a directory !</span><span class="dl">"</span></span> <span class=
+"r">if</span> dir.nil? || !<span class="co">File</span>.directory?(dir)
+  <span class="iv">@dir</span> = dir
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">subdirs</span>
+  <span class="r">return</span> <span class="iv">@subdirs</span> <span class="r">if</span> <span class="iv">@subdirs</span>
+  <span class="iv">@subdirs</span> = [ <span class="co">EvaDir</span>.new(<span class="iv">@dir</span>) ]
+  <span class="iv">@subdirs</span> &lt;&lt; <span class="co">Find</span>.find(<span class="iv">@dir</span>) <span class="r">do</span> |f|
+                <span class="co">EvaDir</span>.new(f) <span class="r">if</span> <span class="co">File</span>.directory?(f)
+              <span class="r">end</span>
+  <span class="iv">@subdirs</span> = <span class="iv">@subdirs</span>.compact.uniq
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">generate_info_files</span>(filename=<span class="s"><span class="dl">"</span><span class=
+"k">infos.txt</span><span class="dl">"</span></span>)
+  <span class="iv">@subdirs</span>.each <span class="r">do</span> |s|
+    s.write_info_file(filename)
+  <span class="r">end</span>
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">generate_meta_info_file</span>(filename=<span class="s"><span class="dl">"</span><span class=
+"k">metainfos.txt</span><span class="dl">"</span></span>)
+  path = <span class="co">File</span>.join(<span class="iv">@dir</span>,filename)
+  <span class="r">begin</span>
+    meta = <span class="co">File</span>.open(path,<span class="s"><span class="dl">"</span><span class="k">w</span><span class="dl">"</span></span>)
+  <span class="r">rescue</span>
+    <span class="gv">$stderr</span>.puts <span class="s"><span class="dl">"</span><span class="k">Error opening file </span><span class="il"><span class=
+"idl">#{</span>path<span class="idl">}</span></span><span class="k"> for writing...</span><span class="dl">"</span></span>
+  <span class="r">end</span>
+  meta.write <span class="s"><span class="dl">"</span><span class="k">Total size: </span><span class="il"><span class="idl">#{</span>size<span class=
+"idl">}</span></span><span class="k"> bytes</span><span class="dl">"</span></span>
+  meta.write <span class="s"><span class="dl">"</span><span class="k">Total number of files: </span><span class="il"><span class=
+"idl">#{</span>nb_files<span class="idl">}</span></span><span class="dl">"</span></span>
+  meta.write <span class="s"><span class="dl">"</span><span class="k">Last modified (&lt;24h) :</span><span class="ch">\n</span><span class=
+"k"> </span><span class="il"><span class="idl">#{</span>last_modified.join(<span class="s"><span class="dl">"</span><span class="ch">\n</span><span class=
+"k">  </span><span class="dl">"</span></span>)<span class="idl">}</span></span><span class="dl">"</span></span> <span class="r">if</span> last_modified.any?
+  meta.close_write
+<span class="r">end</span>
+
+<span class="r">def</span> <span class="fu">last_modified</span>
+  <span class="iv">@subdirs</span>.inject([]) <span class="r">do</span> |memo, subdir|
+    memo &lt;&lt; subdir.files.select{|f| <span class="co">File</span>.mtime(f) &lt; <span class="co">Time</span>.at(<span class=
+"co">Time</span>.now.to_i - <span class="i">86400</span>)}.map(&amp;<span class="sy">:path</span>)
+    memo.flatten
+    memo
+  <span class="r">end</span>
+<span class="r">end</span>
+
+private
+<span class="r">def</span> <span class="fu">method_missing</span>(symbol, *args)
+  <span class="r">if</span> <span class="s"><span class="dl">%w(</span><span class="k">nb_files size</span><span class=
+"dl">)</span></span>.include?(symbol.to_s)
+    <span class="iv">@subdirs</span>.inject(<span class="i">0</span>) <span class="r">do</span> |memo, subdir|
+       memo + subdir.send(symbol)
+    <span class="r">end</span>
+  <span class="r">else</span>
+    <span class="r">super</span>
+  <span class="r">end</span>
+<span class="r">end</span>
+
+e = <span class="co">EvaUtil</span>.new(<span class="pc">ARGV</span>[<span class="i">0</span>])
+e.generate_info_files
+e.generate_meta_info_file
+</pre>
+
+<p>Garanti 100% non testé, 100% fait sans l’API, <strong>et surtout 100% fait avec un éditeur de texte</strong>. C’est sûrement bourré de conneries, mais au
+moins avec un truc comme ça j’aurais pas eu honte. Cela dit vue la longueur, je commence à me pardonner d’avoir barbouillé ma copie de blanco, c’était
+infaisable sans ça. Coder sur papier est définitivement un cauchemard. On se la refait dans 2 ans ;-)</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

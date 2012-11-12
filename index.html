@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Home</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Migration to nanoc</h1>
+
+<p>This week-end I finally took some time to migrate this blog to <a href="http://nanoc.stoneship.org/">nanoc</a>,
+a Ruby web publishing system that generates semi-static websites. I already covered it a bit nearly
+2 years ago (see <a href="/posts/2011-01-27-dbuts-avec-nanoc.html">this article</a> in french).</p>
+
+<p>In the past I used to blog with Dotclear, then Mephisto, and finally Simplelog. Simplelog was an
+abandonned projects at the time, locked with a very old rails version (1.2.x), and I started to port
+it under sqlite3 and rails 2.1.2. Though I really enjoyed Simplelog simple and clean admin panel, I
+never had enough time to maintain it and it rapidly became part of the problem rather than part of
+the solution.</p>
+
+<p>So what's great now with nanoc ?</p>
+
+<p><strong>1/ it's simple</strong> : I only need my favorite text editor and git versionning to edit articles. A ruby
+runtime is needed whenever I want to publish my work (e.g. generate the static html pages from the
+sources, erb+markdown in my case)</p>
+
+<p><strong>2/ it's secure</strong> : it generates <em>static</em> websites, so I don't have to bother if someone screws up my
+login form, if my rails stack is up-to-date, or anything else.</p>
+
+<p><strong>3/ it's easy to host</strong> : Github turns out to be a fantastic, reliable and free hosting solution for
+static sites like that through their <a href="http://pages.github.com/">Github pages</a> feature. It supports 
+jekyll websites out of the box, but you can host any static or semi-static website with it. Hence
+I have a branch called &quot;source&quot; where I have the nanoc source for my website, and a rake task
+allows me to generate the compiled version and publish it on &quot;master&quot; branch directly. This rake
+task magic is what's used to generate the <a href="https://github.com/github/developer.github.com">Github API documentation</a>,
+which also used nanoc. If some day I'm not happy with Github anymore, everything is in my local
+git repo and I just have to host it elsewhere.</p>
+
+<p><strong>4/ it's easy to backup</strong> : git repo, static website, no database, it speaks for itself.</p>
+
+<p><strong>5/ it allows me to focus on the content</strong> : I was already a big fan of VIM (versus full-featured IDE
+like Eclipse or Netbeans), and I tend to become a big fan of <a href="http://www.iawriter.com/">IA Writer</a>,
+a very, very simple text editing app for MacOSX. Not having much features, buttons, menus helps
+you focus on the content rather than the form, the options, etc. It eliminates distractions. Nanoc
+(or Jekyll) is the same, I don't have to think of future-publishing, turning comments on/off,
+which tags should I use, etc.</p>
+
+<p><strong>6/ it allows any website structure</strong> : I'm now free again of my styles, DOM, JS framework, etc.</p>
+
+<p><strong>7/ it let me write my own helpers in Ruby</strong> if needed : it's nearly the only thing that make me
+not use Jekyll but Nanoc. I'm free to define helpers, which can be great for code formatting for
+instance, I had to do that for the Cartoque documentation.</p>
+
+<p><strong>8/ I'm not limited to blog publishing</strong> : I already prepared a <a href="/notes.html">notes section</a> that I
+plan to use for all the technical documentation I produce everyday, which sits on my laptop and
+will probably be lost in 1 or 2 years. This section will be like a wiki for me. It will not
+interfer with blog posts section, but it will share the same workflow and benefits.</p>
+
+<p><strong>9/ it fits really well with my own workflow</strong> : most of my free time is spent in the train,
+where I don't have any Internet connection. The 2 tools I use most of the time are VIM and Git.</p>
+
+<p>Of course you can argue that Wordpress, Typo or Radiant would do a better job in some areas. But
+I don't need specialist / complex things such as SEO, antispam, etc. The only thing I could
+miss is comments, but I'd gladly use an external service such as Disqus or Juvia (self-hosted
+alternative).</p>
+
+<p>I hope this switch will motivate me to write more on this blog about all the technical subjects
+I love. Well, stay tuned :-)</p>
+
+<p><h2>Last Posts</h2>
+<span class="time">23 Feb 2012</span> <a href="/posts/2012-02-23-trying-mongodb-for-cartoque.html">Trying MongoDB for Cartoque</a><br><span class="time">01 Feb 2012</span> <a href="/posts/2012-02-01-graphite-jsonp.html">Graphite &amp; JSONP</a><br><span class="time">12 Dec 2011</span> <a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a><br><span class="time">25 Aug 2011</span> <a href="/posts/2011-08-25-upgraded-to-rails-rc.html">Upgraded to Rails 3.1.rc6</a><br><span class="time">18 Jun 2011</span> <a href="/posts/2011-06-18-canvas-or-svg.html">Canvas or SVG</a><br><span class="time">17 Jun 2011</span> <a href="/posts/2011-06-17-playing-with-canvas.html">Playing with canvas</a>
+<p><a href="/archives.html">All articles</a></p></p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

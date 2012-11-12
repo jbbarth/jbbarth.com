@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Passage de ruby-1.8.5 à ruby-1.8.6</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Passage de ruby-1.8.5 à ruby-1.8.6</h1>
+
+<p>Alors que sur le poste où j’avais d’abord installé Mephisto/Sqlite3 je suis en Debian Lenny (version “testing” à ce jour), qui vient naturellement avec
+ruby-1.8.6. Alors que sur mon serveur, je suis en Debian Etch, et donc ruby-1.8.5. Voici donc les étapes de l’installation, reprises de en partie du site
+<a href="http://ange.librium.org/?p=84">ange.librium.org</a></p>
+
+<ol>
+  <li>Récupérer les tarballs de : ruby 1.8.6, rubygems, et ruby-zlib (indispensable pour ruby 1.8.6)</li>
+
+  <li>Installer zlib1g-dev via “apt-get install” (ou aptitude, ou wajig…)</li>
+
+  <li>Arrêtez les programmes utilisant ruby, à tout hasard mongrel</li>
+
+  <li>Assurer vous de désinstaller ruby et rubygems (apt-get remove ruby rubygems). Vous pouvez également supprimer ri, rdoc, rspec, etc. si vous les avez
+  installés via votre gestionnaire de paquets</li>
+
+  <li>Installer Ruby 1.8.6 : tar -xvzf tarball ; cd ruby<strong>1.8.6</strong> ; ./configure ; make ; make install</li>
+
+  <li>Faites de même avec ruby-zlib : ruby extconf.rb</li>
+
+  <li>Faites de même avec rubygems : ruby setup.rb all</li>
+</ol>
+
+<p>Tout a fonctionné assez bien jusqu’à ce que je redémarre mon mongrel. Patatra, il cherche /usr/bin/ruby1.8 qui n’existe plus.<br>
+Les gem sont installés avec mes anciens paths, pas top pour avoir quelque chose de propre. Donc :</p>
+
+<ol>
+  <li>cd /usr/lib/ruby/gems/1.8/gems/ ; ls &gt; ../tmp.txt ; rm -rf *</li>
+
+  <li>Puis réinstallation de mes gems favorites : gem install rails mongrel rake rcov rspec ruby-debug sqlite3-ruby tzinfo</li>
+
+  <li>Oups, ne fonctionne pas pour sqlite3 (qui fonctionnait avec le paquet sqlite3-ruby) il me dit qu’il lui manque “ruby.h” dès le premier check
+  (raté)</li>
+
+  <li>Donc direction le nouveau répertoire gems : cd /usr/local/lib/ruby/gems/1.8/gems/ ; cd sqlite3-ruby-1.2.1/ext/sqlite3_api/</li>
+
+  <li>2e essai : ruby extconf.rb =&gt; même erreur, OK !</li>
+
+  <li>Installation de libsqlite, “à tout hasard” ;-) : install libsqlite3-0 libsqlite3-dev</li>
+
+  <li>ruby extconf.rb =&gt; OK</li>
+
+  <li>On relance la “vraie” installation : gem install sqlite3-ruby</li>
+</ol>
+
+<p>Enjoy ;-)</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Need a wiki ?</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Need a wiki ?</h1>
+
+<p>En ce moment j’ai trop d’articles techniques à publier, souvent trop en bazar, ou trop long pour être publiés dans une demi-colone de ce blog. De plus je
+risque de quitter mon boulot dans quelques mois, et tout ce que j’ai pû documenter là-bas sera perdu pour moi si je ne le récupère pas avant. Bref, j’ai
+besoin d’un wiki, simple d’utilisation, avec suivi des révisions, formatage en Textile, un peu comme celui de <a href=
+"http://www.redmine.org/">Remine</a>.</p>
+
+<p>Une contrainte supplémentaire, qu’il soit en <a href="http://rubyonrails.org/">Ruby on Rails</a>, éventuellement <a href="http://merbivore.com/">Merb</a>.
+Pas par idéologie, croyance en <span class="caps">REST</span>, ou quelconque connerie de ce genre (et certains en tiennent une couche à ce niveau quand on
+voit la liste rails-france), mais plutôt parce que j’en ai marre de maintenir 50 technos hétérogènes sur mon serveur. Mon <a href=
+"http://blog.jbbarth.com/">blog</a>, mon <a href="http://code.jbbarth.com">gestionnaire de projets</a> tournent déjà en Rails. Ce sera bientôt le cas du site
+<a href="http://www.chanmasters.com/">chanmasters.com</a> que je réécris en ce moment. Bientôt le cas également de <a href="http://photos.jbbarth.com/">ma
+gallerie de photos</a>, qui tourne déjà avec des scripts ruby mais pas administrable en mode web. Donc dommage pour <a href=
+"http://www.dokuwiki.org/">Dokuwiki</a> qui a priori me convenait parfaitement…</p>
+
+<p>J’ai essayé <a href="http://instiki.org/">Instiki</a> sans être réellement convaincu, je ne saurais pas bien expliquer pourquoi. Et puis, j’aurais des
+modifs à faire dessus pour qu’il me convienne (templates trop épurées à mon goût, affichage “geeky” de certains champs, etc…). Ce qui implique un petit peu
+d’exploration du code, cf la suite. Je n’ai pas trouvé d’autres projets très actifs en Rails et qui me convienne (liste <a href=
+"http://en.wikipedia.org/wiki/List_of_wiki_software#Ruby-based">ici</a>)…</p>
+
+<p>En fait, le wiki de Redmine me convient parfaitement. Facile à “hacker” (je commence à connaître un peu le code même si je suis loin d’être un gourou
+comme les 3 ou 4 grands contributeurs réguliers), maintenu, communauté active, support de textile entre autres, jolis diff, etc. Nickel, à 4 petites choses
+près :</p>
+
+<ol>
+  <li>le support Textile est un peu foireux parfois ; voir <a href="http://www.redmine.org/issues/1416">ici</a></li>
+
+  <li>la coloration syntaxique est hideuse, j’aimerais bien remplacer CodeRay par autre chose ; voir <a href=
+  "http://www.redmine.org/issues/2985">ici</a></li>
+
+  <li>j’aimerais bien que les hiérarchies soient faites automatiquement, quitte à rendre l’arborescence un peu profonde, pas grave ; voir <a href=
+  "http://www.redmine.org/issues/3108">ici</a></li>
+
+  <li>j’aimerais bien un système de tags avec un nuage sur le côté ; voir <a href="http://www.redmine.org/issues/2897">ici</a>, <a href=
+  "http://www.redmine.org/issues/480">ici</a> et <a href="http://www.redmine.org/issues/1448">ici</a></li>
+</ol>
+
+<p>Bref, ça sent bon, et le choix est tout fait ; je documenterai dans le prochain article l’installation et la configuration de Redmine pour me servir de
+wiki :-)</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

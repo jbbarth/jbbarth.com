@@ -1,0 +1,140 @@
+/* general styles */
+@import url(http://fonts.googleapis.com/css?family=Lobster+Two:700|Average+Sans:400);
+
+html { overflow-y:scroll; }
+body { font-family: helvetica, arial, freesans, clean, sans-serif; background:#fffae9; }
+a { text-decoration: none; }
+a:link, a:visited { color: #ee376f; } 
+a:hover { color: #ee376f; text-decoration:underline; }
+ul { list-style-type:square; }
+blockquote { margin:5px 15px; font-style:italic; }
+blockquote > p { margin:0; }
+
+/* layout */
+html, body {
+  min-height:100%;
+  font-size:14px;
+}
+#container {
+  overflow:auto;
+  margin:0 auto;
+  padding:0;
+  min-height:100%;
+  height:auto !important;
+  height:100%;
+  color:#865;
+}
+#sidebar, #content {
+  padding:12px 10px 12px 18px;
+}
+#content {
+  overflow:auto;
+  min-height:200px;
+  margin:30px 9px 30px 0;
+  padding-left:35px;
+  border-left:1px solid #eee;
+  padding-bottom:250px; /*footer*/
+}
+#footer {
+  position:relative;
+  margin-top:-250px;
+  width:100%;
+  height:250px;
+  clear:both;
+}
+
+/* sidebar */
+#sidebar {
+  margin:32px 0 0; /* top = content's margin-top + 2px */
+  padding-left:10px;
+  font-size:14px;
+  color:#865;
+}
+#sidebar p {
+  text-align:center;
+}
+#sidebar a:link, #sidebar a:visited, #sidebar a:hover {
+  color:#ee376f;
+}
+.sitetitle {
+  display:inline-block;
+  text-align:center;
+  margin-bottom:15px;
+  font-family: 'Lobster Two', serif;
+  font-size: 42px;
+  font-style: normal;
+  font-weight: 400;
+  color: #de376f !important;
+  text-shadow: 0px 1px 0px #ddd;
+}
+a.sitetitle:hover {
+  color: #ee376f !important;
+  text-decoration:none;
+  cursor:pointer;
+}
+h1 {
+  margin:8px 4px;
+  font-family: 'Average Sans', sans-serif;
+  font-size:36px;
+  text-shadow: 1px 1px 0px #bbb;
+  color:#865;
+}
+h2 {
+  font-family: 'Average Sans', sans-serif;
+  font-size:18px;
+  margin:8px 4px;
+}
+
+#content pre, #content code {
+  font-family: monospace;
+  background-color: #fafafa;
+}
+#content code {
+  border: 1px solid #dadada;
+  padding:0 2px;
+}
+#content pre>code {
+  border:none;
+  padding:0;
+}
+#content pre {
+  border: 1px solid #dadada;
+  margin: 10px 10px 10px 15px;
+  padding: 2px 4px;
+  width:auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+#content h2+pre {
+  font-size: 16px;
+  padding: 4px 7px 2px;
+  border: 1px solid #ccc;
+}
+#content h2+pre, #content h2+pre>code {
+  background-color:#e5e5e8;
+  color: #000;
+}
+#content p {
+  margin:8px 0 6px;
+}
+span.time {
+  font-family:monospace;
+  padding:0 4px;
+}
+#footer {
+  background-color:#732a19;
+  color:#edc;
+}
+#footer a:link, #footer a:visited {
+  color: #edc;
+}
+#footer h2 {
+  color:#edc;
+  border-bottom:1px solid #edc;
+}
+#footer li {
+  margin-left:25px;
+}
+#footer p {
+  margin:0 8px;
+}

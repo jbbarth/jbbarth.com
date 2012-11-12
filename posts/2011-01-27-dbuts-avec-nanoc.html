@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Débuts avec Nanoc</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Débuts avec Nanoc</h1>
+
+<p><a href="http://nanoc.stoneship.org/">Nanoc</a> est un outil de publication de sites statiques écrit en Ruby. Ca permet de structurer facilement un site
+statique : définir un layout, gérer du contenu (un peu) dynamique, formatter ses pages avec Markdown ou Textile, etc.</p>
+
+<p>Vous êtes invité à suivre les docs <a href="http://nanoc.stoneship.org/docs/2-installation/#installing-nanoc">Installing nanoc</a> et <a href=
+"http://nanoc.stoneship.org/docs/3-getting-started/">Getting started</a> si vous voulez essayer nanoc.</p>
+
+<p>En bref dans un environnement <span class="caps">RVM</span>-isé:</p>
+
+<pre>
+rvm use 1.9.2@nanoc --create
+gem install nanoc adsf
+nanoc create_site blah
+cd blah
+nanoc compile &amp;&amp; nanoc view
+</pre>
+
+<p>Et ouvrez dans votre navigateur préféré <a href="http://localhost:3000">http://localhost:3000</a></p>
+
+<p>Evidemment, rien n’interdit en production de gérer ces gems avec <code>bundler</code> dans un <code>Gemfile</code>.</p>
+
+<p>Première chose qui m’a déplu, nanoc transforme tout <code>content/blah.html</code> en <code>output/blah/index.html</code>. Ca fait peut-être plus joli
+dans la barre d’adresse du navigateur, mais mes fichiers s’appellent tous index.html, ça rend notamment les copies avec <code>scp</code> illisibles. Ce
+comportement est géré dans une “route” du fichier <code>Rules</code> à la racine de votre site :</p>
+
+<pre>
+route <span class="s"><span class="dl">'</span><span class="k">*</span><span class="dl">'</span></span> <span class="r">do</span>
+item.identifier + <span class="s"><span class="dl">'</span><span class="k">index.html</span><span class="dl">'</span></span>
+</pre>
+
+<p>Que vous pouvez changer en :</p>
+
+<pre>
+route <span class="s"><span class="dl">'</span><span class="k">*</span><span class="dl">'</span></span> <span class="r">do</span>
+<span class="r">if</span> item.identifier != <span class="s"><span class="dl">"</span><span class="k">/</span><span class=
+"dl">"</span></span> &amp;&amp; item.attributes[<span class="sy">:extension</span>] == <span class="s"><span class="dl">"</span><span class=
+"k">html</span><span class="dl">"</span></span>
+  item.identifier.gsub(<span class="rx"><span class="dl">%r(</span><span class="k">/$</span><span class="dl">)</span></span>,<span class="s"><span class=
+"dl">'</span><span class="k">.html</span><span class="dl">'</span></span>)
+<span class="r">else</span>
+  item.identifier + <span class="s"><span class="dl">'</span><span class="k">index.html</span><span class="dl">'</span></span>
+<span class="r">end</span>
+</pre>
+
+<p>Je ne sais pas si c’est la méthode recommandée, mais ça fonctionne à première vue.</p>
+
+<p>Autre chose, autrement plus gênant, comment gérer votre contenu vraiment statique (par exemple des images) ? Vous allez vite vous rendre compte si vous
+mettez une image à la racine de votre site qu’il refuse de compiler, indiquant que <code>blabla.jpg</code> n’est pas un fichier <span class="caps">ERB</span>
+valide. Pour résoudre ça, j’ai choisi de me faire un dossier <code>content/assets/</code> dont les fichiers seront copiés tels quels dans
+<code>output/assets/</code>, sans compilation ni filtrage. Voici les règles à insérer dans votre fichier <code>Rules</code> (attention, l’ordre ayant une
+importance, chacune a été placée au dessus de la règle “*” correspondante). Pour la règle de compilation :</p>
+
+<pre>
+compile <span class="s"><span class="dl">'</span><span class="k">/assets/*</span><span class="dl">'</span></span> <span class="r">do</span>
+<span class="c"># don't filter or layout</span>
+</pre>
+
+<p>Et pour celle de routage :</p>
+
+<pre>
+route <span class="s"><span class="dl">'</span><span class="k">/assets/*</span><span class="dl">'</span></span> <span class="r">do</span>
+item.identifier.gsub(<span class="rx"><span class="dl">%r(</span><span class="k">/$</span><span class="dl">)</span></span>,<span class="s"><span class=
+"dl">'</span><span class="k">.</span><span class="dl">'</span></span>)+item.attributes[<span class="sy">:extension</span>]
+</pre>
+
+<p>A suivre…</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

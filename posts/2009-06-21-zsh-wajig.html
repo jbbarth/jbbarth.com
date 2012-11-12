@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - zsh & wajig</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>zsh &amp; wajig</h1>
+
+<p>Passé récemment sous <code>zsh</code> comme shell par défaut (merci Laurent), je trouve la complétion automatique de mes commandes <code>wajig</code> très
+lente. Pour mémoire, <code>wajig</code> est une surcouche plutôt sympa des <code>apt*</code> écrite en Python, et il me sert de gestionnaire de package
+principal sur mes Debian et Ubuntu depuis plus d’un an. La complétion automatique étant relativement rapide avec les commandes <code>apt-get</code> et
+compagnie, j’ai décidé de jeter un oeil aux scripts de complétion <code>zsh</code> pour <code>wajig</code> en particulier. J’en ai profité pour rajouter le
+switch <code>-y/—yes</code> qui manque à la complétion bien qu’étant une option parfaitement valide et documentée.</p>
+
+<p>Les scripts de complétion se trouvent dans <code>/usr/share/zsh/functions/Completion/Debian</code>. J’ai repris le script <code>_apt</code> pour adapter
+la section install dans le script <code>_wajig</code>. Les deux se servent d’un 3e script commun nommé <code>_deb_packages</code> au cas où ça vous
+intéresse. Le bonheur c’est que sans connaître vraiment le langage ou les structures utilisées, comme c’est du script relativement lisible on peut tenter par
+des essais/erreurs de modifier ça… et on y arrive !<br>
+<br>
+Voici le résultat sous forme de patch :</p>
+
+<pre>
+% diff _wajig.orig _wajig
+11a12
+&gt;   '(-y —yes)'{-y,—yes}'[assume yes for any questions asked]' \
+44,45c45,46
+&lt;         _alternative \
+&lt;           'packages:package:_deb_packages uninstalled' \
+—-
+&gt;         _wanted \
+&gt;           'packages:package:_deb_packages "$expl_packages[@]" avail' \
+</pre>
+
+<p>Et les complétions sont redevenues rapides ; le fait de changer <code>_alternative</code> par <code>_wanted</code> m’indique d’abord une liste quand
+j’appuie sur <span class="caps">TAB</span>, plutôt qu’enchainer directement sur les options possibles.</p>
+
+<p><strong><span class="caps">EDIT</span></strong>: une simple recherche Google <a href=
+"http://www.mail-archive.com/debian-bugs-closed@lists.debian.org/msg05451.html">montre</a> que certains poussent pour que le “framework” de complétion apt
+pour zsh soit aussi utilisé pour wajig ; à creuser, j’éditerai ce billet si je trouve quelque chose d’intéressant…</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

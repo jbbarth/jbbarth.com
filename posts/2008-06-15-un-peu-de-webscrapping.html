@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Un peu de webscrapping ?</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Un peu de webscrapping ?</h1>
+
+<p>Le <a href="http://en.wikipedia.org/wiki/Web_scraping">webscraping</a> est défini sur la <a href="http://fr.wikipedia.org/wiki/Web_scraping">page
+française</a> de Wikipedia comme suit :</p>
+
+<blockquote>
+  <p>Le Web scraping (parfois appelé Harvesting) décrit généralement en informatique un moyen d’extraire du contenu d’un site internet, via un script ou un
+  programme, dans le but de le transformer ou de changer son format pour permettre son utilisation dans un autre contexte.</p>
+</blockquote>
+
+<p>J’en faisais régulièrement avant en mIRC scripting, rencontrant souvent des problèmes plutôt http que parsing : suivi des sessions, chunks, etc… Et puis
+j’étais à un séminaire ces derniers jours, et des collègues m’ont remotivé pour en faire, alors je commence quelques essais en Ruby.</p>
+
+<p>Let’s go !</p>
+
+<p>Installons <a href="http://scrubyt.org/">scRUBYt!</a>, un package qui vient par dessus <a href="http://code.whytheluckystiff.net/hpricot/">Hpricot</a>
+notamment (parser <span class="caps">HTML</span>). Les <a href="http://wiki.scrubyt.org/index.php?title=Installation_Instructions">instructions
+officielles</a> n’étant pas très concluantes, je me suis rabattu sur <a href="http://agora.scrubyt.org/forums/3/topics/225">ce post</a> qui a résolu tous mes
+soucis :-) Il faudra d’ailleurs que j’examine un de ces jours les avantages de Scrubyt par rapport à Hpricot seul, vues les difficultés d’installation,
+raisonnables mais un peu aggaçantes (et qui ne feront que s’ajouter aux futures difficultés lors d’installations sur d’autres distribs ou au boulot).</p>
+<pre class="bash">
+# gem install —version 1.7.1 ParseTree
+# gem install —version 3.6.3 RubyInline
+# gem install —version 1.1.6 ruby2ruby
+# gem install ParseTreeReloaded
+# gem install RubyInlineAccelleration
+# gem install scrubyt
+</pre>
+
+<p>Parfois il faut relancer le gem install une ou deux fois, mais ça finit par passer normalement.</p>
+
+<p>Ensuite, premier essai (tiré d’<a href="http://snippets.dzone.com/posts/show/4133">ici</a>) :</p>
+<pre class="ruby">
+require 'rubygems'
+require 'scrubyt'
+
+google_data = Scrubyt::Extractor.define do
+ fetch 'http://www.google.com/ncr'
+ fill_textfield 'q', 'ruby'
+ submit
+
+ link "Ruby Programming Language/@href" 
+ next_page "Next", :limit =&gt; 2
+end
+
+puts google_data.to_xml
+</pre>
+
+<pre class="bash">
+# ruby test_scrubyt.rb 
+/usr/local/lib/site_ruby/1.8/rubygems.rb:139:in `activate': can't activate RubyInline (= 3.6.3), already activated RubyInline-3.7.0] (Gem::Exception)
+  from /usr/local/lib/site_ruby/1.8/rubygems.rb:155:in `activate'
+  from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `each'
+  from /usr/local/lib/site_ruby/1.8/rubygems.rb:154:in `activate'
+  from /usr/local/lib/site_ruby/1.8/rubygems/custom_require.rb:31:in `require'
+  from test_scrubyt.rb:2
+</pre>
+
+<p>Oopsie !<br>
+J’ai donc désinstallé la version 3.7.0 via le choix 2 dans la commande :</p>
+<pre class="bash">
+# gem uninstall RubyInline
+</pre>
+
+<p>Et là hop !</p>
+<pre class="bash">
+# ruby test_scrubyt.rb 
+/usr/lib/ruby/gems/1.8/gems/scrubyt-0.3.4/lib/scrubyt/core/scraping/filters/text_filter.rb:25: warning: don't put space before argument parentheses
+http://www.google.com/search?hl=en&amp;ie=ISO-8859-1&amp;q=ruby
+http://www.google.com/search?hl=en&amp;ie=UTF-8&amp;q=ruby&amp;start=10&amp;sa=N
+&lt;root&gt;
+&lt;link&gt;http://www.ruby-lang.org/&lt;/link&gt;
+&lt;link&gt;http://www.ruby-lang.org/en/20020101.html&lt;/link&gt;
+&lt;link&gt;http://en.wikipedia.org/wiki/Ruby_programming_language&lt;/link&gt;
+&lt;link&gt;http://en.wikipedia.org/wiki/Ruby&lt;/link&gt;
+&lt;link&gt;http://www.rubyonrails.org/&lt;/link&gt;
+&lt;link&gt;http://www.rubys.com/&lt;/link&gt;
+&lt;link&gt;http://www.rubycentral.org/&lt;/link&gt;
+&lt;link&gt;http://www.w3.org/TR/ruby/&lt;/link&gt;
+&lt;link&gt;http://www.zenspider.com/Languages/Ruby/QuickRef.html&lt;/link&gt;
+&lt;/root&gt;
+</pre>
+
+<p>Excellent début !</p>
+
+<p>Après un petit patch de /usr/lib/ruby/gems/1.8/gems/scrubyt-0.3.4/lib/scrubyt/core/scraping/filters/text_filter.rb:25 (tu parles d’un patch, j’ai juste
+supprimé un espace… :D), je compte bien mener d’autres essais, notamment ce dont j’ai parlé dans le résumé :-) Je mettrai les résultats ici !</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

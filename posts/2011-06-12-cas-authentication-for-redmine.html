@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - CAS authentication for Redmine</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>CAS authentication for Redmine</h1>
+
+<p>It’s been a while since I wanted to integrate <a href="http://www.redmine.org/">Redmine</a> with my <a href=
+"http://en.wikipedia.org/wiki/Central_Authentication_Service"><span class="caps">CAS</span></a> server at $<span class="caps">WORK</span>. Unfortunately,
+Redmine only supports its integrated login/password, <span class="caps">LDAP</span> auth and OpenID. There are existing demands on this topic (<a href=
+"http://www.redmine.org/issues/2965">#2965 for instance</a>) but Redmine developers always refused to implement such specific authentications in the core
+itself. I approve this choice, I think they should even drop OpenID, and maybe <span class="caps">LDAP</span> support (hard to maintain so many things, the
+core should be leaner).</p>
+
+<h2>Existing solutions</h2>
+
+<p>I’m only aware of two existing solutions if you want to authenticate your Redmine users against <span class="caps">CAS</span> :</p>
+
+<ul>
+  <li><a href="http://blogs.igalia.com/mrego/2009/07/22/casify-redmine/">a blog post titled ‘CASify Redmine’</a> : it explains how to <em>modify</em> the
+  core to use rubycas-client, definitely not a long-term solution</li>
+
+  <li>
+    <a href="http://www.redmine.org/plugins/redmine_cas">a plugin called redmine_cas</a> : it works, but it doesn’t exactly fit my needs :
+
+    <ul>
+      <li>it replaces Redmine standard authentication <em>completely</em> : I just want <span class="caps">CAS</span> authentication as a comfort option, as
+      some of my users are not registered on the <span class="caps">CAS</span> server</li>
+
+      <li>it cannot be configured in the interface : as a datacenter which offers a SaaS product for dozens of users, I want them to be able to configure the
+      <span class="caps">CAS</span> server themselves (we have multiple addresses depending on wether your users are on the intranet, extranet or
+      internet)</li>
+
+      <li>there’s an annoying but when clicking on “logout” : <code>undefined method `destroy' for {}:Hash</code>, though it may be easy to fix</li>
+    </ul>
+  </li>
+</ul>
+
+<p>To be honest, I also wanted to try to the OmniAuth authentication framework and see if it could help integrating Redmine with external authentication
+sources (not only <span class="caps">CAS</span>).</p>
+
+<h2>OmniAuth</h2>
+
+<p><a href="https://github.com/intridea/omniauth">OmniAuth</a> (<a href=
+"http://intridea.com/2010/10/4/omniauth-flexible-authentication-for-rack?blog=company">blog post</a>) is an awesome authentication framework built as a Rack
+middleware.</p>
+
+<p>It has a pretty simple workflow for external authentication sources. If we take the example of <span class="caps">CAS</span> :</p>
+
+<ul>
+  <li>call <code>/auth/cas</code> and you will be redirected to the <span class="caps">CAS</span> server (with the needed back url)</li>
+
+  <li>after you logged in to your <span class="caps">CAS</span> server, you’re redirected to <code>/auth/cas/callback</code> and free to do whatever you want
+  with the params returned, stored in <code>request.env["omniauth.auth"]</code> ; this hash stores at least the “provider” (“cas”) and the “uid”
+  (“jeanbaptiste.barth” for instance)</li>
+</ul>
+
+<p>OmniAuth is covered in 3 railscasts, but the one that has been really helpful is <a href="http://railscasts.com/episodes/241-simple-omniauth">#241 Simple
+OmniAuth</a>.</p>
+
+<h2>The “redmine_omniauth_cas” plugin</h2>
+
+<p>I spent some hours last week-end to build the “redmine_omniauth_cas” plugin. The code is <a href="https://github.com/jbbarth/redmine_omniauth_cas">on
+github</a>. It relies on OmniAuth for (optionally) authenticating your users against a <span class="caps">CAS</span> server. The <span class=
+"caps">CAS</span> server has to be configured in the plugin configuration section. It’s only compatible with Redmine 1.2.0 since latest versions of OmniAuth
+are not compatible with Rack 1.0.1.</p>
+
+<p>There are currently some limitations I plan to improve in the next versions :</p>
+
+<ul>
+  <li>implement ticket validation when first opening your browser (for now you’ll be considered as logged out if your session has expired on Redmine but your
+  ticket is still valid on the <span class="caps">CAS</span> server)</li>
+
+  <li>add a plugin option to hide ‘normal’ login/password form</li>
+
+  <li>authorize on-the-fly registration</li>
+</ul>
+
+<p>I also plan to contribute to OmniAuth and especially the <span class="caps">CAS</span> provider. The current implementation is functional but not so
+flexible, since it doesn’t support OmniAuth’s mechanisms to setup the <span class="caps">CAS</span> options at runtime.</p>
+
+<h2>Conclusion</h2>
+
+<p>This plugin is a first try at using OmniAuth with Redmine, but I could easily imagine building plugins to authenticate against other sources. I hope it
+will be useful for some of you. I think it could even be a viable option to throw OpenID support out of the core, and let it live its life in a clean plugin.
+Stay tuned !</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

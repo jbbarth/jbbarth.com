@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Des images dans Simplelog</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Des images dans Simplelog</h1>
+
+<p>Ma version de <a href="http://www.simplelog.net/">Simplelog</a>, disponible sur <a href="http://github.com/jbbarth/simplelog/">mon espace Github</a>,
+supporte désormais l’upload d’images, utilisables ensuite dans les posts ou pages de son choix :</p>
+
+<p>photo perdue...</p>
+
+<p>Pour que le tout fonctionne, il faut disposer sur son serveur d’une bibliothèque de traitement d’image pour Ruby. Personnellement j’ai choisi <a href=
+"http://seattlerb.rubyforge.org/ImageScience.html">ImageScience</a> pour sa simplicité, mais je viens de me rendre compte qu’il y avait des bugs sur les
+images <span class="caps">PNG</span>. Je vais voir si je peux passer à autre chose pour la suite.</p>
+
+<p>To be continued ;-)</p>
+
+<p><strong><span class="caps">EDIT</span></strong>: je suis passé à <a href="http://rmagick.rubyforge.org/">RMagick</a>, tout a l’air de marcher pas mal.
+D’ailleurs pour ma version de Simplelog, c’est mis comme processeur par défaut (pour le moment en dur dans la classe, qui sait peut-être bientôt en
+configurable) :</p>
+
+<pre>
+has_attachment :content_type => :image,
+                :storage => :file_system,
+                :max_size => 5.megabytes,
+                :resize_to => '740x400>',
+                :thumbnails => { :thumb => '100x100>' },
+                :path_prefix => 'public/assets',
+                :processor => 'Rmagick'
+ 
+validates_as_attachment
+</pre>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

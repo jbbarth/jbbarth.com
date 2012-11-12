@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Introduction à l'URL Rewriting</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Introduction à l'URL Rewriting</h1>
+
+<p>L’URL Rewriting permet de “ré-écrire des URLs”.<br>
+Grâce à cette fonctionnalité, vous pouvez proposer des <strong>URLs “virtuelles”</strong> sur votre site, qui ne correspondent à aucune page réelle : vous
+donnez une certaine <span class="caps">URL</span>, ou vous la mettez dans un lien, et en fait le client verra affichée une page toute autre.</p>
+
+<p>L’URL Rewriting permet de “réécrire des URLs”.</p>
+
+<p>Pré requis : avoir quelques notions sur les expressions réguliéres..</p>
+
+<h2>Introduction</h2>
+
+<p>L’URL Rewriting permet de “ré-écrire des URLs”.<br>
+Grâce à cette fonctionnalité, vous pouvez proposer des <strong>URLs “virtuelles”</strong> sur votre site, qui ne correspondent à aucune page réelle : vous
+donnez une certaine <span class="caps">URL</span>, ou vous la mettez dans un lien, et en fait le client verra affichée une page toute autre.</p>
+
+<p>Les exemples qui suivent supposent une mise en pratique avec Apache (version 1 ou 2) et son module “mod_rewrite”.<br>
+<span class="caps">PHP</span> est pris comme langage de référence pour les exemples pour les noms des pages, mais cela fonctionne bien sûr avec d’autres
+langages :-)</p>
+
+<p>Par exemple :<br>
+http://www.monsite.fr/a/b/c/ affichera en réalité sur mon site la page correspondant à l’URL de votre site :
+http://www.monsite.fr/index.php?page=a&amp;section=b&amp;client=c</p>
+
+<p>L’intérêt est double :<br>
+- le <strong>référencement</strong> : certains moteurs de recherche n’indexent pas les pages au delà d’un certain nombre de paramètres. C’est le cas de
+Google qui bloque au delà de deux. Ainsi, la page que j’ai donné en exemple ( http://www.monsite.fr/index.php ?page=a&amp;section=b&amp;client=c ) qui
+contient trois paramètres “page”, “section” et “client” ne sera pas indexée, ce qui nuira au bon référencement de votre site.<br>
+- la <strong>sécurité</strong>, ou plutot le coté “<strong>pratique</strong>” : vous avez par exemple un répertoire admin/ auquel vous ne voulez que personne
+accède. Grâce à l’URL Rewriting, vous pouvez spécifier que toute page appelée dans le répertoire admin/ doit afficher en fait
+http://www.monsite.fr/erreur.html</p>
+
+<h2>Mise en pratique</h2>
+
+<p>En pratique, l’URL Rewriting est disponible (a minima) sur Apache, et sur <span class="caps">IIS</span>.<br>
+Nous traiterons le cas d’Apache, qui est très répandu, je n’ai jamais testé sur <span class="caps">IIS</span> (le serveur <span class="caps">HTTP</span>
+Microsoft).</p>
+
+<h2>1- Vérifier que l’URL Rewriting est utilisable</h2>
+
+<p>En <span class="caps">PHP</span>, il suffit de vérifier que le module “mod_rewrite” est chargé.<br>
+Faites une page et regardez dans la liste “Apache Loaded Modules” si ce module est bien activé. En général même chez de petits hébergeurs payants c’est le
+cas.</p>
+
+<h2>2- Fonctionnement</h2>
+
+<p>L’URL Rewriting se présente concrètement sous forme de “règles” que vous allez préciser dans un fichier .htaccess<br>
+Rappelons que les fichiers .htaccess ont d’autres fonctions, qui ne seront pas exposées ici : restriction d’accès à une page, erreurs personnalisées,
+redirections.</p>
+
+<p>L’URL Rewriting utilise donc des règles, composées d’un masque de recherche qui est une expression régulière, et un masque de remplacement en fonction (un
+peu comme preg_replace en <span class="caps">PHP</span>)<br>
+Si l’URL entrée par l’utilisateur (ou dans un lien) vérifie le masque de recherche, elle est remplacée par l’autre masque, celui de remplacement.<br>
+A noter : si le masque de remplacement est un tiret, la réécriture n’a pas lieu.</p>
+
+<h2>3- Premier exemple</h2>
+
+<p>Voyons un premier exemple très simple.<br>
+Mettez dans votre .htaccess :</p><pre>RewriteEngine on RewriteRule ^test\.html$ /test.php</pre>
+
+<p>Mettez ensuite une page test.php à la racine de votre site :<br>
+Exemple de contenu :<br>
+<pre>Ceci est la page test.php !!</pre></p>
+
+<p>Si vous essayez d’aller sur http://www.votresite.fr/test.html, vous verrez la page test.php s’afficher ! Et ce bien que test.html n’existe pas en
+réalité.</p>
+
+<p>Remarque : si c’est uniquement pour faire une redirection fixe, pas besoin d’URL Rewriting : un RedirectPermanent marche aussi.. Remarque2 : selon la
+version et les réglages de votre serveur, il est possible que ceci ne marche pas (erreur 500 ou 404) : mettez alors test.php au lieu de /test.php en
+réécriture.</p>
+
+<h2>4- Limites</h2>
+
+<p>Certaines regex ne marcheront pas sur de l’URL Rewriting.<br>
+Les notions “avancées” des langages de regex, du genre test avant, test arrière, conditions, n’ont pas marché sur mon serv Apache.</p>
+
+<p>Conclusion : une expression régulière utilisée dans ce cas se doit d’être <span class="caps">VERIFIEE</span> !</p>
+
+<p>Pour l’anecdote, dans un masque compliqué un jour, [abcd] fonctionnait, mais pas [abcdef], allez comprendre ;o)</p>
+
+<h2>Les références</h2>
+
+<p>Comme tout outil utilisant les regex, on peut capturer du texte et le réutiliser lors du remplacement.</p>
+
+<p>Ceci se fait comme avec preg_replace, par l’ajout de parenthèses pour capturer, et de références $1,$2,... pour restituer ce qui a été capturé. Exemple :
+vous désirez que toute page php demandée dans repertoire1 affiche en fait la page équivalent dans répertoire2 :</p><pre>RewriteEngine on RewriteRule
+^repertoire1/(.*\.php)$ /repertoire2/$1</pre>
+
+<p>Je ne m’étendrai pas plus la dessus ici, histoire de se concentrer sur l’URL Rewriting et non sur les mécanismes de regex.</p>
+
+<h2>Les drapeaux</h2>
+
+<p>Les flags, ou drapeaux, se placent après le masque de ré-écriture : ils permettent de définir des options pour la réécriture.<br>
+Ils peuvent être combinés en étant séparés par une virgule : [L,F] par exemple (voir la suite)</p>[L] : la règle qui précède sera la dernière, aucune autre
+tentative de réécriture ne sera effectuée ensuite. Exemple : <pre>RewriteEngine on RewriteRule ^test\.php$ - [L] RewriteRule ^test\.php$ /test2.php</pre>
+Vous tomberez sur test.php, et non test2.php. Sans le [L], vous tomberez sur test2.php ! Ce flag permet par exemple de bloquer l’accès aux images par
+exemples, tout en gardant une réécriture sur tous les dossiers/fichiers autres. [R] : force une redirection Exemple : <pre>RewriteEngine on RewriteRule
+^test\.php$ /test2.php [R]</pre> test.php sera redirigée vers test2.php, et non réécrite à la volée : le visiteur verra s’écrire test2.php dans la barre de
+navigation de son browser. [F] : forbidden, accès interdit : renvoie une erreur 403 (permet de protéger l’accès à certains fichiers/répertoires coté serveur
+!) Exemple : <pre>RewriteEngine on RewriteRule ^test\.php$ - [F]</pre> [G] : erreur 410, <span class="caps">URL</span> n’existant plus Exemple :
+<pre>RewriteEngine on RewriteRule ^test\.php$ - [G]</pre> [N] : recommence au début des règles Exemple : <pre>RewriteEngine on RewriteRule ^test2\.php$
+/index.html RewriteRule ^test\.php$ /test2.php [N]</pre> Avec ces règles, la page test.php sera réécrite en test2.php, puis en index.html ! [NC] : pattern
+non sensible à la casse (majuscules/minuscules) Exemple : <pre>RewriteEngine on RewriteRule ^tEsT\.pHP$ /test2.php [NC]</pre> Ce masque réécrira bien
+test.php (marche également dans l’autre sens.. qui est plus intéressant ;o))
+
+<p>Voila la liste des autres flags, moins utiles pour débuter :<br>
+[P] : force le passage par un proxy : non testé<br>
+[C] : règles en chaines : non testé<br>
+[T] : force le type <span class="caps">MIME</span> du fichier demandé : non testé<br>
+et autres <span class="caps">QSA</span>,NS,PT,S,E…</p>
+
+<h2>Les conditions</h2>
+
+<p>mod_rexrite permet de mettre différentes conditions avant de réaliser une réécriture.</p>
+
+<p>Trois choses à savoir :<br>
+- le “ET” est implicite entre deux conditions sur deux lignes successives, et pour faire un ou, il suffit d’ajouter un flag [OR] en fin de ligne<br>
+- pour nier un masque, il suffit de le précéder d’un point d’exclamation ”!”<br>
+- les tests agissent sur des “VARIABLES <span class="caps">SERVEUR</span>” de la forme %<em><span class="caps">VARIABLE</span></em>. Une liste exhaustive est
+dispo dans la doc Apache, on va par exemple tester le host du visiteur :</p>
+
+<p>Exemple : refuser les hosts contenant <span class="caps">AOL</span> ou tiscali sur notre page test.php<br>
+<pre>RewriteEngine on RewriteCond %REMOTE_HOST AOL [OR] RewriteCond %REMOTE_HOST tiscali RewriteRule ^test\.php$ - [F]</pre></p>
+
+<p>Exemple : réécrire test.php en test2.php pour les non-utilisateurs de Firefox<br>
+<pre>RewriteEngine on RewriteCond %HTTP_USER_AGENT !^.*Firefox.*$ RewriteRule ^test\.php$ /test2.php</pre></p>
+
+<p>Note : voici mon <span class="caps">HTTP</span>_USER_AGENT<br>
+- avec Firefox : Mozilla/5.0 (Windows ; U ; Windows <span class="caps">NT 5</span>.1 ; fr-FR ; rv:1.7.12) Gecko/20050919 Firefox/1.0.7<br>
+- avec IE : Mozilla/4.0 (compatible ; <span class="caps">MSIE 6</span>.0 ; Windows <span class="caps">NT 5</span>.1 ; <span class="caps">SV1</span> ; .NET
+<span class="caps">CLR 1</span>.1.4322 ; .NET <span class="caps">CLR 2</span>.0.50215)</p>
+
+<p>Cette réécriture n’est pas infaillible, on peut régler son user agent sur certains browsers.</p>
+
+<p>Exemple : afficher une page différente en journée et soirée : (curiosité trouvée dans un ppt sur www.w3-campus.com)</p><pre>RewriteEngine on RewriteCond
+%TIME_HOUR%TIME_MIN &gt;0800 RewriteCond %TIME_HOUR%TIME_MIN &lt;2000 RewriteRule ^index\.html$ index.jour.html [L] RewriteRule ^index\.html$ index.nuit.html
+[L]</pre>
+
+<p>A vous d’être imaginatifs maintenant !</p>
+
+<h2>Conclusion</h2>
+
+<p>Beaucoup de fonctionnalités et options de l’URL Rewriting n’ont pas été abordées ici, mais vous avez déjà un panorama assez large des fonctionnalités de
+base.</p>
+
+<p>Si vous voulez plus d’infos reportez vous à la <a href="http://www.apachefrance.com/Manuels/Apache_1.3_VF/mod/mod_rewrite.html">doc Apache mod_rewrite
+(fr)</a><br>
+Ou <a href="http://www.webmaster-hub.com/publication/article5.html">un autre tuto très bien fait</a></p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

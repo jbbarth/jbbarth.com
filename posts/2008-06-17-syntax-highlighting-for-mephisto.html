@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Syntax Highlighting for Mephisto</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Syntax Highlighting for Mephisto</h1>
+
+<p>Je complèterai un peu ce billet plus tard. Pour l’heure, une démarche sommaire pour mettre en place un module de syntax highlighting sur votre
+Mephisto’blog.<br>
+Il existe de nombreuses autres méthodes <em>a priori</em>, j’en essayerai certainement quelques unes pour voir, pour des questions de performance et
+d’évolutivité, stay tuned :-)</p>
+
+<p>Téléchargement :<br></p>
+<pre class="bash">
+$ cd /tmp
+$ wget http://syntaxhighlighter.googlecode.com/files/SyntaxHighlighter_1.5.1.rar
+$ mkdir sh &amp;&amp; unrar e SyntaxHighlighter_1.5.1.rar sh/
+$ wget http://bboy.mr.freeze.googlepages.com/shBrushBash.js &amp;&amp; mv shBrushBash.js sh/
+</pre>
+
+<p>Intégration à Mephisto :<br></p>
+<pre class="bash">
+$ cd /home/app/mephisto
+$ mkdir public/javascripts/syntaxHighlighter/ &amp;&amp; cp /tmp/sh/*.js public/javascripts/syntaxHighlighter/
+$ mkdir public/stylesheets/syntaxHighlighter &amp;&amp; cp /tmp/sh/*.css public/stylesheets/syntaxHighlighter/
+$ mkdir public/flash &amp;&amp; cp /tmp/sh/*.swf public/flash/
+</pre>
+
+<p>Ajouts dans layout.liquid :<br></p>
+<pre class="html">
+{{ 'syntaxHighlighter/SyntaxHighlighter' | stylesheet }}
+{{ 'syntaxHighlighter/shCore' | javascript }}
+{{ 'syntaxHighlighter/shBrushRuby' | javascript }}
+{{ 'syntaxHighlighter/shBrushCss' | javascript }}
+{{ 'syntaxHighlighter/shBrushXml' | javascript }}
+{{ 'syntaxHighlighter/shBrushBash' | javascript }}
+&lt;script language="javascript"&gt;
+window.onload = function () {
+  dp.SyntaxHighlighter.ClipboardSwf = '/flash/clipboard.swf';
+  dp.SyntaxHighlighter.HighlightAll('code');
+}
+&lt;/script&gt;
+</pre>
+
+<p>Et ensuite, il suffit d’<a href="http://code.google.com/p/syntaxhighlighter/wiki/Usage">appliquer les règles d’utilisation</a> dans vos articles.</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

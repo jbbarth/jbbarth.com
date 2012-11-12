@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Passage sous Mephisto</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Passage sous Mephisto</h1>
+
+<p>Passage de ce blog sous Mephisto : explication sommaire et procédure d’installation.</p>
+
+<p><a href="http://www.wordpress.org">Wordpress</a> est une usine à gaz et tourne en <span class="caps">PHP</span>, or je cherchais un <span class=
+"caps">CMS</span> en Rails. Exit donc l’ancienne version, peu fréquentée et peu mise à jour, de ce blog.</p>
+
+<p><a href="http://www.typosphere.org">Typo</a> m’a gonflé pour la seconde fois : je ne doute pas de la qualité de l’outil pourtant, mais des petits tracas
+d’install font que je n’ai pas conservé cet outil. Première fois il y a quelques mois, j’installe la toute récente version 4, je la lance, je change le thème
+et là, patatra. L’appli m’avait supprimé mon répertoire ”/tmp” ! Bon OK je l’avais fait tourner en root, ce qui n’est pas très malin, mais ce genre
+d’imprécision m’avait aggacé à l’époque. Et cette fois, j’ai essayé d’installer la version svn/trunk, avec une base sqlite3. La migration 48 bloque, et au
+bout de plusieurs minutes, j’ai des virgules qui s’affichent sur mon écran, la taille du répertoire “db/” ne bougeant plus. Au bout de 15 minutes de virgules
+(entrecoupées parfois de “NULL”), j’ai killé la session et le process rake, et vogue pour mehisto ! Qui plus est, l’interface admin est tout aussi moche que
+celle de Mephisto. Alors…</p>
+
+<h2>Installation</h2>
+
+<p>J’ai suivi peu ou prou le pas-à-pas disponible <a href="http://www.mephistoblog.com/docs/setup">ici</a> . J’ai au passage un peu halluciné en voyant que
+le <span class="caps">CMS</span> pouvait tourner sur une base de données provenant de Typo ou Wordpress ! Ils ont vraiment pensé à tout ! Je n’ai pas testé
+cela dit, je voulais une install propre :<br></p>
+
+<p>Après cette étape, et éventuellement l’installation de mongrel :<br></p>
+
+<p>... il suffit de démarrer le serveur ! (étape qui n’est pas mentionnée dans le lien officiel : je suppose vue la tournure qu’ils partent du principe que
+l’utilisateur installe Mephisto sur un environnement mutualisé, et n’ont pas la main sur l’arrêt/démarrage du serveur d’appli, Mongrel dans notre cas).</p>
+
+<p>Anyway, après un petit test concluant de :<br></p>
+
+<p>Je me suis fait un petit script très compliqué pour lancer tout cela :<br></p>
+<pre>
+#!/bin/sh<br>ROOTDIR="/home/app/mephisto" <br>CMD="mongrel_rails" <br>PARAMS="-d -e production -p 8000 —user pada —group pada" <br>case "$1" in
+start)
+  cd $ROOTDIR
+  $CMD start $PARAMS
+  ;;
+stop)
+  cd $ROOTDIR
+  $CMD stop
+  ;;
+restart|reload|flush)
+  cd $ROOTDIR
+  $CMD stop
+  $CMD start $PARAMS
+  ;;
+*)
+  echo "Usage: $0 [start|stop|restart]" &gt;&amp;2
+  exit 3
+  ;;
+esac
+</pre>
+
+<p>Le site est donc accessible via http://vds171.sivit.org:8000/<br>
+J’expliquerai dans un futur article comment configurer Apache &amp; Bind pour avoir une <span class="caps">URL</span> plus jolie :-)</p>
+
+<h2>Themes</h2>
+
+<p>J’ai trouvé le thème que vous voyez sur le <a href="http://mephisto-themes.nanorails.com/gallery">second theme viewer Mephisto</a> c’est le “1024px”
+d’Andreas Viklund, porté en Mephisto par RailsGrunt. Un passage à tout hasard sous IE m’a montré un problème avec le titre qui était caché en partie par le
+sous-titre, c’était très moche. Je suis donc allé sur <a href="http://andreasviklund.com/">le site de l’auteur original</a> , et plus précisément sur la page
+de ce template gratuit : <a href="http://andreasviklund.com/templates/1024px/">ici</a> . J’y ai récupéré le .css, que j’ai remplacé via l’interface Mephisto
+dans mon Mephisto, et ça a fonctionné parfaitement :-)</p>
+
+<h2>Réflexions / Tips</h2>
+
+<ul>
+  <li>Penser à changer le charset dans le layout.liquid pour de l’utf8 : sous Linux, Firefox 3b5 fait la correction automatiquement, mais sous Windows, mes
+  articles étaient assez pourris.. Changer le meta content-type dans ce fichier suffit à résoudre le problème.</li>
+
+  <li>Textilize est un langage très sympa pour faire du markup, mais normalement, il interprète les line breaks comme des balises &lt;br /&gt;, ce que ne
+  fait pas RedCloth. Impossible pour l’instant de savoir pourquoi, mais ça rend l’édition peu intuitive. Je ferai un billet dès que j’aurai trouvé comment
+  résoudre la chose (ajouter l’option ":line_breaks" en modificant redcloth.rb ne semble pas suffire).</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

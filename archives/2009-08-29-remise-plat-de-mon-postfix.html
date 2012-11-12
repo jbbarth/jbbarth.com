@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Remise à plat de mon Postfix</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Remise à plat de mon Postfix</h1>
+
+<p>Sur mon serveur perso, j’ai des besoins simples en terme de mails :<br>
+1- envoyer des mails (relai local) n’importe où<br>
+2- recevoir des mails sur mes domaines (jbbarth.com et autres)</p>
+
+<p>Seulement voilà, à force de suivre des tutos à droite à gauche, de piquer des conseils d’un côté et de l’autre, et surtout de me référer à la <a href=
+"http://www.postfix.org/documentation.html">doc officielle Postfix</a>, impossible de s’y retrouver. Je relayais des centaines de spams par jour sans savoir
+pourquoi, de quoi s’arracher les cheveux.</p>
+
+<p>Premier coupable, <a href="http://www.postfix.org/">Postfix</a> : je ne me suis pas paluché tous les <span class="caps">MAN</span> ni toute la doc
+officielle dans la longueur, mais après en avoir lu une bonne partie, ce truc est d’une complexité e-ffra-yante. OK, c’est puissant, mais après ? En 1 ligne
+mal placée on fout toute une conf par terre, génial.</p>
+
+<p>Enfin en regardant autour, <a href="http://www.exim.org/">Exim</a> n’a pas l’air beaucoup plus simple bien qu’il m’attire nettement plus (ça m’a l’air
+souple, sympa, c’est le choix Debian par défaut, etc.).</p>
+
+<p>Vient le second coupable, moi : j’ai édité les confs à la main, en tatonnant. Là, je décide de rester sous Postfix, mais de chercher une doc bien foutue.
+Et là hourra, merci Debian encore (&lt;3), je trouve <a href="http://wiki.debian.org/Postfix">cette page de wiki</a> ; voici donc :</p>
+
+<pre>
+tar cvzf /home/salvor/postfix.tgz /etc/aliases* /etc/postfix/
+wajig remove —purge postfix
+wajig install postfix
+sudo -s
+tail /var/log/mail.log
+postconf -e "myorigin = chanmasters.com"
+postconf -e "myhostname=$(hostname)"
+postconf -e "relay_domains = chanmasters.com, vds171.sivit.org, jbbarth.com, trollsports-trial.com"
+postfix reload
+vi /etc/postfix/main.cf
+#ajout des restrictions proposées sur le debian wiki
+vi /etc/aliases
+#on vérifie que les aliases sont toujours en place
+#au besoin, un petit coup de "newaliases"
+postconf -e "alias_maps = hash:/etc/aliases"
+postfix reload
+echo "test" | mail -s "1. Mail test to root" root
+echo "test" | mail -s "2. Mail test to webmaster@chanmasters.com" webmaster@chanmasters.com
+echo "test" | mail -s "3. Mail test to jeanbaptiste.barth@gmail.com" jeanbaptiste.barth@gmail.com
+tail /var/log/mail.log
+#les trois mails semblent bien passer
+#ils sont bien arrivés où il faut
+#mêmes tests de l'extérieur
+tail /var/log/mail.log
+#idem, ça roule \o/
+</pre>
+
+<p>:-)</p>
+
+<p><strong><span class="caps">EDIT</span></strong>: petit oopsie, j’ai rajouté l’option <code>permit_mynetworks</code> à la liste
+<code>smtpd_recipient_restrictions</code> (en premier), et pour des raisons pratiques (liées au comportement par défaut de Rails), j’ai désactivé le
+<span class="caps">TLS</span> pour le moment. Et là, ça marche !</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

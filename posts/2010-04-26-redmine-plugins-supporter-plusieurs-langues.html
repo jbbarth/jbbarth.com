@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Redmine Plugins #3 : supporter plusieurs langues</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Redmine Plugins #3 : supporter plusieurs langues</h1>
+
+<p>Redmine supporte à ce jour 37 langues. Si vous souhaitez diffuser votre plugin, c’est une bonne idée de respecter les mêmes conventions que le core, pour
+en faciliter les traductions, voire proposer plusieurs traductions de votre plugin directement. C’est ce que je fais par exemple pour mon plugin “Datacenter”
+que je livre en anglais et en français (voir <a href="http://code.jbbarth.com/projects/redmine-datacenter/wiki/FrWiki">la page de wiki française</a>).</p>
+
+<p>Pour cela, Redmine utilise l’internationalisation de Rails. Chaque mot ou groupe de mot qui doit être traduit est associé à une clé unique. Chaque langue
+a son fichier <span class="caps">YAML</span> dans le dossier <code>config/locales/</code>, et dans ce fichier on indique que telle clé correspond à telle
+chaine de caractères. Par exemple, plutôt que d’écrire “Mon super plugin” directement dans vos vus et helpers, vous allez lui associer une clé de votre
+choix, mettons <code>text_my_super_plugin</code>.</p>
+
+<p>Dans la vue, vous pourrez utiliser le helper <code>l()</code> (un L minuscule) de cette façon :</p>
+
+<pre>
+&lt;%= l(:text_my_super_plugin) %>
+</pre>
+
+<p>Ensuite vous devrez associer cette clé à sa valeur pour chaque langue. Pour le français, le fichier <code>config/locales/fr.yml</code> de votre plugin
+ressemblera à ça :</p>
+
+<pre>
+fr:
+  text_my_super_plugin: Mon super plugin
+</pre>
+
+<p>Et vous pouvez traduire votre appli en anglais, en ajoutant un fichier <code>config/locales/en.yml</code> contenant :</p>
+
+<pre>
+en:
+  text_my_super_plugin: My great plugin
+</pre>
+
+<p>Pour un texte accentué ou comportant des caractères spéciaux, il suffira de mettre la chaine entre quotes pour éviter toute confusion lors de l’analyse du
+fichier. Attention à ce que votre fichier reste bien en UTF8 tout de même.</p>
+
+<p>Si la traduction n’existe pas (fichier de langue manquant ou clé inexistante dans la langue de l’utilisateur), Redmine affichera une erreur. C’est la que
+le helper <code>l_or_humanize</code> peut être utile :</p>
+
+<pre>
+&lt;%= l_or_humanize(:super_plugin) %>
+</pre>
+
+<p>Si la clé existe, elle sera remplacée par sa traduction. Si non, Rails tentera d’en faire une chaine pour humain (remplacement des underscores par des
+espaces, majuscule à la première lettre, etc.). En l’occurrence <code>Super plugin</code>.</p>
+
+<p>Pour les affichages de dates, heures, temps ou intervalles de temps, il existe des helpers beaucoup plus évolués que ceux présentés ci-dessus. Ils sont
+définis dans <code>lib/redmine/i18n.rb</code>. En voici une liste, ainsi que comment les tester dans une console Rails :</p>
+
+<pre>
+% ruby script/console
+Loading production environment (Rails 2.3.5)
+>> include Redmine::I18n
+=> Object
+>> set_language_if_valid('fr')
+=> :fr
+>> l_hours(5)
+=> "5.00 heures"
+>> format_date(Time.now)
+=> "26/04/2010"
+>> format_time(Time.now)
+=> "26/04/2010 19:55"
+>> day_name(1)
+=> "lundi"
+>> month_name(3)
+=> "mars"
+</pre>
+
+<p>A des fins de test, le helper <code>ll()</code> permet de préciser d’abord la locale avant la clé et ainsi de tester une clé dans une locale particulière
+:</p>
+
+<pre>
+>> ll("fi", :field_mail)
+=> "Sähköposti"
+</pre>
+
+<p>Dernière chose, il est possible d’utiliser des variables dans vos fichiers de langue. Ils seront interpolés lors du rendu de la vue. Si vous n’avez qu’une
+variable à mettre, vous pouvez utiliser le nom “value” et passer la valeur dans votre vue directement en 2e argument de votre <code>l()</code>. Si vous avez
+2 variables ou plus, il faut leur donner un nom et passer un hash en 2e argument de <code>l()</code> dans votre vue. Evidemment ces valeurs peuvent
+elles-même faire appel à vos traductions pour éviter de dupliquer des traductions.</p>
+
+<p>Un exemple vaut mieux qu’un long discours. Avec ce fichier de langue :</p>
+
+<pre>
+fr:
+  label_draft_saved_time: "Brouillon sauvegardé à {{value}}"
+  label_draft_pending: "Brouillon en attente, sauvegardé il y a {{time}} : {{restore}} ou {{delete}}"
+  label_draft_restore: "restaurer"
+  label_draft_delete: "supprimer"
+</pre>
+
+<p>Je peux faire appel à ceci dans mes vues (les valeurs de temps sont bidon) :</p>
+
+<pre>
+&lt;%= l(:label_draft_saved_time, format_time(Time.now)) %>
+&lt;%= l(:label_draft_pending, {:time => format_time(Time.now),
+                             :restore => l(:label_draft_restore),
+                             :delete => l(:label_draft_delete)}) %>
+</pre>
+
+<p>J’essaierai de documenter tout ça en anglais dans le wiki Redmine un de ces 4.</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

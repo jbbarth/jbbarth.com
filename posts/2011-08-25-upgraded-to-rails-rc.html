@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Upgraded to Rails 3.1.rc6</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Upgraded to Rails 3.1.rc6</h1>
+
+<p><strong><span class="caps">EDIT</span></strong>: I confirm it’s fixed in 3.1.0-stable, and this patch is not compatible with the stable version.</p>
+
+<p>This night I upgraded my main app of the moment to Rails 3.1.rc6. I followed <a href=
+"http://davidjrice.co.uk/2011/05/25/how-to-upgrade-a-rails-application-to-version-3-1-0.html">this awesome post</a> and everything went fine. I had to fix
+one or two tests, and now I have to think about what goes to the asset pipeline or not, but everything works fine!</p>
+
+<p>One little gotcha with this version though, Sprockets outputs a lot (and I mean a <strong><span class="caps">LOT</span></strong>) of deprecation warnings
+because of this: <a href="https://github.com/rails/rails/issues/2598">https://github.com/rails/rails/issues/2598</a></p>
+
+<p>The interesting part of this patch can easily be backported in an initializer until 3.1-stable is released. Let’s put it in
+<code>config/initializers/sprockets_warnings_silencer.rb</code> :</p>
+
+<pre>
+require 'sprockets/helpers/rails_helper'
+
+module Helpers
+  module RailsHelper
+    class AssetPaths
+      def digest_for(logical_path)
+        if asset = asset_environment[logical_path]
+          return asset.digest_path
+        end
+
+        logical_path
+      end
+
+      def rewrite_asset_path(source, dir)
+        if source[0] == ?/
+          source
+        else
+          source = digest_for(source) if performing_caching?
+          source = File.join(dir, source)
+          source = "/#{url}" unless source =~ /^\//
+          source
+        end
+      end
+    end
+  end
+end
+</pre>
+
+<p>Now let’s explore all the awesome features of Rails 3.1 ! (and first split my bloated <span class="caps">CSS</span> and Javascript files)</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

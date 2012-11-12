@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Supervision CPU via SNMP</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Supervision CPU via SNMP</h1>
+
+<p>Récemment nous avons rencontré divers problèmes au boulot concernant la supervision du <span class="caps">CPU</span> : remontées à 100% alors que “top”
+indiquait 0%, parfois des remontées en “<span class="caps">UNKNOWN</span>” sans raison évidente, etc.</p>
+
+<p><strong>Modes de supervision de la charge <span class="caps">CPU</span></strong></p>
+
+<p>J’écourte l’intro faite sur le wiki du boulot : on peut en gros compter sur 2 sources d’information pour superviser le <span class="caps">CPU</span> d’une
+machine Linux/Unix :</p>
+
+<ul>
+  <li>des commandes système : <code>top</code> (<code>top -b -n 1</code> + grep/head/sed), <code>vmstat</code>, voire si vous avez de la chance
+  <code>procinfo</code> ou autres.</li>
+
+  <li>via <span class="caps">SNMP</span>, qui propose deux types de compteurs : les compteurs moyennés (ssCpu*) et bruts (ssCpuRaw*). Pour des raisons
+  pratiques, on va se concentrer sur ce mode.</li>
+</ul>
+
+<p>Il y a aussi la <a href="http://en.wikipedia.org/wiki/Load_%28computing%29">charge <span class="caps">CPU</span></a> calculée directement par le système,
+bien sûr. Mais son calcul comme son interprétation sont complexes, varient en fonction du nombre de processeurs, et, accessoirement, la définition varie d’un
+Unix-like à un autre. Cela dit si ça vous intéresse, il existe <a href=
+"http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F2914.html;d=1">plusieurs</a> <a href=
+"http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F2836.html;d=1">plugins</a> (peut-être <a href=
+"http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F1465.html;d=1">ça</a> aussi, indirectement).</p>
+
+<p>Je viens de trouver <a href="http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F1473.html;d=1">ce plugin</a> qui m’a bien pu, et qui gère
+apparemment le multi-processeur. Mais ça gâche la suite de l’article alors… revenons donc à la terre ferme.</p>
+
+<p><strong>A. Les compteurs ssCpu</strong></p>
+
+<p>Référence: http://net-snmp.sourceforge.net/docs/mibs/ucdavis.html#ssCpuIdle</p>
+
+<p>Le démon snmpd fournit en standard des compteurs ssCpuIdle, ssCpuUser, etc., directement exprimés en pourcentages, qui devraient permettre de superviser
+l’occupation du <span class="caps">CPU</span> sur une période récente. D’ailleurs on ne sait pas exactement laquelle, je n’ai pas trouvé de référence à ce
+sujet. Mais ces compteurs sont dépréciés, considérés comme non fiables, et inutilisables en l’état sur une plateforme multi-processeurs ou multi-coeurs (le
+total arrive, selon les implémentations, à 100% ou N*100%). Le script <a href=
+"http://www.monitoringexchange.org/cgi-bin/page.cgi?g=Detailed%2F2009.html;d=1">check_snmp_load.pl</a>, utilisé avec l’option “netsc”, utilise un de ces
+compteurs, le <code>ssCpuIdle</code>. Ce script est fourni en standard avec le bundle Nagios3 que j’ai au boulot.</p>
+
+<p>Mais il semble notamment que ce compteur n’est pas fiable au-delà de 62 jours d’uptime sur les RHEL5 (tickets sur le bugtracker RedHat <a href=
+"https://bugzilla.redhat.com/show_bug.cgi?id=473824">ici</a> et <a href="https://bugzilla.redhat.com/show_bug.cgi?id=431439">ici</a>). Ce genre de bêtise, ça
+donne quand même envie de se flinguer, merci RedHat…</p>
+
+<p><strong>B. Compteurs ssCpuRaw</strong></p>
+
+<p>Référence: http://net-snmp.sourceforge.net/docs/mibs/ucdavis.html#ssCpuRawIdle</p>
+
+<p>Les compteurs ssCpuRaw* fonctionnent sur un mode différent :</p>
+
+<pre>
+$ snmpwalk -v 2c -c public myserver.domain.tld 1.3.6.1.4.1.2021.11 |grep CpuRaw
+UCD-SNMP-MIB::ssCpuRawUser.0 = Counter32: 7184735
+UCD-SNMP-MIB::ssCpuRawNice.0 = Counter32: 3142
+UCD-SNMP-MIB::ssCpuRawSystem.0 = Counter32: 7208896
+UCD-SNMP-MIB::ssCpuRawIdle.0 = Counter32: 1116976279
+UCD-SNMP-MIB::ssCpuRawWait.0 = Counter32: 4329138
+UCD-SNMP-MIB::ssCpuRawKernel.0 = Counter32: 6038492
+UCD-SNMP-MIB::ssCpuRawInterrupt.0 = Counter32: 53534
+UCD-SNMP-MIB::ssCpuRawSoftIRQ.0 = Counter32: 1116870
+</pre>
+
+<p>Il s’agit de compteurs permettant de jauger l’utilisation du Cpu <strong>depuis l’initialisation du compteur</strong>. Pour connaitre l’utilisation du Cpu
+sur une période récente, il faut donc prendre les valeurs à un instant t, prendre les valeurs à un instant t+1, et faire la soustraction. C’est ce que
+faisait notre script au boulot, “check_net-snmp_cpu_usage.pl”, récupéré d’une instance Nagios1.3/Oreon.</p>
+
+<p>Seulement ce script fait les choses “bêtement”, il prévoit une intervalle fixe entre les deux checks pour faire la différence. Or ces compteurs ne sont
+pas mis à jour en temps réel, mais à intervalles plus ou moins réguliers, en général 2 secondes, mais ça peut monter à 10 ou 15 secondes en cas de forte
+charge du serveur (à la louche). Résultat, soit on règle l’attente à 15 secondes et dans la majorité des cas on attendra 15 secondes inutilement, soit on
+règle ça a des valeurs moindres, et de temps en temps le script sortira en <span class="caps">UNKNOWN</span>.</p>
+
+<p><strong>Comment faire ? premier essai : check_cpu_load.rb</strong></p>
+
+<p>Voir <a href="http://github.com/jbbarth/monitoring/tree/master">mon espace Github</a></p>
+
+<p>Ce script fait la même chose que <code>check_net-snmp_cpu_usage.pl</code> mais de façon un peu plus intelligente : il récupère une première série de
+valeurs. Puis chaque seconde il en récupère une nouvelle, et il attend que le nombre de cycles <span class="caps">CPU</span> total écoulé entre sa mesure en
+cours et la première série soit suffisamment important. Ensuite (ou au bout de 15 secondes par sécurité), il fait le calcul et sort. Si les compteurs sont
+mis à jour rapidement et que le delta est représentatif, il peut sortir la mesure au bout d’1 ou 2 secondes. Sinon, il attend d’avoir une mesure plus
+représentative, au cas où le serveur travaille peu (peu de cycles <span class="caps">CPU</span>), ou si les compteurs ne sont pas mis à jour (serveur
+saturé).</p>
+
+<p><strong>Deuxième essai : check_cpu_avg.rb</strong></p>
+
+<p>Voir <a href="http://github.com/jbbarth/monitoring/tree/master">mon espace Github</a></p>
+
+<p>Mais cette mesure n’est pas très pertinente : vérifier toutes les 5 minutes ce que fait le <span class="caps">CPU</span> d’une machine sur les 3,4,5
+dernières secondes n’est pas représentatif. Il suffit de lancer la commande à la main plusieurs fois de suite pour s’en convaincre, admirez les écarts en
+quelques secondes sur mon serveur de supervision :</p>
+
+<pre>
+CPU Used OK: 10.17% | Wait=1.52%, System=0.99%, User=6.67%, Nice=0.00%, Idle=89.83%
+CPU Used OK: 23.66% | Wait=2.49%, System=1.77%, User=17.63%, Nice=0.00%, Idle=76.34%
+CPU Used OK: 11.39% | Wait=1.84%, System=1.12%, User=7.31%, Nice=0.00%, Idle=88.61%
+CPU Used OK: 42.97% | Wait=1.59%, System=3.43%, User=34.52%, Nice=0.00%, Idle=57.03%
+CPU Used CRITICAL: 99.01% &gt; 90 | Wait=1.64%, System=13.64%, User=70.09%, Nice=0.00%, Idle=0.99%
+CPU Used CRITICAL: 92.06% &gt; 90 | Wait=1.02%, System=4.76%, User=16.44%, Nice=65.08%, Idle=7.94%
+CPU Used CRITICAL: 100.00% &gt; 90 | Wait=0.00%, System=3.41%, User=6.31%, Nice=86.86%, Idle=0.00%
+CPU Used OK: 41.59% | Wait=4.00%, System=3.16%, User=8.58%, Nice=22.70%, Idle=58.41%
+CPU Used OK: 30.33% | Wait=19.17%, System=1.51%, User=8.14%, Nice=0.00%, Idle=69.67%
+CPU Used CRITICAL: 94.22% &gt; 90 | Wait=0.35%, System=11.70%, User=70.46%, Nice=0.00%, Idle=5.78%
+</pre>
+
+<p>=&gt; ça ne varie pas toujours autant certes, mais lorsque c’est le cas, ça bouge autant que dans un <code>top</code>, ce qui n’est pas le but recherché.
+A la limite on se moque (?) des pics de charge instantanés. L’objectif est plutôt de détecter si une machine reste à 100% de <span class="caps">CPU</span>
+trop longtemps, auquel cas une application a peut-être un problème, ou la machine est peut-être sous-dimensionnée.</p>
+
+<p>L’idée consiste à ne faire qu’un “passage” de la commande <span class="caps">SNMP</span>, de stocker les résultats dans un fichier, et de regarder le
+delta au check Nagios suivant. C’est ce que fait <code>check_cpu_avg.rb</code>. Il sort en <span class="caps">UNKNOWN</span> s’il ne trouve pas de fichier
+stockant un check précédent, et sinon, il fait la différence (qui devient donc une moyenne sur la période entre les deux checks, 5 minutes environ pour
+nous), stocke les nouvelles valeurs dans le fichier et renvoie le résultat de la différence.</p>
+
+<p>Peut-être qu’il est plus pertinent de superviser à la fois ce genre d’indicateur et le <span class="caps">LOAD</span> au sens Linux. Il faudrait en
+creuser <a href="http://en.wikipedia.org/wiki/Load_(computing">la définition du load précédemment cité</a>). C’est un peu obscur pour moi pour le moment,
+mais si un lecteur a un avis, défoulez-vous !</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

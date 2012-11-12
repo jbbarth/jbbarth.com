@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Connaître sa RAM</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Connaître sa RAM</h1>
+
+<p>J’apprendrai la prochaine fois à tourner 7 fois ma langue dans ma bouche avant de dire une bêtise ; non, le nombre de <code>/dev/ram*</code> ce n’est pas
+le nombre de barettes de <span class="caps">RAM</span> sur un Linux. Pour connaitre ce genre d’info, <code>lshw</code> ou <code>dmidecode</code> sont plus
+adaptés. En reformattant la sortie avec <code>ruby</code>, on obtient quelque chose de ce genre :</p>
+
+<pre>
+sudo dmidecode | ruby -ne <span class="s"><span class="dl">'</span><span class=
+"k">( a=[]; 12.times{a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class=
+"k">*(.*)/).first }; puts a.compact.join("/") ) if $_.match /Memory Device$/</span><span class="dl">'</span></span> | uniq -c
+</pre>
+
+<p>Par charité, je vous fais la même en lisible :</p>
+
+<pre>
+sudo dmidecode | \
+ruby -ne <span class="s"><span class="dl">'</span><span class="k">\
+      a &lt;&lt; gets.scan(/(?:Size|Speed|Type):</span><span class="k">\s</span><span class="k">*(.*)/).first </span><span class="k">\
+</pre>
+
+<p>Sur mon NC10:</p>
+
+<pre>
+    1 2048 MB/DDR2/533 MHz (1.9 ns)
+    1 No Module Installed/DDR2/533 MHz (1.9 ns)
+</pre>
+
+<p>Et sur un serveur du boulot:</p>
+
+<pre>
+    8 4096 MB/&lt;OUT OF SPEC&gt;/667 MHz (1.5 ns)
+   24 No Module Installed/&lt;OUT OF SPEC&gt;/Unknown
+</pre>
+
+<p>(3615 Jmelapète)</p>
+
+<p>Hope this helps..</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

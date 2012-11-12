@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Graphite & JSONP</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Graphite &amp; JSONP</h1>
+
+<p>These days I’m discovering <a href="http://graphite.wikidot.com/">Graphite</a> more in depth. To be honest, I saw <a href=
+"http://speakerdeck.com/u/holman/p/scaling-github?slide=63">this slide from Zach Holman</a> and immediately thought I needed the same kind of dashboard.</p>
+
+<p>This future dashboard will be served from a different host than the one hosting Graphite. I want to load data from Graphite into the page through
+Javascript. Hence standard <span class="caps">AJAX</span> calls are impossible because of <a href="http://en.wikipedia.org/wiki/Same_origin_policy">Same
+Origin Policy</a>, yet another security rule everyone suffer and no one (at least not me :)) understand.</p>
+
+<p>Before I declare this measure totally stupid and finally take the time to launch <em>lolsecurity.org</em>, let’s have a look at <strong><span class=
+"caps">JSONP</span></strong>. The principle is well described <a href="http://en.wikipedia.org/wiki/JSONP">on the Wikipedia page</a>. Instead of getting
+<code>{"a json": "object"}</code> through <code>XMLHttpRequest</code> and <span class="caps">AJAX</span>-y friends, this technique inserts a new
+<code>&lt;script&gt;</code> tag in the <span class="caps">DOM</span> and evaluate its content. The client waits for something like <code>callbackFunction({"a
+json": "object"})</code> and the resulting <span class="caps">JSON</span> object is processed client-side with the <code>callbackFunction()</code> function.
+This function name should be supplied by the client as a parameter to the <span class="caps">URL</span>, though it’s not normalized. As it doesn’t make use
+of <code>XMLHttpRequest</code> to retrieve the content, it’s not subject to the <em>Same Origin Policy Hell ©</em>.</p>
+
+<p>If you look at jQuery, the <code>$.ajax</code> functions galaxy allow you to use <span class="caps">JSONP</span> by setting <code>dataType: "jsonp"</code>
+in the request configuration. The callback name is often passed through <code>?callback=blah</code> or <code>jsoncallback=blah</code> in the <span class=
+"caps">URL</span>. For Graphite, it should be passed as <code>jsonp=blah</code> though it’s not really well documented^W^W^W^W not documented at all (it took
+me nearly 2 hours to make it work, the time to be fed up enough to look at the Python source code :/). The final result looks like this :</p>
+
+<pre><code data-language="javascript">//graphite host
+var url = "http://graphite-server/render/";
+//add target and everything needed by graphite URL API...
+url = url + "?target=&lt;graph-data-etc.>";
+//set "json" as the response format
+url = url + "&format=json";
+//set "jsonp" parameter to set the callback name
+//the "?" will automagically be replaced by jQuery
+url = url + "&jsonp=?";
+//finally go!
+$.getJSON(url, function(data){
+  //do whatever you want with the result
+  console.log(data);
+});
+</code></pre>
+
+<p>It should work out of the box, though a look at your favorite browser’s inspector won’t hurt.</p>
+
+<p>Since Graphite <span class="caps">URL</span> generation can be hard, I recommend you use the <a href=
+"https://github.com/prestontimmons/graphitejs">graphitejs</a> plugin if you use jQuery.</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

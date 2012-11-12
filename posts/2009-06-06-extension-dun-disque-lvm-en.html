@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Extension d'un disque LVM en environnement SAN</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Extension d'un disque LVM en environnement SAN</h1>
+
+<p>Alors ça ça ronfle comme titre ! Un <a href="http://fr.wikipedia.org/wiki/R%C3%A9seau_de_stockage_SAN"><span class="caps">SAN</span></a> c’est super,
+c’est efficace, performant, tu peux étendre tes disques à chaud, gérer ton <span class="caps">RAID</span> au clic, faire de la haute dispo, te la raconter à
+la cafét’, bref c’est merveilleux. <a href="http://fr.wikipedia.org/wiki/Gestion_par_volumes_logiques"><span class="caps">LVM</span></a> aussi, c’est super :
+ça apporte pas mal de souplesse dans un environnement mouvant, et quand on fait de l’informatique professionnelle, c’est bien souvent le cas.</p>
+
+<p>En gros, voici le topo : on a un volume logique (que certains appelleront abusivement “un(e) <span class="caps">LUN</span>”) <strong>ld_disk</strong>,
+mappé à un serveur <strong>server</strong>. Côté serveur, ce disque s’appellera directement (par comodité) <strong>ld_disk</strong>, donc via multipathd son
+nom sera <strong>/dev/mpath/ld_appli</strong>. Derrière on a monté directement l’artillerie <span class="caps">LVM</span>, sans partitionner (ce qui aurait
+été plus souple/facile/intelligent) : ce disque a été déclaré comme <em>volume physique (PV)</em>, on a fait dessus un <em>groupe de volumes (VG)</em>
+<strong>vg_appli</strong>, sur lequel on a bêtement fait un seul <em>volume logique (LV)</em> sobrement appelé <strong>lv_appli</strong>. Ce volume fait
+initialement 300Go. Les besoins changent, et on vous demande de passer le tout à 500Go. L’OS est une <span class="caps">RHEL</span> 5, mais ça n’a pas
+d’importance a priori. Bon, on commence logiquement par étendre le disque logique côté <span class="caps">SAN</span>. Et on espère qu’on va pouvoir prendre
+en compte l’extension au niveau système sans perdre de données.</p>
+
+<p>Mais comme trop de choses en ce bas monde, il est difficile de trouver des infos récentes sur le web. 99% des liens trouvés via Google vont dire que c’est
+impossible, ou que <span class="caps">LVM</span> ne le permet pas encore, qu’on n’a qu’à formatter ou recopier sur un autre disque. Quelques posts assez
+anciens (2004?) sur des forums dont j’ai perdu la référence hélas vont expliquer qu’il faut d’abord étendre la partition via fdisk. Seulement moi, je n’ai
+pas de partition, aïe.</p>
+
+<p>Voici donc la marche à suivre :</p>
+
+<pre>
+# on cherche et on note le(s) chemin(s) vers notre disque au sens SCSI (exemple: 3:0:0:0 et 4:0:0:0)
+multipath -ll
+# on met le volume offline
+vgchange -a n vg_appli
+# on rescanne le périphérique au niveau SCSI
+echo "1" &gt; /sys/class/scsi_device/3\:0\:0\:0/device/rescan
+echo "1" &gt; /sys/class/scsi_device/4\:0\:0\:0/device/rescan
+# on relance la découverte coté multipathd
+multipath -F
+multipath -v2
+# puis on étend au niveau de LVM ; exemple :
+pvscan
+#=&gt; PV /dev/mpath/ld_appli   VG vg_appli   lvm2 [300,00 GB / 0    free]
+pvresize /dev/mpath/ld_appli
+pvscan
+#=&gt; PV /dev/mpath/ld_appli   VG vg_appli   lvm2 [500,00 GB / 200,00 GB free]
+# on réactive le VG
+vgchange -a y vg_appli
+# et on étend le LV via la taille :
+lvextend -L +200G /dev/vg_appli/lv_appli
+#ou via le nombre d'extents :
+lvextend -l +123456 /dev/vg_appli/lv_appli
+# il reste à faire l'extension au niveau EXT3 (attention, ces deux étapes sont très longues)
+e2fsck -f /dev/vg_appli/lv_appli
+resize2fs /dev/vg_appli/lv_appli
+</pre>
+
+<p>Hope this helps!</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

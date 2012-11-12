@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Redmine as a wiki engine</title>
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/rainbow/github.css" />
+    <script type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/rainbow-custom.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <a href="/" class="sitetitle">jbbarth.com</a>
+  <p>
+    I'm a sysadmin & developer from Paris, France. I love building tools for
+    ops, and I am an irregular contributor to many open-source projects.
+  </p>
+  <p>
+    Find me as jbbarth on <a href="https://github.com/jbbarth">GitHub</a> and
+    <a href="https://twitter.com/jbbarth">Twitter</a>, or salvor on Freenode
+    IRC.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Redmine as a wiki engine</h1>
+
+<p><strong>ATTENTION ! Cet article n'est plus adapté à partir de Redmine 2.0.</strong></p>
+
+<p>Ce post fait suite à <a href="http://blog.jbbarth.com/admin/posts/edit/127">celui-ci</a>.</p>
+
+<p>Tout d’abord, on installe Redmine classiquement ; je passe volontairement les aspects <span class="caps">DNS</span> (création d’un sous-domaine, en
+l’occurence wiki.jbbarth.com), Apache (création du vhost), et “système” (script de démarrage de Mongrel, user et port adéquats, ce genre de choses) :</p>
+
+<pre>
+cd /home/app/jbbarth/
+svn co http://redmine.rubyforge.org/svn/trunk _redmine-0.8-wiki
+ln -s _redmine-0.8-wiki wiki
+cd wiki/
+rake db:migrate
+rake redmine:load_default_data
+rake config/initializers/session_store.rb
+</pre>
+
+<p>Après démarrage, on procède à une configuration basique de Redmine :</p>
+
+<ul>
+  <li>modification du user/pass admin</li>
+
+  <li>configuration générale dans Administration &gt; Settings</li>
+
+  <li>création d’un projet public “wiki”, identifiant “wiki” ; tous les trackers décochés, et tous les modules sauf le module “wiki”</li>
+
+  <li>dans ce projet, on configurera la “Start page”, et surtout on la créera/remplira (sous peine d’avoir des erreurs 404 dans la suite)</li>
+</ul>
+
+<p>Là commencent les choses “sérieuses”. Que voulons-nous ?</p>
+
+<p><strong>1) que l’accueil de Redmine se fasse sur la page de démarrage du wiki du projet “wiki”</strong><br>
+Pour cela, nous allons éditer config/routes.rb, et remplacer l’accueil défini à la ligne “map.home” par :</p>
+
+<pre>
+#map.home '', :controller =&gt; 'welcome'
+map.home '', :controller =&gt; 'wiki', :id =&gt; 'wiki'
+</pre>
+
+<p>Après redémarrage de l’instance, ça fonctionne !</p>
+
+<p><strong>2) suppression des liens inutiles pour un wiki ; en particulier la première tab “Overview/Aperçu”, et “Projects/Projets”, “My page/Ma page” et
+“Help/Aide” dans le menu en haut à gauche (nous n’aurons qu’un seul projet “wiki”)</strong><br>
+Pour cela nous allons créer un thème à nous et cacher ces liens via du <span class="caps">CSS</span>, ce qui me parait bien suffisant : ils ne représentent
+aucun “danger”, c’est juste qu’ils perturbent la navigation dans le cadre d’une utilisation wiki-only. Voir donc <a href=
+"http://www.redmine.org/wiki/redmine/HowTo_create_a_custom_Redmine_theme">ici pour la création d’un nouveau thème</a>, et éventuellement <a href=
+"http://www.redmine.org/wiki/1/Themes">ici pour des exemples de thèmes</a>.<br>
+Nous créons donc un thème “wiki”, puis quelques lignes suffisent à la fin de public/themes/wiki/stylesheets/application.css :</p>
+
+<pre>
+/* Specific to wiki */
+#top-menu .my-page, #top-menu .projects, #top-menu .help { display:none; }
+#main-menu .overview { display:none; }
+</pre>
+
+<p><strong>3) passage des patches cités dans l’article précédent</strong></p>
+
+<pre>
+cd /home/app/jbbarth/wiki/
+mkdir patches
+</pre>
+
+<p><em>a) passage de CodeRay à UltraViolet :</em></p>
+
+<pre>
+wget -P patches http://www.redmine.org/attachments/download/1698/syntax_highlighting.diff
+patch -p0 &lt; patches/syntax_highlighting.diff
+wget -P patches http://www.redmine.org/attachments/download/1699/redcloth.diff
+patch -p0 &lt; patches/redcloth.diff
+wget -P patches http://www.redmine.org/attachments/1700/ultraviolet_highlighter.zip
+cd patches/
+unzip ultraviolet_highlighter.zip
+cat ultraviolet_highlighter/README.txt
+apt-get install libonig-dev
+gem install ultraviolet
+cp -a ultraviolet_highlighter ../vendor/plugins/
+cd ..
+</pre>
+
+<p>Les traductions ne sont pas bien passées, donc on édite à la main config/locales/en.yml et fr.yml, et on supprime les fichiers “.rej” correspondants.<br>
+<em>b) pages parent automatiques :</em></p>
+
+<pre>
+wget -P patches http://www.redmine.org/attachments/download/2082/3108_automatic_parent_with_tests.diff
+patch -p0 &lt; patches/3108_automatic_parent_with_tests.diff
+</pre>
+
+<p><em>c) correction d’un petit bug de Redcloth :</em></p>
+
+<pre>
+wget -P patches http://www.redmine.org/attachments/download/1728/redcloth_arobas.diff
+patch -p0 &lt; patches/redcloth_arobas.diff
+</pre>
+
+<p><em>d) système de tagging :</em><br>
+Il y avait un patch proposé <a href="http://www.redmine.org/issues/3274">ici</a>, mais il ne correspond pas vraiment à ce que je veux. Voici quand même une
+méthode pour l’appliquer sur une copie de travail <span class="caps">SVN</span> :</p>
+
+<pre>
+wget -P patches http://www.redmine.org/attachments/download/2060/wiki_page_categories_20090520.patch
+sed -i -e 's#- redmine.orig/#- #g' -e 's#\+ redmine/#+ #g' -e 's#diff.*\.orig/\([^ ]*\).*#Index \1\n===============================================#g' patches/wiki_page_categories_20090520.patch
+patch -p0 &lt; patches/wiki_page_categories_20090520.patch
+rake db:migrate
+</pre>
+
+<p>Après toutes ces modifs, on se rend compte que certains patches ne sont pas bien passés :</p>
+
+<pre>
+find . -iname "*.rej"
+</pre>
+
+<p>Normalement avec cet ordre de passage des patches, il n’y a que lib/redcloth3.rb dont on résoud les conflits à la main.</p>
+
+<p>Voilà, hormis le système de tagging on a <a href="http://wiki.jbbarth.com/">un wiki fonctionnel</a>. Je ferai un nouveau post si je trouve quelque chose
+pour le support des tags. Il ne reste plus qu’à le remplir maintenant !</p>
+
+<p><strong><span class="caps">EDIT</span></strong><br>
+- pour que l’activité du projet prenne en compte les changements du wiki par défaut : éditer lib/redmine.rb, et modifier autour de la ligne 155/156:</p>
+
+<pre>
+-  activity.register :wiki_edits, :class_name =&gt; 'WikiContent::Version', :default =&gt; false
++  activity.register :wiki_edits, :class_name =&gt; 'WikiContent::Version', :default =&gt; true
+</pre>
+
+<p>- la même option permet que les recherches prennent en compte les entrées du wiki sur le projet courant<br>
+- pour cacher la liste déroulante de sélection des projets dans la recherche : édition de public/themes/wiki/stylesheets/application.css, ajout de :</p>
+
+<pre>
+select#scope { display:none; }
+</pre>
+
+<p><strong>EDIT2</strong><br>
+J’ai changé l’ordre de passage des patches pour avoir le moins de choses possibles à résoudre à la main.</p>
+
+        </div>
+      </div>
+    </div>
+    <div id=footer>
+  <div class=container_16>
+    <div class=grid_7>
+      <h2>Promoted Posts</h2>
+      <ul>
+        <li><a href="/posts/2011-06-12-cas-authentication-for-redmine.html">CAS Authentication for Redmine</a></li>
+        <li><a href="/posts/2011-12-12-trying-cloudfoundry-with-vagrant-and.html">Trying CloudFoundry with Vagrant ... and some patience</a></li>
+        <li><a href="/posts/2009-08-24-supervision-cpu-via-snmp.html">[fr] Supervision CPU via SNMP</a></li>
+        <li><a href="/posts/2009-06-06-extension-dun-disque-lvm-en.html">[fr] Extension d'un disque LVM en environnement SAN</a></li>
+        <li><a href="/posts/2008-05-21-introduction-a-lurl-rewriting.html">[fr] Introduction à l'URL rewriting</a></li>
+        <li><a href="/posts/2008-05-16-introduction-aux-expressions-regulieres.html">[fr] Introduction aux expressions régulières</a></li>
+      </ul>
+    </div>
+    <div class=grid_7>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <b><a href="http://www.redmine.org/">Redmine</a></b>
+          <em>(occasional contributor, prolific plugin author)</em>
+          <br>
+          Flexible project management web application. You can find all my plugins
+          <a href="https://github.com/jbbarth">on GitHub</a>.
+        </li>
+        <li>
+          <b><a href="http://jbbarth.github.com/cartoque">Cartoque</a></b>
+          <em>(main developer)</em>
+          <br>
+          Tiny CMDB solution I built for my current job.
+        </li>
+      </ul>
+    </div>
+    <div class=grid_2>
+      <h2>Links</h2>
+      <p>
+        <a href="/notes.html">Tech notes</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>
