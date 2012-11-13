@@ -28,9 +28,10 @@ login form, if my rails stack is up-to-date, or anything else.
 static sites like that through their [Github pages](http://pages.github.com/) feature. It supports 
 jekyll websites out of the box, but you can host any static or semi-static website with it. Hence
 I have a branch called "source" where I have the nanoc source for my website, and a rake task
-allows me to generate the compiled version and publish it on "master" branch directly. This rake
-task magic is what's used to generate the [Github API documentation](https://github.com/github/developer.github.com),
-which also used nanoc. If some day I'm not happy with Github anymore, everything is in my local
+allows me to generate the compiled version and publish it on "gh-pages" (or "master" directly
+if it's a <user>.github.com repository) branch. This rake task magic is what's used to generate
+the [Github API documentation](https://github.com/github/developer.github.com),
+which also uses nanoc. If some day I'm not happy with Github anymore, everything is in my local
 git repo and I just have to host it elsewhere.
 
 **4/ it's easy to backup** : git repo, static website, no database, it speaks for itself.
