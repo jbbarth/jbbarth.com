@@ -85,7 +85,7 @@ h1 {
 h2 {
   font-family: 'Average Sans', sans-serif;
   font-size:24px;
-  margin:8px 4px;
+  margin:16px 4px 12px;
 }
 h2.last-posts {
   margin-top:50px;
