@@ -37,7 +37,7 @@
 
 <p><a href="http://pencil.evolus.vn/">Pencil</a> is a great drawing and prototyping tool available on Linux, MacOSX and Windows. I'm testing it for a few days as a replacement for <a href="https://projects.gnome.org/dia/">Dia</a>.</p>
 
-<p>It works well on MacOSX but unfortunately it has some problems on latest Ubuntu Linux. It seems that all export tools are broken in a way or an other, the most important for me being direct export as a PNG image. Luckily, there <a href="https://code.google.com/p/evoluspencil/issues/detail?id=170">an issue for that</a> with some workaround :</p>
+<p>It works well on MacOSX but unfortunately it has some problems on latest Ubuntu Linux. It seems that all export tools are broken in a way or an other, the most important for me being direct export as a PNG image. There <a href="https://code.google.com/p/evoluspencil/issues/detail?id=170">an issue for that</a> which explains the problem: basically, Pencil is not compatible with recent versions of &quot;xulrunner&quot;, the binary and toolkit that powers all the mozilla tools and pencil. Luckily there's a simple workaround which consists in using xulrunner 16 vendored in &quot;/opt&quot; :</p>
 
 <pre><code>wget -O - http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/16.0.2/runtimes/xulrunner-16.0.2.en-US.linux-x86_64.tar.bz2 | sudo tar xjf - -C /opt &amp;&amp; sudo sed -i '/application.ini/ { s|^/usr/bin/firefox|/opt/xulrunner/xulrunner|; s/$/ --no-remote/; }' /usr/bin/pencil
 </code></pre>
