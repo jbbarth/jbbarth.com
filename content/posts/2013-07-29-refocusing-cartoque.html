@@ -1,0 +1,106 @@
+---
+title: Refocusing Cartoque
+---
+
+Refocusing Cartoque
+===================
+
+[Cartoque](http://cartoque.org) is a simple CMDB tool I wrote for the last three
+years at work.
+
+
+A brief history
+---------------
+
+Three years ago I took a new job in a new datacenter. There was a very simple
+(and naive) PHP+Mysql tool there, written by an intern, to list servers,
+applications, and the link between the two. It was pretty obvious that this
+kind of information, usually grouped in a "CMDB", was crucial for the team.
+Unfortunately I found no alternative in the open-source world, the only serious
+one being iTop, but it presented various limitations and big UI problems. So
+I started a new Ruby on Rails project, relying on the same database schema.
+The schema was a bit broken, but anyway, I released a first version of the app
+to production in october 2010. In 2012 I partially rewrote the whole
+application with a Mongodb backend, which offered me denormalization and
+allowed me to escape active_record callbacks hell.
+
+It's now 2013 and I didn't work much on Cartoque for the past 6 months. There
+are various reasons for that, the most important one being I don't have the
+time to work on many projects on my free time, and I had to focus my efforts
+on improving our [Redmine](http://www.redmine.org/) instance at work. I don't
+want to abandon Cartoque at all though, so I'll try here to think about the
+main mistakes I made and the points I'd like to improve in the next few
+months.
+
+Some fundamental problems / needed features
+-------------------------------------------
+
+**API first**: the main problem with the app now is loading and cleaning data,
+which happens through various unflexible, hard-coded, hard-to-monitor rake
+tasks. There's a small REST API but it doesn't cover much things to be honest.
+Also, the API should be easy to discover and to work with (think Google App
+Engine, which exposes API calls on the bottom of each page in web views).
+
+**Say no by default**: the current application is cluttered with a lot of mess
+that's 100% specific of my context at work. This is bad. Every time somebody
+asks me something I should say "no" by default so that the application stays as
+much generic as possible and doesn't lose itself in details.
+
+**Flexibility**: if you want to say "no" by default, you have to make things
+flexible. This was a key motivation when [introducing Mongodb](/posts/2012-02-23-trying-mongodb-for-cartoque.html),
+e.g. offering custom fields as first class citizens. It didn't become a reality
+for now but should be one of the next major features.
+
+**Focused features**: focus is hard. In the current version of Cartoque there
+are many sparse features, making the app bloated and hard to maintain. I need
+to draw a line in the sand and focus only on features inside the line.
+
+**~100% test coverage**: Cartoque was the first app where I tried to have a
+full test suite. 100% test coverage should not be a goal per se, but being
+too indulgent on yourself does not help in the long term. Today there are far
+too many features that are not well tested (mostly because tests are slow and
+fixtures/factories are hard). Having watched all [DAS](http://destroyallsoftware.com/)
+episodes helped me to improve my testing-fu, so let's try that for real now!
+
+**Build on strong ecosystems**: the switch to Mongodb was hard, because I had a
+lot of implicit logic relying on ActiveRecord. [Mongoid](http://mongoid.org),
+the ORM I chose in the end, helped a lot, and it's a fantastic piece of
+software. But unfortunately that's not the case of the ecosystem as a whole.
+Your stack should be working for you, not against you. The fact that some gems
+I use don't put ActiveModel / Mongoid compatibility on top of their goals did
+not help at all. Plus I had to fight against denormalization weirdness... I
+don't really know what to do now, but Mongoid might not be the best choice for
+Cartoque after all.
+
+**Standardize design**: maintaining a whole CSS is a lot of work if you want
+things to look correctly after 3 years of development. My CSS skills are poor,
+so I'd better rely on a standard framework like bootstrap most of the time.
+Having to clutter your design with "!important" everywhere is a sure sign you
+are doing it wrong...
+
+**Tracability**: every action in the app should be traced and auditable. That
+is not the case for now, and it's very hard to know if an information has been
+added manually or automatically through a script, who did enter the
+information, and when (so that we know if it might be outdated or not).
+
+**CI Expiration**: dealing with expired assets is a huge problem. The app
+should let the user define an expiration date for the information he/she adds.
+Say a server disappears, its data would be automatically or semi-automatically
+purged within a few hours or days. Informations added manually would last
+longer or never expire. It wouldn't take so much effort to deal with stale data
+everywhere in the app when you have a heterogeneous platform. That would be a
+big win.
+
+**Localization**: maintaining french and english in the same application turned
+out to be an enormous PITA. The application was french-only at first, but I
+wanted to add english for obvious reasons when I decided to open-source it. 
+Seems to be easy at first, you just have to move your localized string in some
+`config/locales/*.yml̀  files right ? Wrong. It just adds an substantial
+amount of work when dealing with views for very little benefit. Dropped.
+
+Conclusion
+----------
+
+There's a lot of work ahead but it's exciting ! If you're interested, even
+remotely, in helping the development of Cartoque, don't hesitate to test it
+and drop me a line by email or on Github directly.
