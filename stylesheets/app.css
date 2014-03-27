@@ -3,7 +3,7 @@
 
 html { overflow-y:scroll; }
 body { font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, freesans, clean, sans-serif;
-       background:#fffae9; }
+       background:#fffcf3; }
 a { text-decoration: none; }
 a:link, a:visited { color: #ee376f; } 
 a:hover { color: #ee376f; text-decoration:underline; }
