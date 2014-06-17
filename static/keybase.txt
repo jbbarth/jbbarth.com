@@ -1,0 +1,70 @@
+==================================================================
+https://keybase.io/jbbarth
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://jbbarth.com
+  * I am jbbarth (https://keybase.io/jbbarth) on keybase.
+  * I have a public key with fingerprint BD29 4EA4 CD3E E72F 007F  37D6 08BC 6ECE D490 8BFD
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "bd294ea4cd3ee72f007f37d608bc6eced4908bfd",
+            "host": "keybase.io",
+            "key_id": "08bc6eced4908bfd",
+            "uid": "0b2c64104d47c3848c7beffc8cf4d300",
+            "username": "jbbarth"
+        },
+        "service": {
+            "hostname": "jbbarth.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1402992752,
+    "expire_in": 157680000,
+    "prev": "5e1afd045aafa5cabe56d5f305ed7964fb67d9b90ef26f6d656554d366620f47",
+    "seqno": 5,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v0.1.22
+Comment: https://keybase.io/crypto
+
+yML7AnicbZF9TBt1GMcPrAxxDobOERGkF2ICq3DtvbXlRbNsLKCIslelFu7ld/S6
+ctf1rh3YdJLhmIyZEHWUlSwT4kgIMhcHcVOm40U3YLaDAQt7M2t4kW0MlwwHZLhd
+p/5h4v3z+933+Xy/z+/J0/fcU1BUWGSX4B+pq10OGzw754Q2H12wu2FaZCtgoxve
+CZ4cHC+UAofdwQsybIRpVmfAAIUxLAoAqeMQhORQkiUQPc0QgAEsZlCuHAtrYIso
+hRxKDE1JII0XFU35KeZZRf0f3vl3gdYxBKZFMBYjGVSP6RmSBhzH6BkOY1EECYES
+cAhUGVBoK01TDtkCezSwIrp4RhHdTzr/F0hjxDLFaXeIssiINqVgkWW7MeSTK+wh
+cDegi/+JKKZ5gVWmVgwu4JB4UYCNWoVkZD6UqcUQncGgI3GdBgbldt4BivkQgZOE
+HlG+UBvgUiJxoKU4FsFwiuIonKFogBMszqEIDljSQGAcTZCsgTYggNMRHMESOIHj
+ypAEQegQDiOV/hLYJYiwEVeeSZUqkRJfKlCy0wFgT0+3SQWFRUERT4eH9gZFPRPz
+7zb9JdGPci3tfI7KoO1Ybe5NTz5zd/0GsLW8umYhUPl9tPX5D3ps18lrF3OZWxOX
+In0t4zk6qykxTx20dqq+qjtfoO9WD7TEzpkHPzuTmR6DpH0Z3FcCau+GTy3tn+O2
+fJv53i2h883AnvtY0cNPEhr2Zs0eQRvN5y81Ssvxbf0/0VcOxv++wisMtFw092Qn
+MJY/Y16qck8P2UxrX7snt6sc2YeOjp5qXjry1h5bcph1o7Hu5gNv39f7W+XaeuiL
+rp72l4f+eLR/4Tt6DcrM2I6VVU6nDd/8y9VkLXp/LbHK07RhFXBvz4v9RrMto39F
+/7539FPrfPPVS9duOw9OjY3fiBsYtnejgQs1GeW3e6HsSRRfXw+ZJN/H+YVvDK+8
+fFraUVVXdfhncXVSoMvnMi3l/lJaRM33vTj9W/ymjpOjrzbdGJ2Zn807t9WzrXLL
+C8/6E1Od/u3NJy4fWjZfsb5ua10Mzo7thXd0Xm8tS3xlYBOcda9j92CcZvOJseDk
+8QneuHHSGxtdv85X4sU8+adbe6+m3vlhRihQF/rXJN+faFDtLFxMwtuHai9MHgg/
+ezJCW2BLT2qIHNGaPvS25dE1uwZT0FQRisuFsFOBnLkDWcGItxdHPr1T3Tfa/Ovx
+/IdXG43VKc2fN5wjWtyZmmP28R8Px3caV6orItoS5HcffMRLKZFqkPEYMZicSA==
+=LI/k
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/jbbarth
+
+==================================================================
