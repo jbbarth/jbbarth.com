@@ -8,35 +8,36 @@
         font-family: 'Open Sans';
         font-style: normal;
         font-weight: 400;
-        src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v8/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
+        src: local('Open Sans'), local('OpenSans'), url(./fonts/open-sans.woff) format('woff');
       }
       * { box-sizing:border-box; -moz-box-sizing:border-box; }
-      body { font-family:'Open Sans', verdana, sans-serif; margin:0; background-color:#f9f9f9; }
-      h1 { margin:12px 16px 16px; padding:0 0 6px; color:#050505; display:inline-block; }
-      h1.left { margin:12px 0 16px -30px; padding:0 16px 6px 46px; }
+      body { font-family:'Open Sans', verdana, sans-serif; margin:0; background-color:#f8f8f8; }
+      h1 { margin:6px 0 16px -30px; padding:0 16px 6px 44px; color:#050505; display:inline-block; }
       a, a:visited { text-decoration:none; color:#3f51b5; border-color:#3f51b5; border-width:0 0 1px 0; border-style:dotted; }
       a:hover { border-style:solid; }
       .img320x110 { width:320px; height:110px; }
       .container { overflow:hidden; }
       .sidebar { position:absolute; top:0; left:0; width:255px; padding:24px 16px 2000px 20px; height:100%; }
-      .sidebar { background-color:/*#0B486B*/#0097a7; color:#f5f5f5; font-size:14px; line-height:200%; }
+      .sidebar { background-color:/*#0B486B*/#0097a7; color:#fafafa; font-size:14px; line-height:200%; }
       .sidebar a { color:#fff; border-color:#fff; }
       .sidebar .networks { margin:40px 0 0 0; }
       .sidebar .networks a { border-width:0; }
       .sidebar .networks .fa { font-size:24px; width:23%; text-align:center; }
       .sidebar .networks .label { margin:0; padding:6px 0; text-align:center; }
       .avatar-container { margin:0; padding:30px 4px 30px 0; }
-      .avatar { width:90px; height:90px; margin:0 auto; border-radius:100px; -webkit-border-radius:100px; -moz-border-radius:100px; background: url(./profil.jpg) no-repeat; background-size:cover; box-shadow: 0 0 8px rgba(0, 0, 0, .8); -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8); -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8); }
+      .avatar { width:90px; height:90px; margin:0 auto; border-radius:100px; -webkit-border-radius:100px; -moz-border-radius:100px; background: url(./images/profil.jpg) no-repeat; background-size:cover; box-shadow: 0 0 8px rgba(0, 0, 0, .8); -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8); -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8); }
       .project-container { position:relative; margin-left:255px; padding:10px 0 10px 14px; }
-      .project-box { display:none; float:left; width:320px; min-height:260px; }
+      .project-box { display:none; float:left; width:320px; min-height:150px; }
       .project-box { background-color:#fbfbfb; border:0px solid #777; margin:14px; padding:0; border-radius:6px; box-shadow:0 0 0 1px rgba(0,0,0,0.1),2px 2px 8px rgba(0,0,0,0.1); }
-      .project-box img { display:inline; margin:0; padding:4px; box-shadow:0 0 1px rgba(0,0,0,0.15), 0px 0px 8px rgba(0,0,0,.15); width:328px; background-color:#fbfbfb; margin-left:-4px; }
+      .project-box img { display:inline; margin:0 0 0 -4px; padding:4px; box-shadow:0 0 1px rgba(0,0,0,0.15), 0px 0px 8px rgba(0,0,0,.15); background-color:#fbfbfb; }
+      .project-box .img320x110 { width:328px; height:118px; }
       .project-box h2 { font-size:20px; margin:0; padding:16px 16px 0; }
+      .project-box h2.redmine { background: transparent url(./images/redmine_fluid_little.png) no-repeat 16px 19px; padding-left:40px; }
       .project-box p { font-size:14px; margin:0; padding:16px; }
       .project-box .extra-infos { padding:6px 16px 12px; text-align:right; color:#888; }
       .project-box .extra-infos .fa { font-size:14px; margin-right:3px; }
     </style>
-    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="./javascripts/jquery-1.8.2.min.js"></script>
     <script>
       showProjects = function(anchor) {
         if (anchor == "") { anchor = "production" }
@@ -78,148 +79,151 @@
         I <a href="#production" data-filter="production" data-sidebar-color="#0097a7">manage production systems</a>,
         and I like to <a href="#webapps" data-filter="webapps" data-sidebar-color="#7e57c2">create webapps</a>,
         especially <a href="#redmine-plugins" data-filter="redmine-plugins" data-sidebar-color="#f36c60">redmine plugins</a>.
-        <div class=networks style="color:#eee;">
+        <div class=networks>
           <a href="https://github.com/jbbarth/" target="_blank"><span class="fa fa-github" data-label="github.com/jbbarth"></span></a>
           <a href="https://twitter.com/jbbarth" target="_blank"><span class="fa fa-twitter" data-label="twitter.com/jbbarth"></span></a>
-          <a href="http://fr.linkedin.com/pub/jean-baptiste-barth/40/79/9b4/" target="_blank"><span class="fa fa-linkedin" data-label="jean-baptiste.barth" style="padding-bottom:1px;"></span></a>
-          <a href="./cv-en.html" target="_blank"><span class="fa fa-file-o" data-label="My curriculum vitae" style="font-size:20px;"></span></a>
+          <a href="http://fr.linkedin.com/pub/jean-baptiste-barth/40/79/9b4/" target="_blank"><span class="fa fa-linkedin" data-label="jean-baptiste.barth"></span></a>
+          <a href="./cv-en.html" target="_blank"><span class="fa fa-file-text-o" data-label="My curriculum vitae" style="font-size:20px;"></span></a>
           <p class=label></p>
         </div>
       </div>
       <div class=project-container>
         <div class=title>
-          <h1 class=left></h1>
+          <h1></h1>
         </div>
         <div class=project-box data-tags=production>
           <h2>Monitoring</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=production>
           <h2>Deployment</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=production>
           <h2>Ticketting</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=production>
           <h2>Logging</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=production>
           <h2>Debugging</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=production>
           <h2>Performance</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=webapps>
           <h2>Cartoque</h2>
           <p>Cartoque is an open-source CMDB built for medium scale datacenters</p>
-          <img src="./screenshots/portfolio-cartoque.png" class="img320x110 ">
+          <img src="./screenshots/portfolio-cartoque.png" class="img320x110">
           <p class=extra-infos><a href="http://cartoque.org/">cartoque.org</a></p>
         </div>
         <div class=project-box data-tags=webapps>
           <h2>Clou</h2>
           <p>Clou helps manage postdoc proposals for french PhD's</p>
-          <img src="./screenshots/portfolio-clou.png" class="img320x110 ">
+          <img src="./screenshots/portfolio-clou.png" class="img320x110">
           <p class=extra-infos>[private]</p>
         </div>
         <div class=project-box data-tags=webapps>
           <h2>Dashy</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod... </p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
+          <img src="http://placehold.it/320x110" class="img320x110">
           <p class=extra-infos>blah</p>
         </div>
         <div class=project-box data-tags=redmine-plugins>
           <h2>Redmine plugins for $WORK</h2>
           <p>Developed some private plugins for $WORK since 2007</p>
-          <img src="./screenshots/portfolio-redmine.png" class="img320x110 ">
+          <img src="./screenshots/portfolio-redmine-work.png" class="img320x110">
           <p class=extra-infos>[private]</p>
         </div>
         <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Notified plugin</h2>
-          <p>Know which people have been notified on a specific issue</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_notified">jbbarth/redmine_notified</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Uhoh plugin</h2>
-          <p>Centralized errors &amp; exceptions reporting for your redmine instance</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_uhoh">jbbarth/redmine_uhoh</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Reminders plugin</h2>
-          <p>Stick reminders (aka postits) on "My Page" so you don't forget important things!</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_reminders">jbbarth/redmine_reminders</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Wiki Backup plugin</h2>
-          <p>Easy backup solution for your Redmine wikis. Allows full mirroring</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_wiki_backup">jbbarth/redmine_wiki_backup</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Sudo plugin</h2>
-          <p>Sudo-like powers for administrators ; you should not be root all the time !</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_sudo">jbbarth/redmine_sudo</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Refresh plugin</h2>
-          <p>Automatic refresh on important pages in Redmine</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_refresh">jbbarth/redmine_refresh</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine CMDB plugin</h2>
-          <p>CMDB interface for Redmine : allows you to link issues to your external CMDB</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_cmdb">jbbarth/redmine_cmdb</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Stronger plugin</h2>
-          <p>Adds additional layers of security for your Redmine instance exposed on the Internet</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_strong">jbbarth/redmine_strong</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Notification center</h2>
-          <p>Adds various fine-grained options for redmine notifications</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
-          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_notification_center">jbbarth/redmine_notification_center</a></p>
-        </div>
-        <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Drafts plugin</h2>
+          <h2 class=redmine>Drafts plugin</h2>
           <p>Saves drafts of issues while you edit them so they don't get lost</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
+          <img src="./screenshots/portfolio-redmine-drafts.png" class="img320x110">
           <p class=extra-infos><a href="https://github.com/jbbarth/redmine_drafts">jbbarth/redmine_drafts</a></p>
         </div>
         <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine Auto-Private</h2>
+          <h2 class=redmine>Refresh plugin</h2>
+          <p>Automatic refresh on important pages in Redmine</p>
+          <img src="./screenshots/portfolio-redmine-refresh.png" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_refresh">jbbarth/redmine_refresh</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Comments plugin</h2>
+          <p>Private comments for your Redmine instance, visible only by allowed roles</p>
+          <img src="./screenshots/portfolio-redmine-comments.png" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_comments">jbbarth/redmine_comments</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Organizations plugin</h2>
+          <p>Hierarchical organizations for big Redmine instances</p>
+          <img src="./screenshots/portfolio-redmine-organizations.png" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_organizations">jbbarth/redmine_organizations</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Notified plugin</h2>
+          <p>Know which people have been notified on a specific issue</p>
+          <img src="./screenshots/portfolio-redmine-notified.png" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_notified">jbbarth/redmine_notified</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Uhoh plugin</h2>
+          <p>Centralized errors &amp; exceptions reporting for your redmine instance</p>
+          <img src="./screenshots/portfolio-redmine-uhoh.png" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_uhoh">jbbarth/redmine_uhoh</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Reminders plugin</h2>
+          <p>Stick reminders (aka postits) on "My Page" so you don't forget important things!</p>
+          <img src="http://placehold.it/320x110" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_reminders">jbbarth/redmine_reminders</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Wiki Backup plugin</h2>
+          <p>Easy backup solution for your Redmine wikis. Allows full mirroring</p>
+          <img src="http://placehold.it/320x110" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_wiki_backup">jbbarth/redmine_wiki_backup</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>CMDB plugin</h2>
+          <p>CMDB interface for Redmine : allows you to link issues to your external CMDB</p>
+          <img src="http://placehold.it/320x110" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_cmdb">jbbarth/redmine_cmdb</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Notification center</h2>
+          <p>Adds various fine-grained options for redmine notifications</p>
+          <img src="http://placehold.it/320x110" class="img320x110">
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_notification_center">jbbarth/redmine_notification_center</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Auto-Private plugin</h2>
           <p>Force private issues on some projects (where you want privacy between clients)</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
+          <img src="http://placehold.it/320x110" class="img320x110">
           <p class=extra-infos><a href="https://github.com/jbbarth/redmine_auto_private">jbbarth/redmine_auto_private</a></p>
         </div>
         <div class=project-box data-tags=redmine-plugins>
-          <h2>Redmine CAS plugin</h2>
+          <h2 class=redmine>Sudo plugin</h2>
+          <p>Sudo-like powers for administrators ; you should not be root all the time !</p>
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_sudo">jbbarth/redmine_sudo</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>Stronger plugin</h2>
+          <p>Adds additional layers of security for your Redmine instance exposed on the Internet</p>
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_strong">jbbarth/redmine_strong</a></p>
+        </div>
+        <div class=project-box data-tags=redmine-plugins>
+          <h2 class=redmine>CAS plugin</h2>
           <p>Authenticate to your Redmine instance through your existing CAS/SSO solution</p>
-          <img src="http://placehold.it/320x110" class="img320x110 ">
           <p class=extra-infos><a href="https://github.com/jbbarth/redmine_omniauth_cas">jbbarth/redmine_omniauth_cas</a></p>
         </div>
       </div>
