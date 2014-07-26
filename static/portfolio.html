@@ -19,18 +19,20 @@
       a:hover { border-style:solid; }
       .img320x110 { width:320px; height:110px; }
       .container { overflow:hidden; }
-      .sidebar { position:absolute; top:0; left:0; width:265px; padding:24px 14px 2000px 16px; height:100%; }
+      .sidebar { position:absolute; top:0; left:0; width:285px; padding:24px 14px 2000px 16px; height:100%; }
       .sidebar { background-color:/*#0B486B*/#0097a7; color:#fafafa; font-size:14px; line-height:300%; }
       .sidebar a { color:#fff; border-color:#fff; }
       .sidebar a[data-filter] { font-weight:bold; text-shadow: 0 1px 1px #555; padding-bottom:2px; }
       .sidebar ul { padding:0 0 0 25px; margin:0; list-style-type:square; }
+      .sidebar .list .fa { float:right; display:inline-block; margin-top:14px; visibility:hidden; font-size:16px; color:#fff; }
+      .sidebar .list .active .fa { visibility:visible; }
       .sidebar .networks { margin:80px 0 0 0; }
       .sidebar .networks a { border-width:0; }
       .sidebar .networks .fa { font-size:24px; width:23%; text-align:center; }
       .sidebar .networks .label { margin:0; padding:6px 0; text-align:center; }
       .avatar-container { margin:0; padding:30px 4px 30px 0; }
       .avatar { width:90px; height:90px; margin:0 auto; border-radius:100px; -webkit-border-radius:100px; -moz-border-radius:100px; background: url(./images/profil.jpg) no-repeat; background-size:cover; box-shadow: 0 0 8px rgba(0, 0, 0, .8); -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8); -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8); }
-      .box-container { position:relative; margin-left:265px; padding:10px 0 10px 14px; max-width:1100px; }
+      .box-container { position:relative; margin-left:285px; padding:10px 0 10px 14px; max-width:1100px; }
       .subtitle { display:inline-block; margin-left:20px; font-size:14px; color:#999; }
       .box { display:none; float:left; width:320px; min-height:150px; }
       .box { background-color:#fbfbfb; border:0px solid #777; margin:14px; padding:0; border-radius:6px; box-shadow:0 0 0 1px rgba(0,0,0,0.1),2px 2px 8px rgba(0,0,0,0.1); }
@@ -50,6 +52,8 @@
         $(".container h1").html("#"+anchor)
         $("#subtitle").html($("#link-"+anchor).data("subtitle"))
         var color = $("#link-"+anchor).data("sidebar-color")
+        $(".sidebar li").removeClass("active")
+        $("#link-"+anchor).closest("li").addClass("active")
         $(".sidebar").css("background-color", color)
         $(".container h1").css("border-bottom", "2px solid "+color)
         $(".box").each(function() {
@@ -84,10 +88,19 @@
           <div class=avatar></div>
         </div>
         I like to :
-        <ul>
-          <li><a href="#production" id="link-production" data-filter="production" data-sidebar-color="#0097a7" data-subtitle="Some domains I enjoy working on in production environments">manage production systems</a></li>
-          <li><a href="#webapps" id="link-webapps" data-filter="webapps" data-sidebar-color="#607dab" data-subtitle="Some webapps I developed, mostly for work">create webapps</a></li>
-          <li><a href="#redmine-plugins" id="link-redmine-plugins" data-filter="redmine-plugins" data-sidebar-color="#f36c60" data-subtitle="A list of my open-source Redmine plugins">create redmine plugins</a></li>
+        <ul class=list>
+          <li>
+            <span class="fa fa-caret-right"></span>
+            <a href="#production" id="link-production" data-filter="production" data-sidebar-color="#0097a7" data-subtitle="Some domains I enjoy working on in production environments">manage production systems</a>
+          </li>
+          <li>
+            <span class="fa fa-caret-right"></span>
+            <a href="#webapps" id="link-webapps" data-filter="webapps" data-sidebar-color="#607dab" data-subtitle="Some webapps I developed, mostly for work">create webapps</a>
+          </li>
+          <li>
+            <span class="fa fa-caret-right"></span>
+            <a href="#redmine-plugins" id="link-redmine-plugins" data-filter="redmine-plugins" data-sidebar-color="#f36c60" data-subtitle="A list of my open-source Redmine plugins">create redmine plugins</a>
+          </li>
         </ul>
         <div class=networks>
           <a href="https://github.com/jbbarth/" target="_blank"><span class="fa fa-github" data-label="github.com/jbbarth"></span></a>
