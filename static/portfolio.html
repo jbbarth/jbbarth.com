@@ -47,40 +47,61 @@
     </style>
     <script src="./javascripts/jquery-1.8.2.min.js"></script>
     <script>
-      showProjects = function(anchor) {
-        if (anchor == "") { anchor = "production" }
-        $(".container h1").html("#"+anchor)
-        $("#subtitle").html($("#link-"+anchor).data("subtitle"))
-        var color = $("#link-"+anchor).data("sidebar-color")
-        $(".sidebar li").removeClass("active")
-        $("#link-"+anchor).closest("li").addClass("active")
-        $(".sidebar").css("background-color", color)
-        $(".container h1").css("border-bottom", "2px solid "+color)
-        $(".box").each(function() {
-          var tags = $(this).data("tags") || ""
-          if (tags.indexOf(anchor) >= 0) {
-            $(this).fadeIn(300)
-          } else {
-            $(this).hide()
-          }
-        })
+      //lib
+      Portfolio = {
+        anchor: "production",
+        buildMainPage: function(anchor) {
+          //anchor default value
+          if (anchor != "") { this.anchor = anchor }
+          this.setTitle()
+          this.adjustSidebar()
+          this.showProjects()
+        },
+        setTitle: function() {
+          $(".container h1").html("#"+this.anchor)
+          $("#subtitle").html($("#link-"+this.anchor).data("subtitle"))
+          $(".container h1").css("border-bottom", "2px solid "+this.sectionColor())
+        },
+        sectionColor: function() {
+          return $("#link-"+this.anchor).data("sidebar-color")
+        },
+        adjustSidebar: function() {
+          $(".sidebar").css("background-color", this.sectionColor())
+          $(".sidebar li").removeClass("active")
+          $("#link-"+this.anchor).closest("li").addClass("active")
+        },
+        showProjects: function() {
+          var self = this
+          $(".box").each(function() {
+            var tags = $(this).data("tags") || ""
+            if (tags.indexOf(self.anchor) >= 0) { $(this).fadeIn(300) }
+            else { $(this).hide() }
+          })
+        },
+        sidebarLinksBlink: function() {
+          $(".sidebar .list").fadeOut(50).fadeIn(50)
+                             .fadeOut(50).fadeIn(50)
+        },
+        setNetworkLabel: function(value) {
+          $(".networks .label").html(value)
+        }
       }
+      //events
       $(function() {
         var anchor = window.location.hash.replace("#","")
-        showProjects(anchor)
+        Portfolio.buildMainPage(anchor)
         $("a[data-filter]").on("click", function() {
-          showProjects($(this).data("filter"))
+          Portfolio.buildMainPage($(this).data("filter"))
         })
         $(".networks .fa").on("mouseover", function() {
-          $(".networks .label").html($(this).data("label"))
+          Portfolio.setNetworkLabel($(this).data("label"))
         })
         $(".networks .fa").on("mouseout", function() {
-          $(".networks .label").html("")
+          Portfolio.setNetworkLabel("")
         })
         $(document).on("click", function(e) {
           if (e.target.tagName != "A") {
-            $(".sidebar .list").fadeOut(50).fadeIn(50)
-                               .fadeOut(50).fadeIn(50)
+            Portfolio.sidebarLinksBlink()
           }
         })
       })
