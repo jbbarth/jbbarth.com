@@ -20,7 +20,7 @@
       .img320x110 { width:320px; height:110px; }
       .container { overflow:hidden; }
       .sidebar { position:absolute; top:0; left:0; width:285px; padding:24px 14px 2000px 16px; height:100%; }
-      .sidebar { background-color:/*#0B486B*/#0097a7; color:#fafafa; font-size:14px; line-height:300%; }
+      .sidebar { background-color:/*#0B486B*/#0097a7; color:#fff; font-size:14px; line-height:300%; }
       .sidebar a { color:#fff; border-color:#fff; }
       .sidebar a[data-filter] { font-weight:bold; text-shadow: 0 1px 1px #555; padding-bottom:2px; }
       .sidebar ul { padding:0 0 0 25px; margin:0; list-style-type:square; }
@@ -59,7 +59,11 @@
         },
         setTitle: function() {
           $(".container h1").html("#"+this.anchor)
-          $("#subtitle").html($("#link-"+this.anchor).data("subtitle"))
+          var subtitle = $("#link-"+this.anchor).data("subtitle")
+          if (this.anchor == "redmine-plugins") {
+            subtitle = subtitle.replace("my open-source", "my "+($("[data-tags=redmine-plugins]").length - 2)+" open-source")
+          }
+          $("#subtitle").html(subtitle)
           $(".container h1").css("border-bottom", "2px solid "+this.sectionColor())
         },
         sectionColor: function() {
@@ -164,7 +168,7 @@
         </div>
         <div class=box data-tags=production>
           <h2>Debugging & Performance</h2>
-          <p>I like to track performance issue and debug various problems, using <b>Glances, strace, netstat, tcpdump,  ...</b> or much high-level tools like <b>Newrelic</b> or <b>Boundary</b>.</p>
+          <p>I like to track performance issue and debug various problems, using <b>strace, netstat, tcpdump, ...</b> or much high-level tools like <b>Newrelic</b> or <b>Boundary</b>.</p>
         </div>
         <div class=box data-tags=webapps>
           <h2>Cartoque</h2>
@@ -290,9 +294,29 @@
           <p class=extra-infos><a href="https://github.com/jbbarth/redmine_auto_private">jbbarth/redmine_auto_private</a></p>
         </div>
         <div class=box data-tags=redmine-plugins>
+          <h2 class=redmine>Base select2 plugin</h2>
+          <p>Base plugin which adds select2 to your redmine instance</p>
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_base_select2">jbbarth/redmine_base_select2</a></p>
+        </div>
+        <div class=box data-tags=redmine-plugins>
+          <h2 class=redmine>Base Deface plugin</h2>
+          <p>Base plugin which adds ability to use Deface (view overrides) in your plugins</p>
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_base_deface">jbbarth/redmine_base_deface</a></p>
+        </div>
+        <div class=box data-tags=redmine-plugins>
+          <h2 class=redmine>Base RSpec plugin</h2>
+          <p>Base plugin which adds ability to use RSpec for your plugin tests</p>
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_base_rspec">jbbarth/redmine_base_rspec</a></p>
+        </div>
+        <div class=box data-tags=redmine-plugins>
           <h2 class=redmine>Better Crossprojects</h2>
           <p>Force private issues on some projects (where you want privacy between clients)</p>
           <p class=extra-infos><a href="https://github.com/jbbarth/redmine_auto_private">jbbarth/redmine_auto_private</a></p>
+        </div>
+        <div class=box data-tags=redmine-plugins>
+          <h2 class=redmine>Wiki issue details</h2>
+          <p>Add some textile syntax to display issues attributes inside wiki sections</p>
+          <p class=extra-infos><a href="https://github.com/jbbarth/redmine_wiki_issue_details">jbbarth/redmine_auto_private</a></p>
         </div>
         <div class=box data-tags=redmine-plugins>
           <h2 class=redmine>Asset Pipeline plugin</h2>
@@ -326,7 +350,7 @@
         </div>
         <div class=box data-tags=redmine-plugins>
           <h2 class=redmine>Redmine scripts</h2>
-          <p>A collection of useful scripts I use to manage my Redmine installations and developments</p>
+          <p>A collection of useful scripts I use to manage my Redmine installations</p>
           <p class=extra-infos><a href="https://github.com/jbbarth/redmine-scripts">jbbarth/redmine-scripts</a></p>
         </div>
       </div>
