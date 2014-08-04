@@ -59,7 +59,11 @@
         },
         setTitle: function() {
           $(".container h1").html("#"+this.anchor)
-          $("#subtitle").html($("#link-"+this.anchor).data("subtitle"))
+          var subtitle = $("#link-"+this.anchor).data("subtitle")
+          if (this.anchor == "redmine-plugins") {
+            subtitle = subtitle.replace("my open-source", "my "+$("[data-tags=redmine-plugins]").length+" open-source")
+          }
+          $("#subtitle").html(subtitle)
           $(".container h1").css("border-bottom", "2px solid "+this.sectionColor())
         },
         sectionColor: function() {
