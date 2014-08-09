@@ -21,10 +21,14 @@
       .container { overflow:hidden; }
       .sidebar { position:absolute; top:0; left:0; width:285px; padding:24px 14px 2000px 16px; height:100%; }
       .sidebar { background-color:/*#0B486B*/#0097a7; color:#fff; font-size:14px; line-height:300%; }
-      .sidebar a { color:#fff; border-color:#fff; }
-      .sidebar a[data-filter] { font-weight:bold; text-shadow: 0 1px 1px #555; padding-bottom:2px; }
-      .sidebar ul { padding:0 0 0 25px; margin:0; list-style-type:square; }
-      .sidebar .list .fa { float:right; display:inline-block; margin-top:14px; visibility:hidden; font-size:16px; color:#fff; }
+      .sidebar a { color:#fff; }
+      .sidebar a[data-filter] { font-weight:bold; text-shadow: 0 1px 1px #555; }
+      .sidebar ul { padding:0 0 0 0px; margin:0; list-style-type:square; list-style-position:inside; line-height:150%; }
+      .sidebar li { padding:0 8px 2px 18px; margin:0 0 18px 0; }
+      /*.sidebar li:hover { background-color:#ccc; border-radius:14px; }*/
+      .sidebar li .text { border-width:0 0 1px 0; border-style:dotted; border-color:1px; }
+      .sidebar li:hover .text { border-style:solid; }
+      .sidebar .list .fa { float:right; display:inline-block; margin-top:3px; visibility:hidden; font-size:16px; color:#fff; }
       .sidebar .list .active .fa { visibility:visible; }
       .sidebar .networks { margin:80px 0 0 0; }
       .sidebar .networks a { border-width:0; }
@@ -72,7 +76,7 @@
         adjustSidebar: function() {
           $(".sidebar").css("background-color", this.sectionColor())
           $(".sidebar li").removeClass("active")
-          $("#link-"+this.anchor).closest("li").addClass("active")
+          $("#link-"+this.anchor).find("li").addClass("active")
         },
         showProjects: function() {
           var self = this
@@ -103,11 +107,6 @@
         $(".networks .fa").on("mouseout", function() {
           Portfolio.setNetworkLabel("")
         })
-        $(document).on("click", function(e) {
-          if (e.target.tagName != "A") {
-            Portfolio.sidebarLinksBlink()
-          }
-        })
       })
     </script>
   </head>
@@ -120,18 +119,24 @@
         </div>
         I like to :
         <ul class=list>
-          <li>
-            <span class="fa fa-caret-right"></span>
-            <a href="#production" id="link-production" data-filter="production" data-sidebar-color="#0097a7" data-subtitle="Some domains I enjoy working on in production environments">manage production systems</a>
-          </li>
-          <li>
-            <span class="fa fa-caret-right"></span>
-            <a href="#webapps" id="link-webapps" data-filter="webapps" data-sidebar-color="#607dab" data-subtitle="Some webapps I developed, mostly for work">create webapps</a>
-          </li>
-          <li>
-            <span class="fa fa-caret-right"></span>
-            <a href="#redmine-plugins" id="link-redmine-plugins" data-filter="redmine-plugins" data-sidebar-color="#f36c60" data-subtitle="A list of my open-source Redmine plugins">create redmine plugins</a>
-          </li>
+          <a href="#production" id="link-production" data-filter="production" data-sidebar-color="#0097a7" data-subtitle="Some domains I enjoy working on in production environments">
+            <li>
+              <span class="fa fa-caret-right"></span>
+              <span class=text>manage production systems</span>
+            </li>
+          </a>
+          <a href="#webapps" id="link-webapps" data-filter="webapps" data-sidebar-color="#607dab" data-subtitle="Some webapps I developed, mostly for work">
+            <li>
+              <span class="fa fa-caret-right"></span>
+              <span class=text>create webapps</span>
+            </li>
+          </a>
+          <a href="#redmine-plugins" id="link-redmine-plugins" data-filter="redmine-plugins" data-sidebar-color="#f36c60" data-subtitle="A list of my open-source Redmine plugins">
+            <li>
+              <span class="fa fa-caret-right"></span>
+              <span class=text>create redmine plugins</span>
+            </li>
+          </a>
         </ul>
         <div class=networks>
           <a href="https://github.com/jbbarth/" target="_blank"><span class="fa fa-github" data-label="github.com/jbbarth"></span></a>
