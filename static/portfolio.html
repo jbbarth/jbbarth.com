@@ -19,7 +19,13 @@
       a:hover { border-style:solid; }
       .img320x110 { width:320px; height:110px; }
       .container { overflow:hidden; }
-      .sidebar { position:fixed; top:0; left:0; width:285px; padding:24px 14px 2000px 16px; height:100%; }
+      .sidebar { position:absolute; top:0; left:0; width:285px; padding:24px 14px 2000px 16px; height:100%; }
+      @media screen
+        and (min-device-width:800px)  /* avoid on iphone: don't want a fixed position because zoom wouldn't work well */
+        and (min-device-height:500px) /* avoid small screens: wouldn't permit viewing networks */
+      {
+        .sidebar { position:fixed; }
+      }
       .sidebar { background-color:/*#0B486B*/#0097a7; color:#fff; font-size:14px; line-height:300%; }
       .sidebar a { color:#fff; }
       .sidebar a[data-filter] { font-weight:bold; text-shadow: 0 1px 1px #555; }
