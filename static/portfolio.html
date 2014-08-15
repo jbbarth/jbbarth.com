@@ -68,6 +68,7 @@
           this.setTitle()
           this.adjustSidebar()
           this.showProjects()
+          this.scrollToTop()
         },
         setTitle: function() {
           $(".container h1").html("#"+this.anchor)
@@ -100,6 +101,9 @@
         },
         setNetworkLabel: function(value) {
           $(".networks .label").html(value)
+        },
+        scrollToTop: function() {
+          $("html, body").animate({ scrollTop: 0 }, 200)
         }
       }
       //events
