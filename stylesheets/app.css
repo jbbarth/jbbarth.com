@@ -15,7 +15,7 @@ blockquote > p { margin:0; }
 html, body {
   min-height:100%;
   font-size:16px;
-  line-height:1.5em;
+  line-height:1.8em;
 }
 #container {
   overflow:auto;
@@ -35,7 +35,7 @@ html, body {
   margin:30px 9px 30px 0;
   padding-left:35px;
   padding-right:20px;
-  padding-bottom:250px; /*footer*/
+  padding-bottom:260px; /*footer 250px */
   border-left:1px solid #eee;
 }
 #footer {
@@ -50,8 +50,8 @@ html, body {
 #sidebar {
   margin:32px 0 0; /* top = content's margin-top + 2px */
   padding-left:10px;
-  font-size:16px;
-  color:#333;
+  font-size:14px;
+  color:#555;
 }
 #sidebar p {
   text-align:center;
@@ -84,7 +84,7 @@ h1 {
 }
 h2 {
   font-family: 'Average Sans', sans-serif;
-  font-size:24px;
+  font-size:20px;
   margin:16px 4px 12px;
 }
 h2.last-posts {
@@ -122,6 +122,9 @@ h2.last-posts {
 }
 #content p {
   margin:8px 0 6px;
+}
+#content img {
+  margin:20px auto;
 }
 span.time {
   font-family:monospace;
