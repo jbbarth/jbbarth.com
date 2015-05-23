@@ -20,8 +20,8 @@ module NanocHelpers
     paths.map do |path|
       title = YAML.load_file(path)["title"]
       date = Date.parse path.scan(/\/(\d{4}-\d{2}-\d{2})/).first.first
-      %(<span class="time">#{date.strftime("%d %b %Y")}</span> <a href="#{path.gsub(%r{^./content},'')}">#{title}</a>) if title
-    end.compact.join('<br>')
+      %(<div class=link-block><div class="time">#{date.strftime("%d %b %Y")}</div><a href="#{path.gsub(%r{^./content},'')}">#{title}</a></div>) if title
+    end.compact.join("\n")
   end
 
   def json_block(&block)

@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>jbbarth.com - <%= @item[:title] %></title>
+    <link href="http://fonts.googleapis.com/css?family=Lobster+Two:700|Open+Sans:400,600,700" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
     <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/text.css" />
     <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
@@ -17,7 +18,7 @@
   <body>
     <div id="container" class="container_16">
       <div class="grid_4">
-        <%= render @item.identifier.start_with?("/notes") ? "sidebar_notes" : "sidebar" %>
+        <%= render "sidebar" %>
       </div>
       <div class="grid_12">
         <div id="content">
@@ -25,7 +26,6 @@
         </div>
       </div>
     </div>
-    <%= render "footer" %>
     <script type="text/javascript">
       var _gauges = _gauges || [];
       (function() {

@@ -1,10 +1,7 @@
---- 
+---
 title: Home
 ---
 
-<%
-posts = Dir.glob("./content/posts/**/*.html").sort.reverse[0..6]
-home_post = posts.shift
-%>
+<%= stupid_list_links Dir.glob("./content/posts/**/*.html").sort.reverse %>
 
-<%= stupid_render home_post %>
+<a href="/archives.html">Archives</a>
