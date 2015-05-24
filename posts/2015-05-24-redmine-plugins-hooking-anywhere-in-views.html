@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Redmine plugins: hooking anywhere in views</title>
+    <link href="http://fonts.googleapis.com/css?family=Lobster+Two:700|Open+Sans:400,600,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <div class=sitetitle>
+    <a href="/">jbbarth.com</a>
+  </div>
+  <p>
+    I'm a sysadmin &amp; developer from Paris, France. I love building tools for
+    ops, and I'm an irregular contributor to many open-source projects. More
+    <a href="/portfolio.html">here</a>.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Redmine plugins: Hooking anywhere in views</h1>
+
+<h2>State of the hook union</h2>
+
+<p>If you're a hobbyist Redmine plugin developer, chances are you already have used hooks (<a href="http://www.redmine.org/projects/redmine/wiki/Hooks">documentation</a>) quite extensively. There are 2 types of hooks in Redmine, which share some common characteristics but are also fundamentally different :</p>
+
+<ul>
+<li>controller hooks allow you to change Redmine behaviour by executing arbitrary ruby code at some point in some action processing ;</li>
+<li>view hooks allow you to add some &quot;<em>HTML</em>&quot; in views at some pre-defined places. Actually HTML is really any ERB-friendly code you want, so you can have all the power of ERB, or any ruby processing between <code>&lt;% ... %&gt;</code> tags, with the noticeable limitation of not being able to define classes, modules, or method there.</li>
+</ul>
+
+<p>Both are needed in plugins. Without them, the only way to change behaviour in plugins would be, respectively :</p>
+
+<ul>
+<li>for controller hooks : to override the whole method through monkey-patching</li>
+<li>for view hooks : to override the whole partial (plugin views / partials take precedence over core)</li>
+</ul>
+
+<p>While I don't have anything against monkey-patching itself in some particular cases, it turns out it has some downsides. The following problems for controller hooks have their equivalent for view hooks:</p>
+
+<ul>
+<li>it can be difficult to monkey-patch (or override a view) because Redmine has a
+lot of logic in controllers, and some methods are dozens lines long, and the
+load order may not be straightforward ;</li>
+<li>it makes your code fragile when you have to upgrade the Redmine core itself on
+a production instance (more on that later) ;</li>
+<li>it can be hazardous when multiple plugins override the same method, the
+end-result is not guaranteed.</li>
+</ul>
+
+<p>The point is, controller hooks are great and needed. But on the view side, in
+most cases you will want to modify a Redmine view just a few lines before or
+after the existing hook. Or maybe there won't be any hook in the file and you'll
+go the &quot;full overriding&quot; way. Or maybe you will file an issue on
+<a href="https://redmine.org/">redmine.org</a>, requesting a new view hook, which you'll probably never
+get because it doesn't make sense (core developers are too busy fixing important
+bugs and implementing awesome features). And even if you did, you won't get
+anything in your current, stable version.</p>
+
+<p>I hope we will agree that the idea that there could be an explicit hook before
+and after any HTML tag in all Redmine views is stupid. There has to be a better
+way!</p>
+
+<h2>A new hope</h2>
+
+<p><a href="https://github.com/spree/spree">Spree</a> is an open-source e-commerce engine, and
+it's built from scratch to be very modular and extensible. The smart guys who
+develop it designed a pretty elegant solution to the view hook problem: they
+built <a href="https://github.com/spree/deface">deface</a>, a gem that gives you the
+ability to declare modifications you wish to see in your partials (technically
+this is called a <code>Deface::Override</code>), and those modifications are applied when
+the partial is rendered, by targetting a specific place in your ERB view while
+it's being rendered with a CSS or XPath selector.</p>
+
+<p>A <code>Deface::Override</code> looks like this:</p>
+
+<pre><code>Deface::Override.new(
+  :virtual_path  =&gt; &quot;issues/new&quot;,
+  :name          =&gt; &quot;add-warning-for-beginners&quot;,
+  :insert_before =&gt; &quot;h1&quot;,
+  :text          =&gt; %(&lt;div class=warning&gt;Beware you're submitting an issue
+                      on the production instance !&lt;/div&gt;)
+)
+</code></pre>
+
+<p>You need 5 things when you define a <code>Deface::Override</code> :</p>
+
+<ul>
+<li>a <code>:virtual_path</code> : &quot;which partial&quot; do you want to change ?</li>
+<li>a unique <code>:name</code></li>
+<li>an action (here <code>:insert_before</code>) and a place to apply it (here the CSS
+selector <code>h1</code>)</li>
+<li>a piece of <code>:text</code> you want to insert (or a <code>:partial</code> name)</li>
+</ul>
+
+<p>The piece of code above does what you already guessed: it <em>inserts above</em> each
+<em>h1</em> title the <em>text</em> when rendering the <em>issues/new</em> partial.</p>
+
+<p>And it doesn't need any modification in the partial itself, pretty cool heh? It
+works as long as you can reach a specific part of the partial with a CSS
+selector or an XPath selector.</p>
+
+<p>So how does it integrate with Redmine?</p>
+
+<h2>Using deface in a Redmine plugin</h2>
+
+<p>The first obvious step to using deface in your Redmine plugin is to include the
+gem. If you have total control over the Redmine instance (which means you accept
+to include code <em>outside</em> your plugin), you can use the <code>Gemfile.local</code> file in
+the root of your instance. If you don't want to pollute your Redmine core
+instance (which I advice you to), or if you want to be able to distribute your
+plugin, you can put a <code>Gemfile</code> at the root of your plugin and Redmine will
+automatically evaluate it when booting.</p>
+
+<pre><code>gem 'deface'
+</code></pre>
+
+<p>There's a slight limitation to that approach: bundler does not support multiple,
+contradictory definitions for the same gem, e.g. you can't have two different <code>Gemfile</code>s
+requesting the same gem with different constraints. If you do so, you will get a
+warning like this:</p>
+
+<pre><code>You cannot specify the same gem twice with different version requirements.
+You specified: deface (&gt;= 0) and deface (= 0.9.0)
+</code></pre>
+
+<p>That's why I recommend not precising the version of deface in your plugin's
+<code>Gemfile</code>, unless you are sure your users won't include an other plugin with a
+different constraint for this gem. There is a <a href="https://github.com/bundler/bundler/issues/930">bundler issue</a>
+for this but it has been closed for now as there doesn't seem to be many people
+who want multiple constraints on the same gem.</p>
+
+<p>So, the gem is loaded.</p>
+
+<p>Now you want it to find the overrides you define. It happens that deface searchs
+its overrides in <code>app/overrides</code> in the core and in potential <em>Rails engines</em>
+used by the application. By default Redmine plugins are not standard Rails
+engines, so you will have to manually include those paths at boot time. Put the
+following lines in your plugin's <code>init.rb</code>:</p>
+
+<pre><code>Rails.application.paths[&quot;app/overrides&quot;] ||= []
+Rails.application.paths[&quot;app/overrides&quot;] &lt;&lt; File.expand_path(&quot;../app/overrides&quot;, __FILE__)
+</code></pre>
+
+<p>Basically this adds your plugin's <code>app/overrides</code> directory to Rails' search
+paths for deface overrides, creating it first if needed. As simple as that.</p>
+
+<p>Of course you will need to repeat those two steps (the <code>Gemfile</code> and the
+<code>app/overrides</code> in <code>init.rb</code>) in every plugin where you want to use deface, so
+that they stay independent from each other.</p>
+
+<p>Well, if you want to ease this process a little bit, I created a plugin called
+<a href="http://github.com/jbbarth/redmine_base_deface">redmine&#95;base&#95;deface</a> which does
+exactly that: it ensures that <code>deface</code> is properly integrated within your
+Redmine instance.</p>
+
+<h2>Some limitations</h2>
+
+<p>First, deface relies on the <em>nokogiri</em> gem : it parses the pseudo-code generated
+by ERB during the partial evaluation, and it expects it to be valid in an HTML
+or XML sense. So an imaginary partial like this one wouldn't work well with
+deface:</p>
+
+<pre><code>&lt;%= &quot;&lt;div&gt;&quot; %&gt;
+    Foo!
+&lt;/div&gt;
+</code></pre>
+
+<p>Actually, it's precompiled as something like this:</p>
+
+<pre><code>&lt;code erb-loud&gt;&quot;&lt;div&gt;&quot;&lt;/code&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>And nokogiri cannot parse it correctly, resulting in errors when trying to
+deface it. In my experience this is not the case of the majority of partials in
+Redmine core, I only found this case once in <code>app/views/layouts/base.html.erb</code>
+but it has been solved for a while.</p>
+
+<p>Second, there may be parts of your partial you cannot reach through Nokogiri's
+augmented CSS selectors or XPath selectors. But this is fairly rare and if you're
+really stuck, you can always add the content elsewhere and move at load time
+through Javascript.</p>
+
+<h2>Conclusion</h2>
+
+<p>I think Deface is a really nifty idea, it makes hooking anywhere in your ERB views
+really easy and the Redmine integration is pretty straightforward when you get
+used to it.</p>
+
+<p>Deface options are well documented in its <a href="https://github.com/spree/deface">README on GitHub</a>,
+so we won't cover everything here and I encourage you to explore this if you want to make
+your Redmine plugins even more great!</p>
+
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '4e3bca6b613f5d70ee000001');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+    </script>
+  </body>
+</html>

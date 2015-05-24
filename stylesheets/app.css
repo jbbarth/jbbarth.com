@@ -4,7 +4,7 @@ body { font-family: 'Open Sans', sans-serif; background:#fdfdfd; }
 a { text-decoration: none; }
 a:link, a:visited { color: #e51c23; }
 a:hover { color: #e51c23; text-decoration:underline; }
-ul { list-style-type:square; }
+ul { list-style-type:square; padding-left:25px; }
 blockquote { margin:5px 15px; font-style:italic; }
 blockquote > p { margin:0; }
 hr { margin-top: 15px; }
@@ -132,21 +132,4 @@ h2.last-posts {
   padding: 0 4px;
   color: #bbb;
   font-size: 14px;
-}
-#footer {
-  background-color:#732a19;
-  color:#edc;
-}
-#footer a:link, #footer a:visited {
-  color: #edc;
-}
-#footer h2 {
-  color:#edc;
-  border-bottom:1px solid #edc;
-}
-#footer li {
-  margin-left:25px;
-}
-#footer p {
-  margin:0 8px;
 }
