@@ -1,0 +1,165 @@
+---
+title: "Redmine plugins: hooking anywhere in views"
+---
+
+# Redmine plugins: Hooking anywhere in views
+
+## State of the hook union
+
+If you're a hobbyist Redmine plugin developer, chances are you already have used hooks ([documentation](http://www.redmine.org/projects/redmine/wiki/Hooks)) quite extensively. There are 2 types of hooks in Redmine, which share some common characteristics but are also fundamentally different :
+
+- controller hooks allow you to change Redmine behaviour by executing arbitrary ruby code at some point in some action processing ;
+- view hooks allow you to add some "*HTML*" in views at some pre-defined places. Actually HTML is really any ERB-friendly code you want, so you can have all the power of ERB, or any ruby processing between <code>&lt;% ... %&gt;</code> tags, with the noticeable limitation of not being able to define classes, modules, or method there.
+
+Both are needed in plugins. Without them, the only way to change behaviour in plugins would be, respectively :
+
+- for controller hooks : to override the whole method through monkey-patching
+- for view hooks : to override the whole partial (plugin views / partials take precedence over core)
+
+While I don't have anything against monkey-patching itself in some particular cases, it turns out it has some downsides. The following problems for controller hooks have their equivalent for view hooks:
+
+- it can be difficult to monkey-patch (or override a view) because Redmine has a
+lot of logic in controllers, and some methods are dozens lines long, and the
+load order may not be straightforward ;
+- it makes your code fragile when you have to upgrade the Redmine core itself on
+a production instance (more on that later) ;
+- it can be hazardous when multiple plugins override the same method, the
+end-result is not guaranteed.
+
+The point is, controller hooks are great and needed. But on the view side, in
+most cases you will want to modify a Redmine view just a few lines before or
+after the existing hook. Or maybe there won't be any hook in the file and you'll
+go the "full overriding" way. Or maybe you will file an issue on
+[redmine.org](https://redmine.org/), requesting a new view hook, which you'll probably never
+get because it doesn't make sense (core developers are too busy fixing important
+bugs and implementing awesome features). And even if you did, you won't get
+anything in your current, stable version.
+
+I hope we will agree that the idea that there could be an explicit hook before
+and after any HTML tag in all Redmine views is stupid. There has to be a better
+way!
+
+## A new hope
+
+[Spree](https://github.com/spree/spree) is an open-source e-commerce engine, and
+it's built from scratch to be very modular and extensible. The smart guys who
+develop it designed a pretty elegant solution to the view hook problem: they
+built [deface](https://github.com/spree/deface), a gem that gives you the
+ability to declare modifications you wish to see in your partials (technically
+this is called a `Deface::Override`), and those modifications are applied when
+the partial is rendered, by targetting a specific place in your ERB view while
+it's being rendered with a CSS or XPath selector.
+
+A `Deface::Override` looks like this:
+
+    Deface::Override.new(
+      :virtual_path  => "issues/new",
+      :name          => "add-warning-for-beginners",
+      :insert_before => "h1",
+      :text          => %(<div class=warning>Beware you're submitting an issue
+                          on the production instance !</div>)
+    )
+
+You need 5 things when you define a `Deface::Override` :
+
+- a `:virtual_path` : "which partial" do you want to change ?
+- a unique `:name`
+- an action (here `:insert_before`) and a place to apply it (here the CSS
+selector `h1`)
+- a piece of `:text` you want to insert (or a `:partial` name)
+
+The piece of code above does what you already guessed: it _inserts above_ each
+_h1_ title the _text_ when rendering the _issues/new_ partial.
+
+And it doesn't need any modification in the partial itself, pretty cool heh? It
+works as long as you can reach a specific part of the partial with a CSS
+selector or an XPath selector.
+
+So how does it integrate with Redmine?
+
+## Using deface in a Redmine plugin
+
+The first obvious step to using deface in your Redmine plugin is to include the
+gem. If you have total control over the Redmine instance (which means you accept
+to include code _outside_ your plugin), you can use the `Gemfile.local` file in
+the root of your instance. If you don't want to pollute your Redmine core
+instance (which I advice you to), or if you want to be able to distribute your
+plugin, you can put a `Gemfile` at the root of your plugin and Redmine will
+automatically evaluate it when booting.
+
+    gem 'deface'
+
+There's a slight limitation to that approach: bundler does not support multiple,
+contradictory definitions for the same gem, e.g. you can't have two different `Gemfile`s
+requesting the same gem with different constraints. If you do so, you will get a
+warning like this:
+
+    You cannot specify the same gem twice with different version requirements.
+    You specified: deface (>= 0) and deface (= 0.9.0)
+
+That's why I recommend not precising the version of deface in your plugin's
+`Gemfile`, unless you are sure your users won't include an other plugin with a
+different constraint for this gem. There is a [bundler issue](https://github.com/bundler/bundler/issues/930)
+for this but it has been closed for now as there doesn't seem to be many people
+who want multiple constraints on the same gem.
+
+So, the gem is loaded.
+
+Now you want it to find the overrides you define. It happens that deface searchs
+its overrides in `app/overrides` in the core and in potential _Rails engines_
+used by the application. By default Redmine plugins are not standard Rails
+engines, so you will have to manually include those paths at boot time. Put the
+following lines in your plugin's `init.rb`:
+
+    Rails.application.paths["app/overrides"] ||= []
+    Rails.application.paths["app/overrides"] << File.expand_path("../app/overrides", __FILE__)
+
+Basically this adds your plugin's `app/overrides` directory to Rails' search
+paths for deface overrides, creating it first if needed. As simple as that.
+
+Of course you will need to repeat those two steps (the `Gemfile` and the
+`app/overrides` in `init.rb`) in every plugin where you want to use deface, so
+that they stay independent from each other.
+
+Well, if you want to ease this process a little bit, I created a plugin called
+[redmine&#95;base&#95;deface](http://github.com/jbbarth/redmine_base_deface) which does
+exactly that: it ensures that `deface` is properly integrated within your
+Redmine instance.
+
+
+## Some limitations
+
+First, deface relies on the _nokogiri_ gem : it parses the pseudo-code generated
+by ERB during the partial evaluation, and it expects it to be valid in an HTML
+or XML sense. So an imaginary partial like this one wouldn't work well with
+deface:
+
+    <%= "<%=" %> "<div>" %>
+        Foo!
+    </div>
+
+Actually, it's precompiled as something like this:
+
+    <code erb-loud>"<div>"</code>
+    </div>
+
+And nokogiri cannot parse it correctly, resulting in errors when trying to
+deface it. In my experience this is not the case of the majority of partials in
+Redmine core, I only found this case once in `app/views/layouts/base.html.erb`
+but it has been solved for a while.
+
+Second, there may be parts of your partial you cannot reach through Nokogiri's
+augmented CSS selectors or XPath selectors. But this is fairly rare and if you're
+really stuck, you can always add the content elsewhere and move at load time
+through Javascript.
+
+
+## Conclusion
+
+I think Deface is a really nifty idea, it makes hooking anywhere in your ERB views
+really easy and the Redmine integration is pretty straightforward when you get
+used to it.
+
+Deface options are well documented in its [README on GitHub](https://github.com/spree/deface),
+so we won't cover everything here and I encourage you to explore this if you want to make
+your Redmine plugins even more great!
