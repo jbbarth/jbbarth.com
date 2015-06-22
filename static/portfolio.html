@@ -140,7 +140,7 @@
           <a href="#webapps" id="link-webapps" data-filter="webapps" data-sidebar-color="#607dab" data-subtitle="Some webapps I developed, mostly for work">
             <li>
               <span class="fa fa-caret-right"></span>
-              <span class=text>create webapps</span>
+              <span class=text>create tools &amp; webapps</span>
             </li>
           </a>
           <a href="#redmine-plugins" id="link-redmine-plugins" data-filter="redmine-plugins" data-sidebar-color="#f36c60" data-subtitle="A list of my open-source Redmine plugins">
@@ -165,30 +165,42 @@
         </div>
         <div class=box data-tags=production>
           <h2>System Administration</h2>
-          <p>I primarily use <b>Debian and RedHat</b> ecosystems, along with Puppet, even if I always preferred <b>Chef</b> at home.</p>
+          <p>I primarily use <b>Debian/Ubuntu/RedHat</b> ecosystems, along with <b>Ansible</b> or Puppet, or even Chef at home.</p>
           <p class=extra-infos><a href="https://github.com/jbbarth/cookbooks">my chef cookbooks</a></p>
         </div>
         <div class=box data-tags=production>
           <h2>Deployment</h2>
-          <p>I really love <b>Docker</b>, but mostly used <b>chef-solo</b> or custom shell scripts systems for now. I also already used Capistrano.</p>
+          <p>I love building simple and composable things with tools like <b>Docker</b>, <b>Ansible</b> and a few custom scripts .</p>
           <p class=extra-infos><a href="https://github.com/search?q=user%3Ajbbarth+docker">some docker repos</a> - <a href="https://hub.docker.com/u/jbbarth/">hub</a></p>
         </div>
         <div class=box data-tags=production>
           <h2>Monitoring & Logging</h2>
-          <p>I usually use <b>Nagios</b> with Centreon, though I'm learning <b>Sensu</b>. For graphs I love <b>Graphite</b> with Grafana, and I leave my logs in <b>ElasticSearch / Logstash / Kibana</b>.</p>
+          <p>I used <b>Nagios</b> with Centreon, though I'm learning <b>Riemann</b>. For graphs I love <b>Graphite</b> with <b>Grafana</b>, and I leave my logs in <b>ELK</b>.</p>
         </div>
         <div class=box data-tags=production>
           <h2>Application & Databases</h2>
-          <p>I have experience with <b>Nginx, Apache</b>, Tomcat, and <b>various Rails servers</b>. I like <b>Postgresql</b>, though Mysql is OK. I'd love to try Riak in production someday.</p>
+          <p>I have experience with <b>Nginx, Apache</b>, Tomcat, and <b>various Rails servers</b>. I like <b>Postgresql</b> and <b>ElasticSearch</b> too. I'd love to try Riak in production someday.</p>
         </div>
         <div class=box data-tags=production>
           <h2>Internal Tools</h2>
-          <p>I'm really an expert in <b>Redmine</b>, though I already managed SPIP, Dokuwiki, Request Tracker and a lot of useful internal tools.</p>
+          <p>I'm really an expert in <b>Redmine</b>, though I already managed Jekyll, SPIP, Dokuwiki, Request Tracker and a lot of useful internal tools.</p>
           <p class=extra-infos><a href="https://github.com/redmine/redmine/commits/master?author=jbbarth">redmine contribs</a> - <a href=#redmine-plugins data-filter=redmine-plugins>plugins</a></p>
         </div>
         <div class=box data-tags=production>
           <h2>Debugging & Performance</h2>
           <p>I like to track performance issue and debug various problems, using <b>strace, netstat, tcpdump, ...</b> or much high-level tools like <b>Newrelic</b> or <b>Boundary</b>.</p>
+        </div>
+        <div class=box data-tags=webapps>
+          <h2>Simple monitoring system</h2>
+          <p>A simple monitoring system to replace Nagios for a few dozens machines</p>
+          <img src="./screenshots/portfolio-server-check.png" class="img320x110">
+          <p class=extra-infos>made with ruby + ansible + python</p>
+        </div>
+        <div class=box data-tags=webapps>
+          <h2>Costs dashboard</h2>
+          <p>A dashboard to analyze monthly AWS/OVH costs</p>
+          <img src="./screenshots/portfolio-costs.png" class="img320x110">
+          <p class=extra-infos>made with sinatra + reactjs</p>
         </div>
         <div class=box data-tags=webapps>
           <h2>Cartoque</h2>
