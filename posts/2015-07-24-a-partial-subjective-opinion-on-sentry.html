@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - A partial, subjective opinion on Sentry</title>
+    <link href="http://fonts.googleapis.com/css?family=Lobster+Two:700|Open+Sans:400,600,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <div class=sitetitle>
+    <a href="/">jbbarth.com</a>
+  </div>
+  <p>
+    I'm a sysadmin &amp; developer from Paris, France. I love building tools for
+    ops, and I'm an irregular contributor to many open-source projects. More
+    <a href="/portfolio.html">here</a>.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>A partial, subjective opinion on Sentry</h1>
+
+<p>Last week I said on Twitter that I was not very impressed by <a href="https://getsentry.com">Sentry</a> and I'd like to explain it in more details.</p>
+
+<p><blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/titanous">@titanous</a> <a href="https://twitter.com/progrium">@progrium</a> do you have 2 or 3 advantages of Sentry over others? Considering switching off bc not impressed at all, maybe rollbar</p>&mdash; Jean-Baptiste Barth (@jbbarth) <a href="https://twitter.com/jbbarth/status/619926620766404608">July 11, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+
+<p>First things first, this post is by no mean a way to denigrate Sentry developers hard work, and I hope they'll take it as a (hopefully) valuable feedback from some random user. And obviously, this article doesn't reflect the views of <a href="https://www.botify.com/">my current employer</a>, where actually most people range Sentry from &quot;good enough&quot; to &quot;freaking awesome I love it&quot; (though I don't understand the latter ones...).</p>
+
+<p>There are many reasons why a product might not fit your needs. I'm personally very sensitive to 2 of them:</p>
+
+<ul>
+<li><em>the right set of features</em> : that's very subjective for sure, but I'd argue that in identified products like Sentry we can reach a consensus on some common use-cases ; also too many useless features is not a great sign (== lack of focus ; see OpenOffice^WLibreOffice for instance)</li>
+<li><em>the overall user experience</em> : in other words, the execution of this very set of features. Especially are common things are hard to do, hard to find, unintuitive, or badly presented ?</li>
+</ul>
+
+<h2>Error reporting basics</h2>
+
+<p>Sentry is an error-reporting app. It aims at providing developers and operations teams some <em>&quot;insight into the errors that affect your customers&quot;</em>. I identify roughly 3 major use-cases where you'd want to use something like this:</p>
+
+<ul>
+<li>case 1: you want to see the effects of an &quot;event&quot; (usually a freshly-finished deployment or an environmental outage) on your production errors ; which errors are the most frequent, how bad things are, etc.</li>
+<li>case 2: there's no external event but you managed to free up a few hours to tackle technical problems in your codebase, and Sentry can give you insight about the most frequent/problematic errors, or acknowledge that they are fixed</li>
+<li>case 3: you just hit a 500 error (or one of your customer contacting you) and want to identify what happened, which code raised the error, which server, is it a common problem, etc.</li>
+</ul>
+
+<p>Error reporting tools can do much more, but those 3 cases are a good starting point:</p>
+
+<ul>
+<li>aggregated view of errors, with time constraint (&quot;after the last deploy&quot;)</li>
+<li>aggregated view, without much time constraint (&quot;all un-handled errors&quot;)</li>
+<li>non aggregated search + view</li>
+</ul>
+
+<h2>Time selection problem</h2>
+
+<p>A minor but annoying one first. Sentry time-selector looks like this:</p>
+
+<p><img src="/screenshots/sentry_time_selector.png" alt="Sentry Time Selector">
+</p>
+
+<p>By default it starts back at 5 days ago. Meaning that if you want to identify what happened in the last few minutes/hours (case 1 and sometimes 3), you'll have to tweak start date and start hour. And it's no pleasant experience, since the hour doesn't have any kind of helper so you'll have to calculate the right hour in your head, and type it with your keyboard. Not <em>hard</em>, but when you do it 30 times a day, it quickly becomes a pain.</p>
+
+<p>Most modern tools propose a simplified version of this by predefining common time ranges (&quot;last 15 mins&quot;, &quot;last hour&quot;, &quot;last 4 hours&quot;, &quot;last day&quot;, ...).</p>
+
+<h2>Search problem</h2>
+
+<p>I'm an infrastructure guy. When a customer experiences a 500 error, I don't care if it's a JS problem, a Django problem, or one of our backend systems that went wrong. But developers certainly do and they need to stay focused on the area where they have the most impact (in other words, backend developers don't have to be polluted by JS errors and vice-versa).</p>
+
+<p>To achieve visibility and notifications separation, Sentry proposes the concept of &quot;Teams&quot;, and inside teams, &quot;Projects&quot;. That sounds OK at first, but from what I've seen it's not flexible at all, because there's no search option that is cross-team or even cross-project inside the same team.</p>
+
+<p>People like me, my boss, our CTO, or our support team, absolutely need a transversal view so they can at least search things, identify efforts to be made depending on codebases, or simply identify which error a customer complaining on Twitter encountered (case 3).</p>
+
+<p>The &quot;Trends&quot; and &quot;New events&quot; aggregations at team level are nice though, so I guess Sentry folks may be pushing in that direction some day.</p>
+
+<p>Until then, the only reasonable options are: 1/ build your own dashboards (which might now be possible with the API announced 8 months ago), or 2/ stick everyone in the same team/project, but good luck for filtering things efficiently.</p>
+
+<h2>Aggregation problems</h2>
+
+<p>Sentry aggregates your errors so you can see exceptions from the same &quot;kind&quot; bundled with each other. That's cool!</p>
+
+<p>Sometimes it aggregates things badly (in a way or another), but that's certainly not a trivial problem, and I don't have a magical solution for this. In a previous context I included in the app my own error reporting system and the only simple thing I could come up with was generating a hash from a clean version of the exception (without memory addresses or IDs) ; but that's way too basic for sure.</p>
+
+<p>Anyway, my take on this is that if you cannot trust your aggregation system 100%, you should be able to disable it, at least selectively. Why? Because 1/ you don't want to miss important exceptions badly classified under non-important existing ones, and 2/ you don't want to lose data.</p>
+
+<p><em>Lose data?!?</em> Oh, sorry, forgot to talk about that. Sentry applies <a href="https://app.getsentry.com/docs/5/data-sampling/">data sampling</a> to incoming errors so you (or most likely it) doesn't get overwhelmed by a supposedly massive amount of incoming errors.</p>
+
+<p>Come on! I'm a grown up, I can tweak my Postgres DB to store 30 or 40k records thanks. What I can barely afford though, is having a customer saying he encountered an error, and not finding it in my error reporting system (case &quot;3&quot; above).</p>
+
+<p>So, I have 237 errors of one kind, you click on the report, you click on &quot;Older event/sample&quot; but at some point you understand that you're looping over the 3 same exceptions from yesterday, and you've basically lost the ability to retrieve finer grain informations.</p>
+
+<p><em>Actually, I just clicked 5 times on &quot;Older sample&quot; on the SaaS version of Sentry, then 5 or 6 (?) times on &quot;Newer sample&quot; and provoked a 500 error. I think I'm ready to write a &quot;this is normal&quot; as Gary Bernhardt would.</em></p>
+
+<p>To be fair there's one solution to this though: the raven client is pretty smart and it generates an &quot;ID&quot; that you can display on the error page to ease interaction with your customer. But customers don't always include all informations in error reports, and they even don't always contact support, so back to initial problem.</p>
+
+<p>For now we identified errors that need actions and we're inserting the username inside the exception message so Sentry doesn't aggregate them. Yep, that's terrible. We hoped that the rules system would allow us to disable sampling for specific errors, but that was not the case (maybe an idea for later?).</p>
+
+<p>An other option would be to <em>not</em> sample data and store everything, but fix thresholds (either TTL or quantity threshold) to define when data should be removed. Such a retention mechanism would be both more flexible and more reliable in my opinion.</p>
+
+<p>And for errors we don't anticipate (most of them) ? Argh.</p>
+
+<p>Maybe at least basic UI inside a given error could be improved, so the user can actually understand clearly which sample he's on, which one have been dropped, etc. Also there's nearly no information hierarchy on this page, so it's very hard to read (and I often miss informations like comments from my colleagues), but that shouldn't be too hard to improve I guess.</p>
+
+<h2>A conclusion</h2>
+
+<p>To be honest, there are many other things that Sentry might get right. One being that it integrates with many languages and that the protocol seems to be hackable enough to add more integrations. There are also a lot of advanced features that I don't care much of, given that the basics are not OK for me, but still, notifications, acknowledgements, rate limiting, origin security are nice things to have.</p>
+
+<p>Anyway that's not by congratulating about how some sides of a project are good that software improves. I sincerely hope Sentry will improve in the next few months/years, but for now I'm ready to try alternatives or even build my own raven-compliant error reporting tool.</p>
+
+<hr>
+
+<p><em>NB: there's no comment on this blog, but if some Sentry hackers find those criticisms valuable, don't hesitate to ping me back so I can follow the discussion elsewhere, being a GH issue, HN, Reddit, or anywhere... Again, happy to help if I can!</em></p>
+
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '4e3bca6b613f5d70ee000001');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+    </script>
+  </body>
+</html>
