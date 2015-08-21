@@ -137,12 +137,12 @@ default if not specified</em>, disable all the loggers previously configured? Of
 course it's useful if you specify a new dict merged from a previous one, or if
 you know you want to clean state before logging differently. But wipe
 everything, silently, by default? I can't imagine how it could be considered
-good practice, in the Ops world this is called silent data loss, and you most
-likely won't like that.</p>
+good practice. In the Ops world this is called silent data loss, and you'll
+most likely hate that.</p>
 
 <p>So back to our problem, I only had to find where the <code>dictConfig()</code> method was
 called and quickly found a place in our code where we submitted a new config
-dict without the much needed <code>'disable_existing_loggers': False</code>.</p>
+dict without the much needed <code>'disable_existing_loggers': False</code>. Done.</p>
 
 <h2>When you draw conclusions</h2>
 
