@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jbbarth.com - Debugging a Python logging problem</title>
+    <link href="http://fonts.googleapis.com/css?family=Lobster+Two:700|Open+Sans:400,600,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
+    <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
+    <meta charset="utf-8">
+    <meta name="generator" content="nanoc 3.2.3">
+  </head>
+  <body>
+    <div id="container" class="container_16">
+      <div class="grid_4">
+        <div id="sidebar">
+  <div class=sitetitle>
+    <a href="/">jbbarth.com</a>
+  </div>
+  <p>
+    I'm a sysadmin &amp; developer from Paris, France. I love building tools for
+    ops, and I'm an irregular contributor to many open-source projects. More
+    <a href="/portfolio.html">here</a>.
+  </p>
+</div>
+
+      </div>
+      <div class="grid_12">
+        <div id="content">
+          <h1>Debugging a Python logging problem</h1>
+
+<p>This post is a follow-up on an enigmatic tweet I wrote this morning:</p>
+
+<p><blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">Python, that
+language where your prod systems don’t log anything for 2 weeks because you
+forgot a key in a dict <a
+href="https://twitter.com/hashtag/LolExplicitVsImplicit?src=hash">#LolExplicitVsImplicit</a></p>&mdash;
+Jean-Baptiste Barth (@jbbarth) <a
+href="https://twitter.com/jbbarth/status/634606984784949248">August 21,
+2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+
+<h2>When you first try to debug with care</h2>
+
+<p>Here at <a href="https://www.botify.com/">Botify</a> we use Python extensively, from our
+webapp to some of our backend services. Python is a great language when it
+comes to analyzing a lot of data while still keeping a lot of flexibility and
+agility in the development process.</p>
+
+<p>We had a problem though for 2 weeks or so: some of our production systems
+wouldn't log anymore. It started with our main web application, and yesterday I
+found that if I upgraded one backend service, it would do the same. At the time
+I didn't understand that both were related though, because I previously had my
+fair share of hours debugging why Django didn't log some messages, so I assumed
+that this was a new Django weirdness as usual (I was wrong). Also we had pretty
+big infrastructure changes and codebase moves in the last few weeks, so it was
+easy to assume that &quot;logging doesn't work anymore because we now host apps in a
+different way&quot; (I was wrong too). The way we host apps had nothing to do with
+the problem in the end, but with those wrong assumptions, I implicitly decided
+that the problem only happened on servers and I wouldn't be able to debug it
+locally, with say, some <code>print</code> or <code>pdb.set_trace()</code> calls.</p>
+
+<p>One very nice thing when you deal with a dynamic language that lets you down is
+you can patch most of the stdlib and easily have some insights about what
+happens in core functions, such as the Python <code>logging</code> module. Long story
+short, I first tried to add some <code>print</code> calls to see if I would get things
+back in the logs, for instance in Python <code>Logger.log()</code> method, but didn't
+succeed. We have a pile of other softwares that deal with STDOUT/STDERR so I
+needed to bypass them to be sure.</p>
+
+<p>Next thing I tried was a stanadlone line that writes to a debug file. It's self
+contained, so what could go wrong? In Ruby I use the shell-out short syntax
+like this:</p>
+
+<pre><code>%x(echo "DEBUG: #{some_var_I_want_to_debug}" >> /tmp/debug.log)
+</code></pre>
+
+<p>I also use <code>File.open(...){|f|f.write(foo)}</code> or a real debugger at times, but
+if a system is under load, the remote debugger is not an option, and the
+beautiful thing with <code>%x(...)</code> is that if you get the syntax right and the
+first argument can be called, there are very few risk you break the whole
+system in production: it won't pop up an exception because the file is not
+writable or the disk is full for instance.</p>
+
+<p>Here's the equivalent in Python, though a little less concise:</p>
+
+<pre><code>import subprocess
+subprocess.check_output(
+    'echo "DEBUG: {} >> /tmp/debug.log"'.format(
+        some_var_I_want_to_debug, shell=True))
+</code></pre>
+
+<p><em>NB: don't forget <code>shell=True</code>, or it will bite you.</em></p>
+
+<p>Doing this kinda works, and you're not subject to Python's buffering stdout
+(which caused me some difficulties sometimes), but it's a bit heavy to
+transport. Someone may want to wrap it in a helper method, but you probably
+won't be able to bypass the <code>import</code> call, and you very much lack context
+(like, the stack trace at this point).</p>
+
+<h2>When you give up and decide to use a bazooka</h2>
+
+<p>With the previous method I <em>could</em> have find the problem (basically transport
+the debug line from file to file, trying to find <em>where</em> the log was
+discarded). A bit cumbersome, but the most annoying thing was that I still had
+buffering issues and I couldn't convince myself that I was seeing all the debug
+messages I should. When you're debugging for 2 hours, trust issues pop
+everywhere. :-/</p>
+
+<p>I nearly reached my Python skills limit in this area, so I needed a bigger
+hammer. The following is absolutely <strong>not</strong> recommended in production of
+course. My whole story happened on a staging system at night, but the previous
+parts <em>could</em> be tried on a production system if you're desperate. The next one
+cannot. So, I leaved my good-developer mindset appart, and started debugging
+things with exceptions:</p>
+
+<pre><code>raise Exception("DEBUG JB: {}".format(some_var_I_want_to_debug))
+</code></pre>
+
+<p>No glory, I know, but exceptions pop-up in near real-time in our error handling
+tool, and I get a lot of context for free (the offending lines, some global
+context of the Django request, etc.).</p>
+
+<p>I quickly reached the point where I saw that the logger I wanted had a
+<code>self.disabled</code> property set to <code>True</code>. Reading the Python 2.7 stdlib code, it
+became apparent that this parameter is usually either <code>0</code> or <code>True</code>, and it's
+set to <code>True</code> if you wipe loggers because you passed the
+<code>disable_existing_loggers</code> option in your configuration dict.</p>
+
+<p>Then I saw this in the stdlib:</p>
+
+<pre><code>disable_existing = config.pop('disable_existing_loggers', True)
+</code></pre>
+
+<p>With of course nothing logged around.  Why? Why on earth would you, <em>by
+default if not specified</em>, disable all the loggers previously configured? Of
+course it's useful if you specify a new dict merged from a previous one, or if
+you know you want to clean state before logging differently. But wipe
+everything, silently, by default? I can't imagine how it could be considered
+good practive, in the Ops world this is called silent data loss, and you most
+likely won't like that.</p>
+
+<p>So back to our problem, I only had to find where the <code>dictConfig()</code> method was
+called and quickly found a place in our code where we submitted a new config
+dict without the much needed <code>'disable_existing_loggers': False</code>.</p>
+
+<h2>When you draw conclusions</h2>
+
+<p>A little wrap up:</p>
+
+<ul>
+<li>I was wrong all along with my initial assumptions, so I had extreme
+difficulties to debug this while I could have simply used <code>print</code> debugging
+or an advanced local debugger like <code>IPython</code> ;</li>
+<li>too bad that Python itself doesn't provide a &quot;super-mode&quot; to debug logging
+itself, it's very very complicated, and a full tracer would be good but I
+didn't find one (think <code>rbtrace</code> in Ruby) ;</li>
+<li>it's typically the kind of problems you don't usually unit test, because &quot;hey
+it's not code it's just configuration!&quot; ; bad habit, will try to remediate</li>
+<li>this is not &quot;explicit&quot; at all: that could be better in the stdlib, and I will
+try to see if it's better in Python 3.x ; if not, I hope the contribution
+process is as smooth as Crystal's ;-)</li>
+</ul>
+
+<p>Let's make it better!</p>
+
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '4e3bca6b613f5d70ee000001');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+    </script>
+  </body>
+</html>
