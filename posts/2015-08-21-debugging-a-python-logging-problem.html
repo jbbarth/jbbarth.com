@@ -104,7 +104,7 @@ won't be able to bypass the <code>import</code> call, and you very much lack con
 the debug line from file to file, trying to find <em>where</em> the log was
 discarded). A bit cumbersome, but the most annoying thing was that I still had
 buffering issues and I couldn't convince myself that I was seeing all the debug
-messages I should. When you're debugging for 2 hours, trust issues pop
+messages I should. When you're debugging for 2 hours, trust issues pop up
 everywhere. :-/</p>
 
 <p>I nearly reached my Python skills limit in this area, so I needed a bigger
@@ -132,12 +132,12 @@ set to <code>True</code> if you wipe loggers because you passed the
 <pre><code>disable_existing = config.pop('disable_existing_loggers', True)
 </code></pre>
 
-<p>With of course nothing logged around.  Why? Why on earth would you, <em>by
+<p>With of course nothing logged around.  Why? Why on Earth would you, <em>by
 default if not specified</em>, disable all the loggers previously configured? Of
 course it's useful if you specify a new dict merged from a previous one, or if
 you know you want to clean state before logging differently. But wipe
 everything, silently, by default? I can't imagine how it could be considered
-good practive, in the Ops world this is called silent data loss, and you most
+good practice, in the Ops world this is called silent data loss, and you most
 likely won't like that.</p>
 
 <p>So back to our problem, I only had to find where the <code>dictConfig()</code> method was
