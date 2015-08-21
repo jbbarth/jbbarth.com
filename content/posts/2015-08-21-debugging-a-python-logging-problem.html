@@ -1,0 +1,146 @@
+---
+title: Debugging a Python logging problem
+---
+
+Debugging a Python logging problem
+==================================
+
+This post is a follow-up on an enigmatic tweet I wrote this morning:
+
+
+<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">Python, that
+language where your prod systems don’t log anything for 2 weeks because you
+forgot a key in a dict <a
+href="https://twitter.com/hashtag/LolExplicitVsImplicit?src=hash">#LolExplicitVsImplicit</a></p>&mdash;
+Jean-Baptiste Barth (@jbbarth) <a
+href="https://twitter.com/jbbarth/status/634606984784949248">August 21,
+2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+When you first try to debug with care
+--------------------------------------
+
+Here at [Botify](https://www.botify.com/) we use Python extensively, from our
+webapp to some of our backend services. Python is a great language when it
+comes to analyzing a lot of data while still keeping a lot of flexibility and
+agility in the development process.
+
+We had a problem though for 2 weeks or so: some of our production systems
+wouldn't log anymore. It started with our main web application, and yesterday I
+found that if I upgraded one backend service, it would do the same. At the time
+I didn't understand that both were related though, because I previously had my
+fair share of hours debugging why Django didn't log some messages, so I assumed
+that this was a new Django weirdness as usual (I was wrong). Also we had pretty
+big infrastructure changes and codebase moves in the last few weeks, so it was
+easy to assume that "logging doesn't work anymore because we now host apps in a
+different way" (I was wrong too). The way we host apps had nothing to do with
+the problem in the end, but with those wrong assumptions, I implicitly decided
+that the problem only happened on servers and I wouldn't be able to debug it
+locally, with say, some `print` or `pdb.set_trace()` calls.
+
+One very nice thing when you deal with a dynamic language that lets you down is
+you can patch most of the stdlib and easily have some insights about what
+happens in core functions, such as the Python `logging` module. Long story
+short, I first tried to add some `print` calls to see if I would get things
+back in the logs, for instance in Python `Logger.log()` method, but didn't
+succeed. We have a pile of other softwares that deal with STDOUT/STDERR so I
+needed to bypass them to be sure.
+
+Next thing I tried was a stanadlone line that writes to a debug file. It's self
+contained, so what could go wrong? In Ruby I use the shell-out short syntax
+like this:
+
+<pre><code>%x(echo "DEBUG: #{some_var_I_want_to_debug}" >> /tmp/debug.log)
+</code></pre>
+
+I also use `File.open(...){|f|f.write(foo)}` or a real debugger at times, but
+if a system is under load, the remote debugger is not an option, and the
+beautiful thing with `%x(...)` is that if you get the syntax right and the
+first argument can be called, there are very few risk you break the whole
+system in production: it won't pop up an exception because the file is not
+writable or the disk is full for instance.
+
+Here's the equivalent in Python, though a little less concise:
+
+<pre><code>import subprocess
+subprocess.check_output(
+    'echo "DEBUG: {} >> /tmp/debug.log"'.format(
+        some_var_I_want_to_debug, shell=True))
+</code></pre>
+
+*NB: don't forget `shell=True`, or it will bite you.*
+
+Doing this kinda works, and you're not subject to Python's buffering stdout
+(which caused me some difficulties sometimes), but it's a bit heavy to
+transport. Someone may want to wrap it in a helper method, but you probably
+won't be able to bypass the `import` call, and you very much lack context
+(like, the stack trace at this point).
+
+
+When you give up and decide to use a bazooka
+--------------------------------------------
+
+With the previous method I *could* have find the problem (basically transport
+the debug line from file to file, trying to find *where* the log was
+discarded). A bit cumbersome, but the most annoying thing was that I still had
+buffering issues and I couldn't convince myself that I was seeing all the debug
+messages I should. When you're debugging for 2 hours, trust issues pop
+everywhere. :-/
+
+I nearly reached my Python skills limit in this area, so I needed a bigger
+hammer. The following is absolutely **not** recommended in production of
+course. My whole story happened on a staging system at night, but the previous
+parts *could* be tried on a production system if you're desperate. The next one
+cannot. So, I leaved my good-developer mindset appart, and started debugging
+things with exceptions:
+
+<pre><code>raise Exception("DEBUG JB: {}".format(some_var_I_want_to_debug))
+</code></pre>
+
+No glory, I know, but exceptions pop-up in near real-time in our error handling
+tool, and I get a lot of context for free (the offending lines, some global
+context of the Django request, etc.).
+
+I quickly reached the point where I saw that the logger I wanted had a
+`self.disabled` property set to `True`. Reading the Python 2.7 stdlib code, it
+became apparent that this parameter is usually either `0` or `True`, and it's
+set to `True` if you wipe loggers because you passed the
+`disable_existing_loggers` option in your configuration dict.
+
+Then I saw this in the stdlib:
+
+<pre><code>disable_existing = config.pop('disable_existing_loggers', True)
+</code></pre>
+
+With of course nothing logged around.  Why? Why on earth would you, *by
+default if not specified*, disable all the loggers previously configured? Of
+course it's useful if you specify a new dict merged from a previous one, or if
+you know you want to clean state before logging differently. But wipe
+everything, silently, by default? I can't imagine how it could be considered
+good practive, in the Ops world this is called silent data loss, and you most
+likely won't like that.
+
+So back to our problem, I only had to find where the `dictConfig()` method was
+called and quickly found a place in our code where we submitted a new config
+dict without the much needed `'disable_existing_loggers': False`.
+
+
+When you draw conclusions
+-------------------------
+
+A little wrap up:
+
+- I was wrong all along with my initial assumptions, so I had extreme
+  difficulties to debug this while I could have simply used `print` debugging
+  or an advanced local debugger like `IPython` ;
+- too bad that Python itself doesn't provide a "super-mode" to debug logging
+  itself, it's very very complicated, and a full tracer would be good but I
+  didn't find one (think `rbtrace` in Ruby) ;
+- it's typically the kind of problems you don't usually unit test, because "hey
+  it's not code it's just configuration!" ; bad habit, will try to remediate
+- this is not "explicit" at all: that could be better in the stdlib, and I will
+  try to see if it's better in Python 3.x ; if not, I hope the contribution
+  process is as smooth as Crystal's ;-)
+
+Let's make it better!
