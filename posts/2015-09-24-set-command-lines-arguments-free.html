@@ -148,7 +148,7 @@ and more expressive than before:</p>
 
 <p>Compared with something like:</p>
 
-<pre><code>% badlogtailer \
+<pre><code>$ badlogtailer \
 --hosts $(echo $(badec2list --fields ip --filters staging,crawler|sed &quot;s/^ip=//&quot;) |sed &quot;s/ /,/&quot;) \
 --files &quot;/var/log/syslog,/var/log/botify/*.log&quot;
 </code></pre>
