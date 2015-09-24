@@ -86,8 +86,8 @@ here at Botify.
 
     # (all instances)
     $ ec2list
-    name=i-0d7b56a1.foo.com type=m3.medium region=eu-central-1 az=eu-central-1a ip=47.51.157.251 Env=staging Role=web
-    name=i-7086fec2.foo.com type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
+    name=i-0d7b56a1 type=m3.medium region=eu-central-1 az=eu-central-1a ip=47.51.157.251 Env=staging Role=web
+    name=i-7086fec2 type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
     ...
 
 Parameters can be used to filter things after retrieval (like a `grep -F` on
@@ -95,7 +95,7 @@ values):
 
     # (only crawler instances, in production)
     $ ec2list production crawler
-    name=i-7086fec2.foo.com type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
+    name=i-7086fec2 type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
 
 Parameters ending with a "=" are treated as "extractors". If 0 extractor,
 displays everything. If 1 extractor, displays only the values for the given
@@ -104,10 +104,10 @@ original format, but displays only the requested columns:
 
     # (all crawler instances names, in production)
     $ ec2list name= production crawler
-    i-7086fec2.foo.com
+    i-7086fec2
     ...
     $ ec2list name= type= production crawler
-    name=i-7086fec2.foo.com type=m3.xlarge
+    name=i-7086fec2 type=m3.xlarge
     ...
 
 OK I could have done this with some `cut`, `grep`, `sed`, ... But I'm
