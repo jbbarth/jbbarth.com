@@ -1,6 +1,6 @@
 /* general styles */
 html { overflow-y:scroll; }
-body { font-family: 'Open Sans', sans-serif; background:#fdfdfd; }
+body { font: 300 16px/1.6em helvetica, 'Open Sans', sans-serif; background:#fdfdfd; }
 a { text-decoration: none; }
 a:link, a:visited { color: #e51c23; }
 a:hover { color: #e51c23; text-decoration:underline; }
@@ -30,11 +30,8 @@ html, body {
 #content {
   overflow:auto;
   min-height:200px;
-  margin:30px 9px 30px 0;
-  padding-left:35px;
-  padding-right:20px;
-  padding-bottom:10px;
-  border-left:1px solid #eee;
+  margin:30px 0 30px 0;
+  padding:12px 0 10px 20px;
 }
 
 /* sidebar */
@@ -51,7 +48,7 @@ html, body {
   color:#e51c23;
 }
 .sitetitle {
-  margin:0 auto 15px;
+  margin:0 auto 20px;
   text-align: center;
   font-family: 'Lobster Two', serif;
   font-size: 42px;
@@ -67,7 +64,7 @@ html, body {
 }
 h1 {
   margin:4px 4px 20px;
-  font-size:28px;
+  font-size:32px;
   color:#e51c23;
 }
 h2 {
@@ -94,8 +91,8 @@ h2.last-posts {
 }
 #content pre {
   border: 1px solid #dadada;
-  margin: 10px 10px 10px 15px;
-  padding: 2px 4px;
+  margin: 10px 4px 10px 4px;
+  padding: 8px 12px;
   width:auto;
   overflow-x: auto;
   overflow-y: hidden;
