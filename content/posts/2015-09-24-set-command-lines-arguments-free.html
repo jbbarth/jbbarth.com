@@ -123,7 +123,7 @@ and more expressive than before:
 
 Compared with something like:
 
-    % badlogtailer \
+    $ badlogtailer \
     --hosts $(echo $(badec2list --fields ip --filters staging,crawler|sed "s/^ip=//") |sed "s/ /,/") \
     --files "/var/log/syslog,/var/log/botify/*.log"
 
