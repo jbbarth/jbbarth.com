@@ -11,7 +11,7 @@
     #head > h1 { font-family: Arial, Helvetica, sans-serif; font-size: 181%; margin:0 0 10px; }
     .block { padding:0; margin-top: 1.5em; }
     .block > table { margin:0; }
-    .block td { text-align:left; margin: 0; padding:0 5px 5px 20px; }
+    .block td { text-align:left; vertical-align:top; margin: 0; padding:0 5px 5px 20px; }
     .block td.cat { width:120px; font-weight:bold; color:#909090; font-style:italic; text-align:right; vertical-align:top; padding-right:10px; }
     h2 { color:#283593; display:block; border-bottom:1px solid #283593; font-weight:bold; font-size:120%; padding-bottom: 0; }
     p { margin:0; }
@@ -64,18 +64,31 @@
       <table>
         <tbody>
           <tr>
-            <td class="cat">since June&nbsp;2013</td>
+            <td class="cat">since Dec 2014</td>
+            <td>
+              <p class=job>Infrastructure Engineer</p>
+              <p class="place">Botify, Paris (75)</p>
+              <ul>
+                <li>hosting of 2 web applications specialized in SEO optimizations</li>
+                <li>platform of ~100 servers on OVH, Amazon Web Services (EC2, S3, SWF), Google Cloud</li>
+                <li>lead for infrastructure evolutions and production management, including incident management and on-call operations</li>
+                <li>support of development processes: documentation, Slack bot, continuous integration, deployments, ...</li>
+                <li>participation to product development: frontend (Django), backend (SWF, simpleflow)</li>
+                <li>built tooling around the platform: costs reporting, monitoring</li>
+              </ul>
+             </td>
+          </tr>
+          <tr>
+            <td class="cat">June&nbsp;2013<br>to Nov&nbsp;2014</td>
             <td>
               <p class=job>Deputy group manager, Production</p>
               <p class="place">Ministry of Ecology and Sustainable Development - Paris-La Défense (92)</p>
               <ul>
-                <li>hosting of ~200 web and BI applications on a platform of 800 servers, spread on 2 datacenters in Paris and Bordeaux, especially: national mailing platform (90k users, cyrus/postfix/openldap), sytadin.fr, bison-fute.fr, etc.</li>
+                <li>hosting of ~200 web and BI applications on a platform of 800 servers, spread on 2 datacenters in Paris and Bordeaux</li>
+                <li>management of a 19 sysadmins team ; on-call rotations</li>
                 <li>open-source context: Debian, RedHat, Apache, Tomcat, PostgreSQL, Puppet, Rails, Bind, IPVS, Nagios, Logstash, ElasticSearch, Kibana, Graphite, Docker, etc.</li>
                 <li>lead for infrastructure evolutions and convergence projects</li>
-                <li>management of a 19 sysadmins team</li>
-                <li>level 3 support for the team ; technology watch ; expertise ; troubleshooting</li>
-                <li>on-call rotations for the national mailing platform</li>
-                <li>interministerial study on cloud components (especially Openstack)</li>
+                <li>interministerial study on cloud components (Openstack)</li>
               </ul>
              </td>
           </tr>
@@ -85,10 +98,8 @@
               <p class=job>Deputy team lead, datacenter of the General Secretariat</p>
               <p class="place">Ministry of Ecology and Sustainable Development - Paris-La Défense (92)</p>
               <ul>
-                <li>hosting of ~100 web and BI applications on a platform of 350 servers</li>
                 <li>open-source context: Debian, RedHat, Apache, Tomcat, PostgreSQL, Nagios, Puppet, etc.</li>
                 <li>implementation and adaptation of free softwares: Redmine + <a href="https://github.com/search?o=desc&q=user%3Ajbbarth+redmine&s=updated&type=Repositories">plugins</a>, <a href="http://cartoque.org/">Cartoque</a></li>
-                <li>shared management of a 11 sysadmins and 6 operators team</li>
                 <li>organizational and technical evolutions inside the datacenter</li>
                 <li>level 3 support for the team ; technology watch ; expertise ; troubleshooting</li>
               </ul>
@@ -102,20 +113,19 @@
               <ul>
                 <li>administration of ~40 applications in a RedHat environment</li>
                 <li>day-to-day management of 3 people</li>
-                <li>conception and deployment of architecture evolutions, especially geographic information systems (ESRI, PostgreSQL/PostGIS/MapServer)</li>
-                <li>reworking around the monitoring platform (Nagios), configuration management (Puppet), versionning (Git)</li>
-                <li>deployment of a ticketting and documentation system (Redmine) and implementation of a basic CMDB on top of it</li>
+                <li>conception and deployment of architecture evolutions</li>
+                <li>tools modernization: Nagios, Puppet, Git, Redmine, home-made CMDB</li>
               </ul>
             </td>
           </tr>
           <tr>
-            <td class="cat">2007 (3&nbsp;months)</td>
+            <td class="cat">2007<br>(3&nbsp;months)</td>
             <td>
               Post-graduate dissertation: overview of rich client technologies (XUL, Flex, OpenLaszlo)
             </td>
           </tr>
           <tr>
-            <td class="cat">2006 (5&nbsp;months)</td>
+            <td class="cat">2006<br>(5&nbsp;months)</td>
             <td>
               Internship at CETE (Lyon): new website for project Cassiopee (accounting at ministry of ecology)
             </td>
@@ -134,7 +144,7 @@
               <ul>
                 <li>Linux/Unix administration: <strong>Debian / Ubuntu</strong>, RHEL, basic concepts under AIX, Solaris</li>
                 <li>System: <strong>OpenSSH, Docker</strong>, traditional tools</li>
-                <li>Configuration management: <strong>Chef</strong>, Puppet</li>
+                <li>Configuration management: <strong>Ansible</strong>, <strong>Chef</strong>, Puppet</li>
                 <li>Versioning: <strong>Git</strong>, Subversion</li>
                 <li>Web and application servers: <strong>Apache, Nginx, Passenger</strong>, Tomcat</li>
                 <li>Monitoring/logs: <strong>Nagios, Graphite, Logstash/ELK</strong>, Munin, Centreon</li>
@@ -145,11 +155,11 @@
             <td class="cat">Development</td>
             <td>
               <ul>
-                <li>Open-source contributions, mainly on <strong>Redmine</strong></li>
-                <li>Development on <strong>Ruby on Rails</strong>, Sinatra, jQuery, basic concepts of Emberjs</li>
-                <li>Languages: <strong>Ruby</strong>, Perl, shell (bash,zsh), basic concepts of Java, PHP, Go, Clojure</li>
-                <li>SQL databases: <strong>PostgreSQL, MySQL</strong>, SQLite, basic concepts of Oracle</li>
-                <li>NoSQL databases: <strong>MongoDB</strong>, Riak, RiakCS, Redis</li>
+                <li>Open-source contributions, mostly on <strong>Redmine</strong></li>
+                <li>Development on <strong>Ruby on Rails</strong>, Sinatra, Django, jQuery, basic concepts of Emberjs, ReactJS</li>
+                <li>Languages: <strong>Ruby</strong>, <strong>Python</strong>, Go, Perl, shell (bash,zsh), basic concepts of Java, PHP, Clojure</li>
+                <li>SQL databases: <strong>PostgreSQL</strong>, <strong>MySQL</strong>, SQLite, basic concepts of Oracle</li>
+                <li>NoSQL databases: <strong>ElasticSearch</strong>, MongoDB, Riak, RiakCS, Redis</li>
               </ul>
             </td>
           </tr>
@@ -158,7 +168,7 @@
             <td>
               <ul>
                 <li>Basic skills on networks: CISCO CCNA1 (no certification)</li>
-                <li>Daily administration of HP switches, MacData/Brocade FC switches, Checkpoint firewalls</li>
+                <li>Daily administration of HP switches, MacData/Brocade FC switches, Checkpoint/Juniper firewalls</li>
               </ul>
             </td>
           </tr>
@@ -190,8 +200,8 @@
             <td class="cat">2009</td>
             <td>
               <ul>
-                <li>Training &amp; certification <strong>RedHat Certified Engineer</strong> RHCE 805009621242785 (outdated)</li>
-                <li>Training &amp; certification <strong>RedHat Certified Technician</strong> RHCT 605009165926776 (outdated)</li>
+                <li>Training &amp; certification <strong>RedHat Certified Engineer</strong> RHCE 805009621242785 (RHEL5, outdated)</li>
+                <li>Training &amp; certification <strong>RedHat Certified Technician</strong> RHCT 605009165926776 (RHEL5, outdated)</li>
               </ul>
             </td>
           </tr>
@@ -227,8 +237,8 @@
           <tr>
             <td class="cat">Sports</td>
             <td>
-              Trial mountain biking for 16 years: competition, demonstrations, training, at Trollsports Trial club (Lyon)<br>
-              Roller ; learning monocycle
+              Trial mountain biking for 17 years: competition, demonstrations, training, at Trollsports Trial club (Lyon)<br>
+              Roller ; learning monocycle (but it's hard!)
             </td>
           </tr>
           <tr>
