@@ -91,7 +91,7 @@ to outsmart you or have weird conventions are not OK either.</li>
 Server names and absolute paths are easy to detect reliably, so the tool
 accepts arguments in any order, and in any number, as long as there's at least
 one remote server and one file among them. I don't have to remember any weird
-options, and I can use expansions or globbing directly (though I need to quote
+option, and I can use expansions or globbing directly (though I need to quote
 globs if I want them to be interpreted on the remote server):</p>
 
 <pre><code>$ logtailer host1.foo.com host2.foo.com /var/log/syslog
@@ -101,8 +101,8 @@ $ logtailer host{1,2,3,4}.foo.com /var/log/syslog &quot;/var/log/**/*.log&quot;
 
 <p>The second example is a private script called <strong>ec2list</strong> that saves me dozens
 of clicks a day in the AWS EC2 console. This script lists all our EC2 instances
-(== virtual machines) and display a number fo basic properties like their
-public IP, region, and some tags values that follows our own conventions
+(== virtual machines) and displays a number fo basic properties like their
+public IP, region, and some tag values that follow our own conventions
 here at Botify.</p>
 
 <pre><code># (all instances)
@@ -140,7 +140,7 @@ who will read a script or a documentation that uses this. Also I think I'll
 stop here with <code>ec2list</code>, if I need more complex operations (typically some
 &quot;AND&quot; or &quot;OR&quot; in filters), better use the standard tooling after a pipe.</p>
 
-<p>Coupling the two makes tailing logs for instance an order of magniture easier
+<p>Coupling the two makes tailing logs for instance an order of magnitude easier
 and more expressive than before:</p>
 
 <pre><code>$ logtailer $(ec2list ip= staging crawler) /var/log/syslog &quot;/var/log/botify/*.log&quot;
@@ -164,7 +164,7 @@ something anyway.</p>
 standardizing generic commands used once in a while is a very good thing for the
 UNIX/Linux users community as a whole. But little tools you use 20+ times a day
 don't have to follow those rules, they have to be flexible and follow your needs
-so you maximize both productivity and hapiness.</p>
+so you maximize both productivity and happiness.</p>
 
 <p>Now go set some command-line arguments free!</p>
 
