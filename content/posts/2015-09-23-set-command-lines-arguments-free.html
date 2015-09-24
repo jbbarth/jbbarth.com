@@ -1,0 +1,145 @@
+---
+title: Set command-line arguments free!
+---
+
+Set command-line arguments free!
+================================
+
+
+_This is a little manifesto for setting command-line arguments free. They are
+hostages of rigorist minds for 3 decades, and now it has to stop._
+
+
+When writing command-line tools, there seems to be a cosmic convergence towards
+this model:
+
+    $ command subcommand(?) -abc -d --long-opt foo bar baz
+
+This is OK, and it certainly saves some brain power when it comes to
+manipulating hundreds of different commands every day. Older tools, such as
+`find`, even look suspicious for not comforming to that model. Better, most
+programming languages have tools to handle that easily, more or less.
+
+
+What's wrong with that?
+-----------------------
+
+I certainly won't argue that conventions are not a good thing, they mostly are,
+and I could elaborate on this another day. By the way if you want to learn some
+basics about UNIX conventions and velociraptors, I strongly recommend watching
+this [excellent talk](https://www.youtube.com/watch?v=Qucn0QuXFhc) that George
+Brocklehurst gave at dotRB 2013, he exposes some fundamentals really well, and
+it's funny.
+
+But this form of passing arguments is certainly not for all kind of programs,
+and at least _sometimes_, I'd say that a much more free-form of arguments is
+liberating. Beyond this philosophical and weak aergument, this form of passing
+arguments in day-to-day operations has a number of practical drawbacks, where a
+bit more intelligence built inside your tools may boost your productivity:
+
+- **cognitive overhead**: you have to memorize option names and positions of
+  arguments ; and some languages/tools are stricter than others (for instance,
+  some tools don't accept flags after positional arguments, like Docker ; some
+  need an "=" sign between long options and associated values so that it's not
+  ambiguous ; some arguments can be repeated, others not ; etc.)
+- **composability with other shell features**: you may find yourself in a
+  situation where you'd like to use a subshell, or shell expansion (`a{1,2,3}`)
+  or globbing (`files*.txt`) ; the natural separator for these operations is a
+  space character, and it's incredibly cumbersome to always have some sed or
+  awk or perl or ruby (pick your own poison) everywhere to just accomodate this
+- **a little more intelligence**: I can't count the number of times I heard a
+  sysadmin complain about `scp` copying to a file locally because he forgot the
+  `:` character the first time ; basically *nobody* uses `scp` to copy from
+  local to local, and the tool should just figure it out when you're actually
+  trying to say "copy this file to foo.bar.com" (which is obviously a remote
+  host) ; and for serious scripting (?), it could have a non-human mode ; or
+  maybe just display a warning if things are suspicious?
+- **a little less intelligence**: on the other hand, people complain also a lot
+  about `rsync` and its weird conventions for copying folders inside folders,
+  or maybe not, or maybe just if there's a `/` at the end, or maybe just the
+  first time and the next time it will do something else, etc. Tools that try
+  to outsmart you or have weird conventions are not OK either.
+
+
+A tale of 2 beautiful programs
+------------------------------
+
+I experimented with that recently for two programs.
+
+The first is **logtailer**, a multi-hosts "tail -f" available [here](https://github.com/botify-labs/logtailer).
+Server names and absolute paths are easy to detect reliably, so the tool
+accepts arguments in any order, and in any number, as long as there's at least
+one remote server and one file among them. I don't have to remember any weird
+options, and I can use expansions or globbing directly (though I need to quote
+globs if I want them to be interpreted on the remote server):
+
+
+    $ logtailer host1.foo.com host2.foo.com /var/log/syslog
+    $ logtailer /var/log/syslog host1.foo.com /var/log/foo.log
+    $ logtailer host{1,2,3,4}.foo.com /var/log/syslog "/var/log/**/*.log"
+
+The second example is a private script called **ec2list** that saves me dozens
+of clicks a day in the AWS EC2 console. This script lists all our EC2 instances
+(== virtual machines) and display a number fo basic properties like their
+public IP, region, and some tags values that follows our own conventions
+here at Botify.
+
+    # (all instances)
+    $ ec2list
+    name=i-0d7b56a1.foo.com type=m3.medium region=eu-central-1 az=eu-central-1a ip=47.51.157.251 Env=staging Role=web
+    name=i-7086fec2.foo.com type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
+    ...
+
+Parameters can be used to filter things after retrieval (like a `grep -F` on
+values):
+
+    # (only crawler instances, in production)
+    $ ec2list production crawler
+    name=i-7086fec2.foo.com type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
+
+Parameters ending with a "=" are treated as "extractors". If 0 extractor,
+displays everything. If 1 extractor, displays only the values for the given
+keys (great for further shell integrations!). If 2+ extractors, it retains the
+original format, but displays only the requested columns:
+
+    # (all crawler instances names, in production)
+    $ ec2list name= production crawler
+    i-7086fec2.foo.com
+    ...
+    $ ec2list name= type= production crawler
+    name=i-7086fec2.foo.com type=m3.xlarge
+    ...
+
+OK I could have done this with some `cut`, `grep`, `sed`, ... But I'm
+discussing UX here: both for writing, and maybe even some day for other people
+who will read a script or a documentation that uses this. Also I think I'll
+stop here with `ec2list`, if I need more complex operations (typically some
+"AND" or "OR" in filters), better use the standard tooling after a pipe.
+
+Coupling the two makes tailing logs for instance an order of magniture easier
+and more expressive than before:
+
+    $ logtailer $(ec2list ip= staging crawler) /var/log/syslog "/var/log/botify/*.log"
+
+Compared with something like:
+
+    % badlogtailer \
+    --hosts $(echo $(badec2list --fields ip --filters staging,crawler|sed "s/^ip=//") |sed "s/ /,/") \
+    --files "/var/log/syslog,/var/log/botify/*.log"
+
+_(the latest example is exagerated, it could be simpler with some positional arguments, but you get the idea)_
+
+
+Conclusion
+----------
+
+This is not a *revolution*, and other tools certainly already do that. But it's
+something anyway.
+
+Overall like many things in engineering, it's a matter of tradeoffs:
+standardizing generic commands used once in a while is a very good thing for the
+UNIX/Linux users community as a whole. But little tools you use 20+ times a day
+don't have to follow those rules, they have to be flexible and follow your needs
+so you maximize both productivity and hapiness.
+
+Now go set some command-line arguments free!
