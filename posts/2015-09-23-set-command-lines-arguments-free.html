@@ -107,8 +107,8 @@ here at Botify.</p>
 
 <pre><code># (all instances)
 $ ec2list
-name=i-0d7b56a1.foo.com type=m3.medium region=eu-central-1 az=eu-central-1a ip=47.51.157.251 Env=staging Role=web
-name=i-7086fec2.foo.com type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
+name=i-0d7b56a1 type=m3.medium region=eu-central-1 az=eu-central-1a ip=47.51.157.251 Env=staging Role=web
+name=i-7086fec2 type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
 ...
 </code></pre>
 
@@ -117,7 +117,7 @@ values):</p>
 
 <pre><code># (only crawler instances, in production)
 $ ec2list production crawler
-name=i-7086fec2.foo.com type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
+name=i-7086fec2 type=m3.xlarge region=us-west-2 az=us-west-2a ip=54.246.17.235 Env=production Role=crawler
 </code></pre>
 
 <p>Parameters ending with a &quot;=&quot; are treated as &quot;extractors&quot;. If 0 extractor,
@@ -127,10 +127,10 @@ original format, but displays only the requested columns:</p>
 
 <pre><code># (all crawler instances names, in production)
 $ ec2list name= production crawler
-i-7086fec2.foo.com
+i-7086fec2
 ...
 $ ec2list name= type= production crawler
-name=i-7086fec2.foo.com type=m3.xlarge
+name=i-7086fec2 type=m3.xlarge
 ...
 </code></pre>
 
