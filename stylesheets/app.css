@@ -1,6 +1,6 @@
 /* general styles */
 html { overflow-y:scroll; }
-body { font: 300 16px/1.6em helvetica, 'Open Sans', sans-serif; background:#fdfdfd; }
+body { font:400 16px/1.6em 'Source Sans Pro', sans-serif; }
 a { text-decoration: none; }
 a:link, a:visited { color: #e51c23; }
 a:hover { color: #e51c23; text-decoration:underline; }
@@ -36,10 +36,9 @@ html, body {
 
 /* sidebar */
 #sidebar {
-  margin:32px 0 0; /* top = content's margin-top + 2px */
+  margin:36px 0 0; /* top = content's margin-top + 2px */
   padding-left:10px;
-  color:#555;
-  font-size: 14px;
+  color:#888;
 }
 #sidebar p {
   text-align:center;
@@ -48,14 +47,12 @@ html, body {
   color:#e51c23;
 }
 .sitetitle {
-  margin:0 auto 20px;
+  margin:0 auto 10px;
   text-align: center;
-  font-family: 'Lobster Two', serif;
-  font-size: 42px;
+  font-size: 24px;
+  font-weight: bold;
   font-style: normal;
-  font-weight: 400;
   color: #e51c23 !important;
-  text-shadow: 0px 1px 0px #ddd;
 }
 .sitetitle a:hover {
   color: #e51c23 !important;
@@ -65,6 +62,7 @@ html, body {
 h1 {
   margin:4px 4px 20px;
   font-size:32px;
+  font-weight: normal;
   color:#e51c23;
 }
 h2 {
@@ -114,19 +112,18 @@ h2.last-posts {
 }
 .link-block {
   font-size: 16px;
-  font-weight: 600;
-  margin: 10px 0 15px -10px;
+  margin: 10px 0 10px -10px;
   padding: 5px 10px;
 }
 .link-block:first-child {
   margin-top: -5px;
 }
 .link-block:hover {
-  background-color: #f6f6f6;
+  background-color: #fafafa;
 }
 .time {
   float: right;
   padding: 0 4px;
-  color: #bbb;
+  color: #888;
   font-size: 14px;
 }
