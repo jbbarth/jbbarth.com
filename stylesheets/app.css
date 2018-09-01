@@ -2,8 +2,8 @@
 html { overflow-y:scroll; }
 body { font:400 16px/1.6em 'Source Sans Pro', sans-serif; }
 a { text-decoration: none; }
-a:link, a:visited { color: #e51c23; }
-a:hover { color: #e51c23; text-decoration:underline; }
+a:link, a:visited { color: #D81B60; }
+a:hover { color: #D81B60; text-decoration:underline; }
 ul { list-style-type:square; padding-left:25px; }
 blockquote { margin:5px 15px; font-style:italic; }
 blockquote > p { margin:0; }
@@ -38,13 +38,13 @@ html, body {
 #sidebar {
   margin:36px 0 0; /* top = content's margin-top + 2px */
   padding-left:10px;
-  color:#888;
+  color:#666;
 }
 #sidebar p {
   text-align:center;
 }
 #sidebar a:link, #sidebar a:visited, #sidebar a:hover {
-  color:#e51c23;
+  color:#D81B60;
 }
 .sitetitle {
   margin:0 auto 10px;
@@ -52,10 +52,10 @@ html, body {
   font-size: 24px;
   font-weight: bold;
   font-style: normal;
-  color: #e51c23 !important;
+  color: #D81B60 !important;
 }
 .sitetitle a:hover {
-  color: #e51c23 !important;
+  color: #D81B60 !important;
   text-decoration:none;
   cursor:pointer;
 }
@@ -63,7 +63,7 @@ h1 {
   margin:4px 4px 20px;
   font-size:32px;
   font-weight: normal;
-  color:#e51c23;
+  color:#D81B60;
 }
 h2 {
   font-family: 'Average Sans', sans-serif;
@@ -124,6 +124,6 @@ h2.last-posts {
 .time {
   float: right;
   padding: 0 4px;
-  color: #888;
+  color: #666;
   font-size: 14px;
 }
