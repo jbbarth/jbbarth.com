@@ -7,7 +7,7 @@ GEM
     colored (1.2)
     cri (2.3.0)
       colored (>= 1.2)
-    json (1.8.2)
+    json (2.2.0)
     method_source (0.8.1)
     mime-types (1.19)
     nanoc (3.4.2)
@@ -36,3 +36,6 @@ DEPENDENCIES
   rake
   redcarpet (~> 1.17)
   systemu
+
+BUNDLED WITH
+   2.0.2
