@@ -2,8 +2,8 @@
 html { overflow-y:scroll; }
 body { font:400 16px/1.6em 'Source Sans Pro', sans-serif; }
 a { text-decoration: none; }
-a:link, a:visited { color: #D81B60; }
-a:hover { color: #D81B60; text-decoration:underline; }
+a:link, a:visited { color: #0D47A1; }
+a:hover { color: #0D47A1; text-decoration:underline; }
 ul { list-style-type:square; padding-left:25px; }
 blockquote { margin:5px 15px; font-style:italic; }
 blockquote > p { margin:0; }
@@ -44,7 +44,7 @@ html, body {
   text-align:center;
 }
 #sidebar a:link, #sidebar a:visited, #sidebar a:hover {
-  color:#D81B60;
+  color:#0D47A1;
 }
 .sitetitle {
   margin:0 auto 10px;
@@ -52,10 +52,10 @@ html, body {
   font-size: 24px;
   font-weight: bold;
   font-style: normal;
-  color: #D81B60 !important;
+  color: #0D47A1 !important;
 }
 .sitetitle a:hover {
-  color: #D81B60 !important;
+  color: #0D47A1 !important;
   text-decoration:none;
   cursor:pointer;
 }
@@ -63,7 +63,7 @@ h1 {
   margin:4px 4px 20px;
   font-size:32px;
   font-weight: normal;
-  color:#D81B60;
+  color:#0D47A1;
 }
 h2 {
   font-family: 'Average Sans', sans-serif;
@@ -117,9 +117,6 @@ h2.last-posts {
 }
 .link-block:first-child {
   margin-top: -5px;
-}
-.link-block:hover {
-  background-color: #fafafa;
 }
 .time {
   float: right;
