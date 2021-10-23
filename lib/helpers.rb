@@ -16,10 +16,12 @@ module NanocHelpers
     html << File.read(path).split("---\n")[2..-1].join("---\n")
   end
 
-  def stupid_list_links(paths)
+  def stupid_list_links(paths, condition=nil)
     paths.map do |path|
-      title = YAML.load_file(path)["title"]
+      tree = YAML.load_file(path)
+      title = tree["title"]
       date = Date.parse path.scan(/\/(\d{4}-\d{2}-\d{2})/).first.first
+      next if !condition || !condition.call(title, date, tree)
       %(<div class=link-block><div class="time">#{date.strftime("%d %b %Y")}</div><a href="#{path.gsub(%r{^./content},'')}">#{title}</a></div>) if title
     end.compact.join("\n")
   end

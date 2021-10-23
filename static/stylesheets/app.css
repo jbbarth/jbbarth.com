@@ -8,6 +8,7 @@ ul { list-style-type: square; padding-left: 25px; }
 blockquote { margin: 5px 15px; font-style: italic; }
 blockquote > p { margin: 0; }
 hr { margin-top: 15px; }
+details > summary { cursor: pointer; }
 
 /* layout */
 html, body {
