@@ -1,6 +1,6 @@
 /* general styles */
 html { overflow-y:scroll; }
-body { font:400 16px/1.6em 'Source Sans Pro', sans-serif; }
+body { font:400 16px/1.6em 'Montserrat', sans-serif; }
 a { text-decoration: none; }
 a:link, a:visited { color: #0D47A1; }
 a:hover { color: #0D47A1; text-decoration:underline; }
