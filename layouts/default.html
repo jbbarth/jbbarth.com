@@ -14,10 +14,12 @@
   </head>
   <body>
     <div id="container" class="container_16">
-      <div class="grid_4">
-        <%= render "sidebar" %>
-      </div>
-      <div class="grid_12">
+      <div class="grid_16">
+        <div id="header">
+          <a href="/">Home</a>
+          <a href="https://github.com/jbbarth" target="_blank">Code</a>
+          <a href="https://twitter.com/jbbarth" target="_blank">About</a>
+        </div>
         <div id="content">
           <%= yield %>
         </div>
