@@ -109,11 +109,7 @@ h2.last-posts {
 }
 .link-block {
   font-size: 16px;
-  margin: 2px 0 2px -10px;
-  padding: 5px 10px;
-}
-.link-block:first-child {
-  margin-top: -5px;
+  padding: 5px 0;
 }
 .time {
   float: right;
