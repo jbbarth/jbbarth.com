@@ -2,6 +2,8 @@
 title: Home
 ---
 
+<%= stupid_list_links Dir.glob("./content/posts/*.html").sort.reverse, Proc.new{|title, date, tree| date >= Date.parse("2016-01-01")} %>
+
 <details>
   <summary>Archives</summary>
   <%= stupid_list_links Dir.glob("./content/posts/*.html").sort.reverse, Proc.new{|title, date, tree| date <= Date.parse("2015-12-31")} %>
