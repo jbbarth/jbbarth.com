@@ -5,9 +5,10 @@ a { text-decoration: none; }
 a:link, a:visited { color: #2563EB; }
 a:hover { color: #2563EB; text-decoration: underline; }
 ul { list-style-type: square; padding-left: 25px; }
-blockquote { margin: 5px 15px; font-style: italic; }
+blockquote { padding: 0 15px; border-left: 6px solid #eee; }
 blockquote > p { margin: 0; }
 hr { margin-top: 15px; }
+details > summary { cursor: pointer; }
 
 /* layout */
 html, body {
@@ -19,6 +20,7 @@ html, body {
   overflow: auto;
   margin: 0 auto;
   padding: 0;
+  width: 600px !important;
   min-height: 100%;
   height: auto !important;
   height: 100%;
@@ -109,11 +111,7 @@ h2.last-posts {
 }
 .link-block {
   font-size: 16px;
-  margin: 2px 0 2px -10px;
-  padding: 5px 10px;
-}
-.link-block:first-child {
-  margin-top: -5px;
+  padding: 5px 0;
 }
 .time {
   float: right;

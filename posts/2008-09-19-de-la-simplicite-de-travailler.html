@@ -6,22 +6,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/reset.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/960.css" />
     <link rel="stylesheet" type="text/css" media="all" href="/stylesheets/app.css" />
     <meta http-equiv="cache-control" content="max-age=10, must-revalidate" />
     <meta charset="utf-8">
     <meta name="generator" content="nanoc 3.2.3">
   </head>
   <body>
-    <div id="container" class="container_16">
-      <div class="grid_16">
-        <div id="header">
-          <a href="/">Home</a>
-          <a href="https://github.com/jbbarth" target="_blank">Code</a>
-          <a href="https://twitter.com/jbbarth" target="_blank">About</a>
-        </div>
-        <div id="content">
-          <h1>De la simplicité de travailler des dates en Ruby</h1>
+    <div id="container">
+      <div id="header">
+        <a href="/">Home</a>
+        <a href="https://github.com/jbbarth" target="_blank">GitHub</a>
+        <a href="https://twitter.com/jbbarth" target="_blank">Twitter</a>
+      </div>
+      <div id="content">
+        <h1>De la simplicité de travailler des dates en Ruby</h1>
 
 <p>Imaginons qu’on veuille ajouter 10000 jours au 26/06/2008. <em>Date.new(2008,6,26)</em> permet de créer un premier objet date. La méthode “+” permet
 ensuite d’ajouter des jours, et pour info “&gt;&gt;” d’ajouter des mois. Modulo un <em>require “Date”</em> au début, on a tout ce qu’il faut ! Il faut juste
@@ -44,7 +42,6 @@ root@vds# ruby -e ‘puts 10000 – 85’
 
 <p>Dans 10000 jours depuis le 26/06, c’est à dire 9915 jours à compter d’aujourd’hui, nous serons le 12 novembre 2035 ! Merci Ruby :-)</p>
 
-        </div>
       </div>
     </div>
   </body>
