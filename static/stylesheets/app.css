@@ -5,7 +5,7 @@ a { text-decoration: none; }
 a:link, a:visited { color: #2563EB; }
 a:hover { color: #2563EB; text-decoration: underline; }
 ul { list-style-type: square; padding-left: 25px; }
-blockquote { margin: 5px 15px; font-style: italic; }
+blockquote { padding: 0 15px; border-left: 6px solid #eee; }
 blockquote > p { margin: 0; }
 hr { margin-top: 15px; }
 details > summary { cursor: pointer; }
@@ -20,6 +20,7 @@ html, body {
   overflow: auto;
   margin: 0 auto;
   padding: 0;
+  width: 600px !important;
   min-height: 100%;
   height: auto !important;
   height: 100%;
